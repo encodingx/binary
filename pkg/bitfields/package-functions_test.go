@@ -33,7 +33,7 @@ const (
 	rfc791InternetHeaderPrecedenceNetworkControl
 )
 
-func TestBitfields(t *testing.T) {
+func TestPackageFunctions(t *testing.T) {
 	const (
 		internetHeaderLength  = 5
 		internetHeaderVersion = 4
