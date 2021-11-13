@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	Sub32BitFieldMaxSizeBits  = Sub32BitFieldMaxSizeBytes * 8
-	Sub32BitFieldMaxSizeBytes = 4
-	Sub32BitFieldMaxValue     = (1 << Sub32BitFieldMaxSizeBits) - 1
+	BitFieldMaxSizeBits  = BitFieldMaxSizeBytes * 8
+	BitFieldMaxSizeBytes = 4
+	BitFieldMaxValue     = (1 << BitFieldMaxSizeBits) - 1
 )
 
-type Sub32BitField interface {
+type BitField interface {
 	// A bit field of length less than or equal to 32 bits.
 
 	ByteSliceFromUint32(uint32) ([]byte, error)
@@ -48,7 +48,7 @@ type Sub32BitField interface {
 	// to minimise confusion.
 }
 
-type sub32BitField struct {
+type bitField struct {
 	length int
 	// The bit-length of the field, not to be confused with that of its value.
 
@@ -58,10 +58,10 @@ type sub32BitField struct {
 	// for its position in that sequence to be appropriate.
 }
 
-func NewSub32BitField(length int, offset int) (field *sub32BitField, e error) {
-	// Return a basic default implementation of interface Sub32BitField.
+func NewBitField(length int, offset int) (field *bitField, e error) {
+	// Return a basic default implementation of interface BitField.
 
-	field = &sub32BitField{
+	field = &bitField{
 		length: length,
 		offset: offset,
 	}
@@ -76,24 +76,24 @@ func NewSub32BitField(length int, offset int) (field *sub32BitField, e error) {
 	return
 }
 
-func (f sub32BitField) ByteSliceFromUint32(input uint32) (
+func (f bitField) ByteSliceFromUint32(input uint32) (
 	output []byte, e error,
 ) {
-	// Implement the Sub32BitField interface.
+	// Implement the BitField interface.
 
 	return f.byteSlice(input)
 }
 
-func (f sub32BitField) Uint32FromByteSlice(input []byte) (
+func (f bitField) Uint32FromByteSlice(input []byte) (
 	output uint32, e error,
 ) {
-	// Implement the Sub32BitField interface.
+	// Implement the BitField interface.
 
 	return f.rawUint32(input)
 }
 
-func (f sub32BitField) ByteSliceFromBool(input bool) (output []byte, e error) {
-	// Implement the Sub32BitField interface.
+func (f bitField) ByteSliceFromBool(input bool) (output []byte, e error) {
+	// Implement the BitField interface.
 
 	var (
 		rawUint32 uint32
@@ -106,8 +106,8 @@ func (f sub32BitField) ByteSliceFromBool(input bool) (output []byte, e error) {
 	return f.byteSlice(rawUint32)
 }
 
-func (f sub32BitField) BoolFromByteSlice(input []byte) (output bool, e error) {
-	// Implement the Sub32BitField interface.
+func (f bitField) BoolFromByteSlice(input []byte) (output bool, e error) {
+	// Implement the BitField interface.
 
 	var (
 		rawUint32 uint32
@@ -123,7 +123,7 @@ func (f sub32BitField) BoolFromByteSlice(input []byte) (output bool, e error) {
 	return
 }
 
-func (f sub32BitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
+func (f bitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 	// Given a 32-bit unsigned integer representing a value,
 	// return a slice of four bytes representing a 32-bit sequence
 	// containing the bit field in its appropriate position,
@@ -136,7 +136,7 @@ func (f sub32BitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 		overflowError = "Unsigned integer %d overflows field of length %d."
 	)
 
-	byteSlice = make([]byte, Sub32BitFieldMaxSizeBytes)
+	byteSlice = make([]byte, BitFieldMaxSizeBytes)
 
 	if rawUint32 >= (1 << f.length) {
 		e = fmt.Errorf(overflowError, rawUint32, f.length)
@@ -149,7 +149,7 @@ func (f sub32BitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 	return
 }
 
-func (f sub32BitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
+func (f bitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 	// Given a slice of four bytes representing a 32-bit sequence,
 	// return a 32-bit unsigned integer representing the value
 	// contained by the bit field as defined by its length and offset.
@@ -159,9 +159,9 @@ func (f sub32BitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 		byteSliceLengthError = "Length of byte slice should be %d; got %d."
 	)
 
-	if len(byteSlice) != Sub32BitFieldMaxSizeBytes {
+	if len(byteSlice) != BitFieldMaxSizeBytes {
 		e = fmt.Errorf(byteSliceLengthError,
-			Sub32BitFieldMaxSizeBytes,
+			BitFieldMaxSizeBytes,
 			len(byteSlice),
 		)
 
@@ -173,17 +173,17 @@ func (f sub32BitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 	return
 }
 
-func (f sub32BitField) mask() (mask uint32) {
+func (f bitField) mask() (mask uint32) {
 	// Return the bit mask of the field
 	// corresponding to its position in a 32-bit sequence.
 
-	mask = Sub32BitFieldMaxValue >> (Sub32BitFieldMaxSizeBits - f.length) <<
+	mask = BitFieldMaxValue >> (BitFieldMaxSizeBits - f.length) <<
 		f.offset
 
 	return
 }
 
-func (f sub32BitField) validateLengthAndOffset() (e error) {
+func (f bitField) validateLengthAndOffset() (e error) {
 	// Verify that the length and offset of a field
 	// fall within appropriate ranges, and
 	// that the length-offset combination
@@ -204,7 +204,7 @@ func (f sub32BitField) validateLengthAndOffset() (e error) {
 		return
 	}
 
-	if f.length+f.offset > Sub32BitFieldMaxSizeBits {
+	if f.length+f.offset > BitFieldMaxSizeBits {
 		e = fmt.Errorf(combinationError, f.length, f.offset)
 
 		return
@@ -213,11 +213,11 @@ func (f sub32BitField) validateLengthAndOffset() (e error) {
 	return
 }
 
-func (f sub32BitField) validateLength() (e error) {
+func (f bitField) validateLength() (e error) {
 	// Verify that the length of a field falls within the appropriate range.
 
 	const (
-		maximumLength = Sub32BitFieldMaxSizeBits
+		maximumLength = BitFieldMaxSizeBits
 		minimumLength = 1
 
 		lengthOutOfRange = "" +
@@ -234,11 +234,11 @@ func (f sub32BitField) validateLength() (e error) {
 	return
 }
 
-func (f sub32BitField) validateOffset() (e error) {
+func (f bitField) validateOffset() (e error) {
 	// Verify that the offset of a field falls within the appropriate range.
 
 	const (
-		maximumOffset = Sub32BitFieldMaxSizeBits - 1
+		maximumOffset = BitFieldMaxSizeBits - 1
 		minimumOffset = 0
 
 		offsetOutOfRange = "" +

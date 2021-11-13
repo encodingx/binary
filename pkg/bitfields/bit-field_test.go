@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSub32BitField(t *testing.T) {
+func TestBitField(t *testing.T) {
 	const (
 		lengthInvalid0 = 0
 		lengthInvalid1 = 33
@@ -41,77 +41,77 @@ func TestSub32BitField(t *testing.T) {
 	var (
 		bytes []byte
 		e     error
-		field Sub32BitField
+		field BitField
 		value interface{}
 	)
 
 	// Control cases
 	// to make sure error in subsequent cases are not unintended.
 
-	field, e = NewSub32BitField(lengthValid0, offsetValid0)
+	field, e = NewBitField(lengthValid0, offsetValid0)
 
 	assert.Nil(t, e,
-		"Function NewSub32BitField should return a nil error "+
+		"Function NewBitField should return a nil error "+
 			"when it is passed a valid length argument.",
 	)
 
 	assert.NotNil(t, field,
-		"Function NewSub32BitField should return a non-nil Sub32BitField "+
+		"Function NewBitField should return a non-nil BitField "+
 			"when it is passed a valid length argument.",
 	)
 
 	// Error cases
 
-	field, e = NewSub32BitField(lengthInvalid0, offsetValid0)
+	field, e = NewBitField(lengthInvalid0, offsetValid0)
 
 	assert.NotNil(t, e,
-		"Function NewSub32BitField should return a non-nil error "+
+		"Function NewBitField should return a non-nil error "+
 			"when it is passed an invalid length argument.",
 	)
 
 	assert.Nil(t, field,
-		"Function NewSub32BitField should return a nil Sub32BitField "+
+		"Function NewBitField should return a nil BitField "+
 			"when it is passed an invalid length argument.",
 	)
 
-	field, e = NewSub32BitField(lengthInvalid1, offsetValid1)
+	field, e = NewBitField(lengthInvalid1, offsetValid1)
 
 	assert.NotNil(t, e,
-		"Function NewSub32BitField should return a non-nil error "+
+		"Function NewBitField should return a non-nil error "+
 			"when it is passed an invalid length argument.",
 	)
 
 	assert.Nil(t, field,
-		"Function NewSub32BitField should return a nil Sub32BitField "+
+		"Function NewBitField should return a nil BitField "+
 			"when it is passed an invalid length argument.",
 	)
 
-	field, e = NewSub32BitField(lengthValid1, offsetValid1)
+	field, e = NewBitField(lengthValid1, offsetValid1)
 	// valid length and offset but invalid combination
 
 	assert.NotNil(t, e,
-		"Function NewSub32BitField should return a non-nil error "+
+		"Function NewBitField should return a non-nil error "+
 			"when it is passed an invalid length-offset combination.",
 	)
 
 	assert.Nil(t, field,
-		"Function NewSub32BitField should return a nil Sub32BitField "+
+		"Function NewBitField should return a nil BitField "+
 			"when it is passed an invalid length-offset combination.",
 	)
 
-	field, e = NewSub32BitField(lengthUint32, offsetValid0)
+	field, e = NewBitField(lengthUint32, offsetValid0)
 
 	bytes, e = field.ByteSliceFromUint32(valueOverflow)
 
 	assert.NotNil(t, e,
-		"Method Sub32BitField.ByteSliceFromUint32 should "+
+		"Method BitField.ByteSliceFromUint32 should "+
 			"return a non-nil error "+
 			"when it is passed a value that overflows the field.",
 	)
 
 	assert.Equal(t,
 		byteSliceZeroes, bytes,
-		"Method Sub32BitField.ByteSliceFromUint32 should "+
+		"Method BitField.ByteSliceFromUint32 should "+
 			"return a byte slice filled with zeroes "+
 			"when it is passed a value that overflows the field.",
 	)
@@ -119,7 +119,7 @@ func TestSub32BitField(t *testing.T) {
 	_, e = field.Uint32FromByteSlice(byteSliceEmpty)
 
 	assert.NotNil(t, e,
-		"Method Sub32BitField.Uint32FromByteSlice should "+
+		"Method BitField.Uint32FromByteSlice should "+
 			"return a non-nil error "+
 			"when it is passed a byte slice that is shorter than 4 bytes.",
 	)
@@ -127,7 +127,7 @@ func TestSub32BitField(t *testing.T) {
 	_, e = field.BoolFromByteSlice(byteSliceEmpty)
 
 	assert.NotNil(t, e,
-		"Method Sub32BitField.BoolFromByteSlice should "+
+		"Method BitField.BoolFromByteSlice should "+
 			"return a non-nil error "+
 			"when it is passed a byte slice that is shorter than 4 bytes.",
 	)
@@ -142,7 +142,7 @@ func TestSub32BitField(t *testing.T) {
 	//  3   2                   1                   0
 	//  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <offset
 
-	field, e = NewSub32BitField(lengthUint32, offsetCase0)
+	field, e = NewBitField(lengthUint32, offsetCase0)
 	if e != nil {
 		t.Error(e)
 	}
@@ -154,7 +154,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.Equal(t,
 		byteSliceCase0, bytes,
-		"Byte slice returned by method Sub32BitField.ByteSliceFromUint32 "+
+		"Byte slice returned by method BitField.ByteSliceFromUint32 "+
 			"should match the expected.",
 	)
 
@@ -165,7 +165,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.EqualValues(t,
 		valueUint32, value,
-		"Value returned by method Sub32BitField.Uint32FromByteSlice "+
+		"Value returned by method BitField.Uint32FromByteSlice "+
 			"should match the expected.",
 	)
 
@@ -179,7 +179,7 @@ func TestSub32BitField(t *testing.T) {
 	//  3   2                   1                   0
 	//  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <offset
 
-	field, e = NewSub32BitField(lengthUint32, offsetCase1)
+	field, e = NewBitField(lengthUint32, offsetCase1)
 	if e != nil {
 		t.Error(e)
 	}
@@ -191,7 +191,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.Equal(t,
 		byteSliceCase1, bytes,
-		"Byte slice returned by method Sub32BitField.ByteSliceFromUint32 "+
+		"Byte slice returned by method BitField.ByteSliceFromUint32 "+
 			"should match the expected.",
 	)
 
@@ -202,7 +202,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.EqualValues(t,
 		valueUint32, value,
-		"Value returned by method Sub32BitField.Uint32FromByteSlice "+
+		"Value returned by method BitField.Uint32FromByteSlice "+
 			"should match the expected.",
 	)
 
@@ -216,7 +216,7 @@ func TestSub32BitField(t *testing.T) {
 	//  3   2                   1                   0
 	//  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <offset
 
-	field, e = NewSub32BitField(lengthUint32, offsetCase2)
+	field, e = NewBitField(lengthUint32, offsetCase2)
 	if e != nil {
 		t.Error(e)
 	}
@@ -228,7 +228,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.Equal(t,
 		byteSliceCase2, bytes,
-		"Byte slice returned by method Sub32BitField.ByteSliceFromUint32 "+
+		"Byte slice returned by method BitField.ByteSliceFromUint32 "+
 			"should match the expected.",
 	)
 
@@ -239,7 +239,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.EqualValues(t,
 		valueUint32, value,
-		"Value returned by method Sub32BitField.Uint32FromByteSlice "+
+		"Value returned by method BitField.Uint32FromByteSlice "+
 			"should match the expected.",
 	)
 
@@ -253,7 +253,7 @@ func TestSub32BitField(t *testing.T) {
 	//  3   2                   1                   0
 	//  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 <offset
 
-	field, e = NewSub32BitField(lengthBool, offsetCase3)
+	field, e = NewBitField(lengthBool, offsetCase3)
 	if e != nil {
 		t.Error(e)
 	}
@@ -265,7 +265,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.Equal(t,
 		byteSliceCase3, bytes,
-		"Byte slice returned by method Sub32BitField.ByteSliceFromBool "+
+		"Byte slice returned by method BitField.ByteSliceFromBool "+
 			"should match the expected.",
 	)
 
@@ -276,7 +276,7 @@ func TestSub32BitField(t *testing.T) {
 
 	assert.EqualValues(t,
 		valueBool, value,
-		"Value returned by method Sub32BitField.BoolFromByteSlice "+
+		"Value returned by method BitField.BoolFromByteSlice "+
 			"should match the expected.",
 	)
 }

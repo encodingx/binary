@@ -25,12 +25,12 @@ func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
 	var (
 		byteSlice []byte
 		details   structFieldDetails
-		field     Sub32BitField
+		field     BitField
 		i         int
 		nFields   int
 	)
 
-	bytes = make([]byte, Sub32BitFieldMaxSizeBytes)
+	bytes = make([]byte, BitFieldMaxSizeBytes)
 
 	nFields, details, e = getStructFieldDetails(structure)
 	if e != nil {
@@ -38,7 +38,7 @@ func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
 	}
 
 	for i = 0; i < nFields; i++ {
-		field, e = sub32BitFieldFromStructFieldTag(details.Tags[i])
+		field, e = bitFieldFromStructFieldTag(details.Tags[i])
 		if e != nil {
 			return
 		}
@@ -95,7 +95,7 @@ func Unmarshal32BitWord(pointer interface{}, bytes []byte) (e error) {
 
 	var (
 		details     structFieldDetails
-		field       Sub32BitField
+		field       BitField
 		i           int
 		nFields     int
 		valueBool   bool
@@ -108,7 +108,7 @@ func Unmarshal32BitWord(pointer interface{}, bytes []byte) (e error) {
 	}
 
 	for i = 0; i < nFields; i++ {
-		field, e = sub32BitFieldFromStructFieldTag(details.Tags[i])
+		field, e = bitFieldFromStructFieldTag(details.Tags[i])
 		if e != nil {
 			return
 		}
@@ -208,10 +208,10 @@ func getStructFieldDetails(structure interface{}) (
 	return
 }
 
-func sub32BitFieldFromStructFieldTag(tag reflect.StructTag) (
-	field Sub32BitField, e error,
+func bitFieldFromStructFieldTag(tag reflect.StructTag) (
+	field BitField, e error,
 ) {
-	// Return a Sub32BitField given a struct field tag,
+	// Return a BitField given a struct field tag,
 	// with the length and offset of the former set
 	// to those indicated by the tag.
 
@@ -225,7 +225,7 @@ func sub32BitFieldFromStructFieldTag(tag reflect.StructTag) (
 		return
 	}
 
-	field, e = NewSub32BitField(length, offset)
+	field, e = NewBitField(length, offset)
 	if e != nil {
 		return
 	}
