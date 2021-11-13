@@ -23,13 +23,11 @@ func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
 	// the byte slice returned should still be of the appropriate length.
 
 	var (
-		i       int
-		nFields int
-
-		details structFieldDetails
-
-		field     Sub32BitField
 		byteSlice []byte
+		details   structFieldDetails
+		field     Sub32BitField
+		i         int
+		nFields   int
 	)
 
 	bytes = make([]byte, Sub32BitFieldMaxSizeBytes)
@@ -96,12 +94,10 @@ func Unmarshal32BitWord(pointer interface{}, bytes []byte) (e error) {
 	// store the result in the structure pointed to by pointer.
 
 	var (
-		i       int
-		nFields int
-
-		details structFieldDetails
-
+		details     structFieldDetails
 		field       Sub32BitField
+		i           int
+		nFields     int
 		valueBool   bool
 		valueUint32 uint32
 	)
