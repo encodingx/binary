@@ -7,6 +7,9 @@ import (
 )
 
 type rfc791InternetHeaderWord0 struct {
+	// Reference: RFC 791 Internet Protocol, Section 3.1 Internet Header Format
+	// https://datatracker.ietf.org/doc/html/rfc791#section-3.1
+
 	Version                  uint `bitfield:"4,28"`
 	InternetHeaderLength     uint `bitfield:"4,24"`
 	TypeOfServicePrecedence  uint `bitfield:"3,21"`
