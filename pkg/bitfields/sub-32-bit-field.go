@@ -15,10 +15,37 @@ type Sub32BitField interface {
 	// A bit field of length less than or equal to 32 bits.
 
 	ByteSliceFromUint32(uint32) ([]byte, error)
+	// Given a 32-bit unsigned integer representing a value,
+	// return a slice of four bytes representing a 32-bit sequence
+	// containing the bit field in its appropriate position,
+	// flanked by leading and trailing zeroes if applicable.
+
 	Uint32FromByteSlice([]byte) (uint32, error)
+	// Given a slice of four bytes representing a 32-bit sequence,
+	// return a 32-bit unsigned integer representing the value
+	// contained by the bit field as defined by its length and offset.
+	// Disregard bits in the sequence that fall outside the field.
 
 	ByteSliceFromBool(bool) ([]byte, error)
+	// Given a boolean value,
+	// return a slice of four bytes representing a 32-bit sequence
+	// containing the bit field in its appropriate position,
+	// flanked by leading and trailing zeroes if applicable.
+
+	// true is assumed to be equivalent to 1, and false to 0.
+	// It is highly recommended that the length of boolean fields be set to 1
+	// to minimise confusion.
+
 	BoolFromByteSlice([]byte) (bool, error)
+	// Given a slice of four bytes representing a 32-bit sequence,
+	// return a boolean value
+	// contained by the bit field as defined by its length and offset.
+	// Disregard bits in the sequence that fall outside the field.
+
+	// If the least-significant bit of the field is set to 1,
+	// the value of the field is deemed to be true, otherwise false.
+	// It is highly recommended that the length of boolean fields be set to 1
+	// to minimise confusion.
 }
 
 type sub32BitField struct {
@@ -68,10 +95,6 @@ func (f sub32BitField) Uint32FromByteSlice(input []byte) (
 func (f sub32BitField) ByteSliceFromBool(input bool) (output []byte, e error) {
 	// Implement the Sub32BitField interface.
 
-	// true is assumed to be equivalent to 1, and false to 0.
-	// It is highly recommended that the length of boolean fields be set to 1
-	// to minimise confusion.
-
 	var (
 		rawUint32 uint32
 	)
@@ -85,11 +108,6 @@ func (f sub32BitField) ByteSliceFromBool(input bool) (output []byte, e error) {
 
 func (f sub32BitField) BoolFromByteSlice(input []byte) (output bool, e error) {
 	// Implement the Sub32BitField interface.
-
-	// If the least-significant bit of the field is set to 1,
-	// the value of the field is deemed to be true, otherwise false.
-	// It is highly recommended that the length of boolean fields be set to 1
-	// to minimise confusion.
 
 	var (
 		rawUint32 uint32
