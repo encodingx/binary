@@ -10,15 +10,28 @@ type rfc791InternetHeaderWord0 struct {
 	// Reference: RFC 791 Internet Protocol, Section 3.1 Internet Header Format
 	// https://datatracker.ietf.org/doc/html/rfc791#section-3.1
 
-	Version                  uint `bitfield:"4,28"`
-	InternetHeaderLength     uint `bitfield:"4,24"`
-	TypeOfServicePrecedence  uint `bitfield:"3,21"`
-	TypeOfServiceDelay       bool `bitfield:"1,20"`
-	TypeOfServiceThroughput  bool `bitfield:"1,19"`
-	TypeOfServiceReliability bool `bitfield:"1,18"`
-	TypeOfServiceReserved    uint `bitfield:"2,16"`
-	TotalLength              uint `bitfield:"16,0"`
+	Version                  uint                           `bitfield:"4,28"`
+	InternetHeaderLength     uint                           `bitfield:"4,24"`
+	TypeOfServicePrecedence  rfc791InternetHeaderPrecedence `bitfield:"3,21"`
+	TypeOfServiceDelay       bool                           `bitfield:"1,20"`
+	TypeOfServiceThroughput  bool                           `bitfield:"1,19"`
+	TypeOfServiceReliability bool                           `bitfield:"1,18"`
+	TypeOfServiceReserved    uint                           `bitfield:"2,16"`
+	TotalLength              uint                           `bitfield:"16,0"`
 }
+
+type rfc791InternetHeaderPrecedence byte
+
+const (
+	rfc791InternetHeaderPrecedenceRoutine rfc791InternetHeaderPrecedence = iota
+	rfc791InternetHeaderPrecedencePriority
+	rfc791InternetHeaderPrecedenceImmediate
+	rfc791InternetHeaderPrecedenceFlash
+	rfc791InternetHeaderPrecedenceFlashOverride
+	rfc791InternetHeaderPrecedenceCRITICOrECP
+	rfc791InternetHeaderPrecedenceInternetworkControl
+	rfc791InternetHeaderPrecedenceNetworkControl
+)
 
 func TestBitfields(t *testing.T) {
 	const (
@@ -39,24 +52,13 @@ func TestBitfields(t *testing.T) {
 		reserved = 0
 	)
 
-	const (
-		internetHeaderPrecedenceRoutine = iota
-		internetHeaderPrecedencePriority
-		internetHeaderPrecedenceImmediate
-		internetHeaderPrecedenceFlash
-		internetHeaderPrecedenceFlashOverride
-		internetHeaderPrecedenceCRITICOrECP
-		internetHeaderPrecedenceInternetworkControl
-		internetHeaderPrecedenceNetworkControl
-	)
-
 	var (
 		binary = []byte{0b01000101, 0b01010100, 0b1110110, 0b00001110}
 
 		structure0 = rfc791InternetHeaderWord0{
 			Version:                  internetHeaderVersion,
 			InternetHeaderLength:     internetHeaderLength,
-			TypeOfServicePrecedence:  internetHeaderPrecedenceImmediate,
+			TypeOfServicePrecedence:  rfc791InternetHeaderPrecedenceImmediate,
 			TypeOfServiceDelay:       internetHeaderDelayLow,
 			TypeOfServiceThroughput:  internetHeaderThroughputNormal,
 			TypeOfServiceReliability: internetHeaderReliabilityHigh,
