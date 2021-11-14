@@ -1,4 +1,4 @@
-package binary
+package bitfields
 
 import (
 	"testing"

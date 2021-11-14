@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/bitfields"
 	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/constants"
 )
 
@@ -39,7 +40,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 	var (
 		byteSlice []byte
 		details   structFieldDetails
-		field     BitField
+		field     bitfields.BitField
 		i         int
 		nFields   int
 	)
@@ -107,7 +108,7 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 
 	var (
 		details     structFieldDetails
-		field       BitField
+		field       bitfields.BitField
 		i           int
 		nFields     int
 		valueBool   bool
@@ -227,9 +228,9 @@ func getStructFieldDetails(structure interface{}) (
 }
 
 func bitFieldFromStructFieldTag(tag reflect.StructTag) (
-	field BitField, e error,
+	field bitfields.BitField, e error,
 ) {
-	// Return a BitField given a struct field tag,
+	// Return a bitfields.BitField given a struct field tag,
 	// with the length and offset of the former set
 	// to those indicated by the tag.
 
@@ -243,7 +244,7 @@ func bitFieldFromStructFieldTag(tag reflect.StructTag) (
 		return
 	}
 
-	field, e = NewBitField(length, offset)
+	field, e = bitfields.NewBitField(length, offset)
 	if e != nil {
 		return
 	}
