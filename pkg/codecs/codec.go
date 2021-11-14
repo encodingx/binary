@@ -185,7 +185,7 @@ func getStructFieldDetails(structure interface{}) (
 	// carrying the kinds, struct tags and values of those fields.
 
 	const (
-		nonStructError = "Type %s is not a struct."
+		nonStructError = "Type %s is not a struct, or a pointer to a struct."
 	)
 
 	var (
@@ -198,6 +198,14 @@ func getStructFieldDetails(structure interface{}) (
 
 	structType = reflect.TypeOf(structure)
 
+	structValue = reflect.ValueOf(structure)
+
+	if structType.Kind() == reflect.Ptr {
+		structType = structType.Elem()
+
+		structValue = structValue.Elem()
+	}
+
 	if structType.Kind() != reflect.Struct {
 		e = fmt.Errorf(nonStructError,
 			structType.Name(),
@@ -205,8 +213,6 @@ func getStructFieldDetails(structure interface{}) (
 
 		return
 	}
-
-	structValue = reflect.ValueOf(structure)
 
 	nFields = structType.NumField()
 

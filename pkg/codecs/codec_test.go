@@ -90,7 +90,7 @@ func TestCodec(t *testing.T) {
 
 	e = codec.Unmarshal(binary, &structure1)
 	if e != nil {
-		return
+		t.Error(e)
 	}
 
 	assert.Equal(t,
