@@ -3,6 +3,8 @@ package binary
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/constants"
 )
 
 type BitField interface {
@@ -130,7 +132,7 @@ func (f bitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 		overflowError = "Unsigned integer %d overflows field of length %d."
 	)
 
-	byteSlice = make([]byte, wordLengthInBytes)
+	byteSlice = make([]byte, constants.WordLengthInBytes)
 
 	if rawUint32 >= (1 << f.length) {
 		e = fmt.Errorf(overflowError, rawUint32, f.length)
@@ -153,9 +155,9 @@ func (f bitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 		byteSliceLengthError = "Length of byte slice should be %d; got %d."
 	)
 
-	if len(byteSlice) != wordLengthInBytes {
+	if len(byteSlice) != constants.WordLengthInBytes {
 		e = fmt.Errorf(byteSliceLengthError,
-			wordLengthInBytes,
+			constants.WordLengthInBytes,
 			len(byteSlice),
 		)
 
@@ -171,7 +173,8 @@ func (f bitField) mask() uint32 {
 	// Return the bit mask of the field
 	// corresponding to its position in a 32-bit sequence.
 
-	return wordRangeMaximum >> (wordLengthInBits - f.length) << f.offset
+	return constants.WordRangeMaximum >>
+		(constants.WordLengthInBits - f.length) << f.offset
 }
 
 func (f bitField) validateLengthAndOffset() (e error) {
@@ -195,7 +198,7 @@ func (f bitField) validateLengthAndOffset() (e error) {
 		return
 	}
 
-	if f.length+f.offset > wordLengthInBits {
+	if f.length+f.offset > constants.WordLengthInBits {
 		e = fmt.Errorf(combinationError, f.length, f.offset)
 
 		return
@@ -208,7 +211,7 @@ func (f bitField) validateLength() (e error) {
 	// Verify that the length of a field falls within the appropriate range.
 
 	const (
-		maximumLength = wordLengthInBits
+		maximumLength = constants.WordLengthInBits
 		minimumLength = 1
 
 		lengthOutOfRange = "" +
@@ -229,7 +232,7 @@ func (f bitField) validateOffset() (e error) {
 	// Verify that the offset of a field falls within the appropriate range.
 
 	const (
-		maximumOffset = wordLengthInBits - 1
+		maximumOffset = constants.WordLengthInBits - 1
 		minimumOffset = 0
 
 		offsetOutOfRange = "" +

@@ -3,6 +3,8 @@ package binary
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/constants"
 )
 
 const (
@@ -42,7 +44,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 		nFields   int
 	)
 
-	bytes = make([]byte, wordLengthInBytes)
+	bytes = make([]byte, constants.WordLengthInBytes)
 
 	nFields, details, e = getStructFieldDetails(structure)
 	if e != nil {
