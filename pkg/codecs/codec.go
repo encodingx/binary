@@ -1,11 +1,11 @@
-package binary
+package codecs
 
 import (
 	"fmt"
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/bitfields"
-	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/constants"
+	"github.com/joel-ling/go-bitfields/pkg/bitfields"
+	"github.com/joel-ling/go-bitfields/pkg/constants"
 )
 
 const (

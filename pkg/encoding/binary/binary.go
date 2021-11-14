@@ -1,14 +1,16 @@
 package binary
 
 import (
-	"encoding/binary"
+	stdlib "encoding/binary"
 	"io"
+
+	"github.com/joel-ling/go-bitfields/pkg/codecs"
 )
 
 // Original features
 
 var (
-	defaultCodec = NewCodec()
+	defaultCodec = codecs.NewCodec()
 )
 
 func Marshal(structure interface{}) ([]byte, error) {
@@ -22,14 +24,14 @@ func Unmarshal(bytes []byte, pointer interface{}) error {
 // Standard library features
 
 const (
-	MaxVarintLen16 = binary.MaxVarintLen16
-	MaxVarintLen32 = binary.MaxVarintLen32
-	MaxVarintLen64 = binary.MaxVarintLen64
+	MaxVarintLen16 = stdlib.MaxVarintLen16
+	MaxVarintLen32 = stdlib.MaxVarintLen32
+	MaxVarintLen64 = stdlib.MaxVarintLen64
 )
 
 var (
-	BigEndian    = binary.BigEndian
-	LittleEndian = binary.LittleEndian
+	BigEndian    = stdlib.BigEndian
+	LittleEndian = stdlib.LittleEndian
 )
 
 type ByteOrder interface {
@@ -43,37 +45,37 @@ type ByteOrder interface {
 }
 
 func PutUvarint(buf []byte, x uint64) int {
-	return binary.PutUvarint(buf, x)
+	return stdlib.PutUvarint(buf, x)
 }
 
 func PutVarint(buf []byte, x int64) int {
-	return binary.PutVarint(buf, x)
+	return stdlib.PutVarint(buf, x)
 }
 
 func Read(r io.Reader, order ByteOrder, data interface{}) error {
-	return binary.Read(r, order, data)
+	return stdlib.Read(r, order, data)
 }
 
 func ReadUvarint(r io.ByteReader) (uint64, error) {
-	return binary.ReadUvarint(r)
+	return stdlib.ReadUvarint(r)
 }
 
 func ReadVarint(r io.ByteReader) (int64, error) {
-	return binary.ReadVarint(r)
+	return stdlib.ReadVarint(r)
 }
 
 func Size(v interface{}) int {
-	return binary.Size(v)
+	return stdlib.Size(v)
 }
 
 func Uvarint(buf []byte) (uint64, int) {
-	return binary.Uvarint(buf)
+	return stdlib.Uvarint(buf)
 }
 
 func Varint(buf []byte) (int64, int) {
-	return binary.Varint(buf)
+	return stdlib.Varint(buf)
 }
 
 func Write(w io.Writer, order ByteOrder, data interface{}) error {
-	return binary.Write(w, order, data)
+	return stdlib.Write(w, order, data)
 }

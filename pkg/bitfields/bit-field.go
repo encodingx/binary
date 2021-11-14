@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/joel-ling/go-bitfields/pkg/encoding/binary/constants"
+	"github.com/joel-ling/go-bitfields/pkg/constants"
 )
 
 type BitField interface {
