@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	BitFieldMaxSizeBits  = BitFieldMaxSizeBytes * 8
-	BitFieldMaxSizeBytes = 4
-	BitFieldMaxValue     = (1 << BitFieldMaxSizeBits) - 1
+	wordLengthInBytes = 4
+	wordLengthInBits  = wordLengthInBytes * 8
+	wordRangeMaximum  = (1 << wordLengthInBits) - 1
 )
 
 type BitField interface {
@@ -58,7 +58,7 @@ type bitField struct {
 	// for its position in that sequence to be appropriate.
 }
 
-func NewBitField(length int, offset int) (field *bitField, e error) {
+func NewBitField(length, offset int) (field *bitField, e error) {
 	// Return a basic default implementation of interface BitField.
 
 	field = &bitField{
@@ -136,7 +136,7 @@ func (f bitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 		overflowError = "Unsigned integer %d overflows field of length %d."
 	)
 
-	byteSlice = make([]byte, BitFieldMaxSizeBytes)
+	byteSlice = make([]byte, wordLengthInBytes)
 
 	if rawUint32 >= (1 << f.length) {
 		e = fmt.Errorf(overflowError, rawUint32, f.length)
@@ -159,9 +159,9 @@ func (f bitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 		byteSliceLengthError = "Length of byte slice should be %d; got %d."
 	)
 
-	if len(byteSlice) != BitFieldMaxSizeBytes {
+	if len(byteSlice) != wordLengthInBytes {
 		e = fmt.Errorf(byteSliceLengthError,
-			BitFieldMaxSizeBytes,
+			wordLengthInBytes,
 			len(byteSlice),
 		)
 
@@ -173,14 +173,11 @@ func (f bitField) rawUint32(byteSlice []byte) (rawUint32 uint32, e error) {
 	return
 }
 
-func (f bitField) mask() (mask uint32) {
+func (f bitField) mask() uint32 {
 	// Return the bit mask of the field
 	// corresponding to its position in a 32-bit sequence.
 
-	mask = BitFieldMaxValue >> (BitFieldMaxSizeBits - f.length) <<
-		f.offset
-
-	return
+	return wordRangeMaximum >> (wordLengthInBits - f.length) << f.offset
 }
 
 func (f bitField) validateLengthAndOffset() (e error) {
@@ -204,7 +201,7 @@ func (f bitField) validateLengthAndOffset() (e error) {
 		return
 	}
 
-	if f.length+f.offset > BitFieldMaxSizeBits {
+	if f.length+f.offset > wordLengthInBits {
 		e = fmt.Errorf(combinationError, f.length, f.offset)
 
 		return
@@ -217,7 +214,7 @@ func (f bitField) validateLength() (e error) {
 	// Verify that the length of a field falls within the appropriate range.
 
 	const (
-		maximumLength = BitFieldMaxSizeBits
+		maximumLength = wordLengthInBits
 		minimumLength = 1
 
 		lengthOutOfRange = "" +
@@ -238,7 +235,7 @@ func (f bitField) validateOffset() (e error) {
 	// Verify that the offset of a field falls within the appropriate range.
 
 	const (
-		maximumOffset = BitFieldMaxSizeBits - 1
+		maximumOffset = wordLengthInBits - 1
 		minimumOffset = 0
 
 		offsetOutOfRange = "" +
