@@ -14,15 +14,15 @@ const (
 
 type Codec interface {
 	Marshal(interface{}) ([]byte, error)
-	// Return a slice of bytes encoding a Go struct
-	// with properly defined field types and tags.
+	// Return a slice of four bytes containing a 32-bit "word"
+	// encoding a Go struct with properly defined field types and tags.
 
 	// Even if an error occurs,
 	// the byte slice returned should still be of the appropriate length.
 
 	Unmarshal([]byte, interface{}) error
-	// Parse a slice of bytes encoding a Go structs
-	// with properly defined field types and tags, and
+	// Parse a slice of four bytes containing a 32-bit "word"
+	// encoding a Go struct with properly defined field types and tags, and
 	// store the result in the structure pointed to by pointer.
 }
 
