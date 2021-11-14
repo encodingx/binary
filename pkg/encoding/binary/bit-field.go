@@ -5,12 +5,6 @@ import (
 	"fmt"
 )
 
-const (
-	wordLengthInBytes = 4
-	wordLengthInBits  = wordLengthInBytes * 8
-	wordRangeMaximum  = (1 << wordLengthInBits) - 1
-)
-
 type BitField interface {
 	// A bit field of length less than or equal to 32 bits.
 
