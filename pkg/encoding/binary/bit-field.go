@@ -1,4 +1,4 @@
-package bitfields
+package binary
 
 import (
 	"encoding/binary"
