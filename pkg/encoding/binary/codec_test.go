@@ -33,7 +33,7 @@ const (
 	rfc791InternetHeaderPrecedenceNetworkControl
 )
 
-func TestPackageFunctions(t *testing.T) {
+func TestCodec(t *testing.T) {
 	const (
 		internetHeaderLength  = 5
 		internetHeaderVersion = 4
@@ -71,29 +71,32 @@ func TestPackageFunctions(t *testing.T) {
 
 	var (
 		bytes []byte
+		codec Codec
 		e     error
 	)
 
-	bytes, e = Marshal32BitWord(structure0)
+	codec = NewCodec()
+
+	bytes, e = codec.Marshal(structure0)
 	if e != nil {
 		t.Error(e)
 	}
 
 	assert.Equal(t,
 		binary, bytes,
-		"The slice of bytes returned by function Marshal32BitWord "+
+		"The slice of bytes returned by function Codec.Marshal "+
 			"should match the expected given the struct field values.",
 	)
 
-	e = Unmarshal32BitWord(&structure1, binary)
+	e = codec.Unmarshal(binary, &structure1)
 	if e != nil {
 		return
 	}
 
 	assert.Equal(t,
 		structure0, structure1,
-		"A struct marshalled by function Marshal32BitWord and "+
-			"then unmarshalled by function Unmarshal32BitWord "+
+		"A struct marshalled by function Codec.Marshal and "+
+			"then unmarshalled by function Codec.Unmarshal "+
 			"should by the same as the original struct.",
 	)
 }

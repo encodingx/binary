@@ -9,18 +9,30 @@ const (
 	unsupportedError = "Struct fields of kind %s are not yet supported."
 )
 
-type structFieldDetails struct {
-	Kinds  []reflect.Kind
-	Tags   []reflect.StructTag
-	Values []reflect.Value
-}
-
-func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
-	// Return a slice of four bytes containing a 32-bit "word"
-	// encoding a Go struct with properly defined field types and tags.
+type Codec interface {
+	Marshal(interface{}) ([]byte, error)
+	// Return a slice of bytes encoding a Go struct
+	// with properly defined field types and tags.
 
 	// Even if an error occurs,
 	// the byte slice returned should still be of the appropriate length.
+
+	Unmarshal([]byte, interface{}) error
+	// Parse a slice of bytes encoding a Go structs
+	// with properly defined field types and tags, and
+	// store the result in the structure pointed to by pointer.
+}
+
+type codec struct{}
+
+func NewCodec() *codec {
+	// Return a default implementation of interface Codec.
+
+	return &codec{}
+}
+
+func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
+	// Implement interface Codec.
 
 	var (
 		byteSlice []byte
@@ -30,7 +42,7 @@ func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
 		nFields   int
 	)
 
-	bytes = make([]byte, BitFieldMaxSizeBytes)
+	bytes = make([]byte, wordLengthInBytes)
 
 	nFields, details, e = getStructFieldDetails(structure)
 	if e != nil {
@@ -88,10 +100,8 @@ func Marshal32BitWord(structure interface{}) (bytes []byte, e error) {
 	return
 }
 
-func Unmarshal32BitWord(pointer interface{}, bytes []byte) (e error) {
-	// Parse a slice of four bytes containing a 32-bit "word"
-	// encoding a Go struct with properly defined field types and tags, and
-	// store the result in the structure pointed to by pointer.
+func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
+	// Implement interface Codec.
 
 	var (
 		details     structFieldDetails
@@ -154,6 +164,12 @@ func Unmarshal32BitWord(pointer interface{}, bytes []byte) (e error) {
 	}
 
 	return
+}
+
+type structFieldDetails struct {
+	Kinds  []reflect.Kind
+	Tags   []reflect.StructTag
+	Values []reflect.Value
 }
 
 func getStructFieldDetails(structure interface{}) (
