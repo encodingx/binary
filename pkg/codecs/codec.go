@@ -26,12 +26,14 @@ type Codec interface {
 	// store the result in the structure pointed to by pointer.
 }
 
-type codec struct{}
+type codec struct {
+	bitFieldCache map[reflect.StructTag]bitfields.BitField
+}
 
 func NewCodec() *codec {
 	// Return a default implementation of interface Codec.
 
-	return &codec{}
+	return &codec{bitFieldCache: make(map[reflect.StructTag]bitfields.BitField)}
 }
 
 func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
@@ -53,7 +55,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 	}
 
 	for i = 0; i < nFields; i++ {
-		field, e = bitFieldFromStructFieldTag(details.Tags[i])
+		field, e = c.bitFieldFromStructFieldTag(details.Tags[i])
 		if e != nil {
 			return
 		}
@@ -121,7 +123,7 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 	}
 
 	for i = 0; i < nFields; i++ {
-		field, e = bitFieldFromStructFieldTag(details.Tags[i])
+		field, e = c.bitFieldFromStructFieldTag(details.Tags[i])
 		if e != nil {
 			return
 		}
@@ -165,6 +167,39 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 			return
 		}
 	}
+
+	return
+}
+
+func (c codec) bitFieldFromStructFieldTag(tag reflect.StructTag) (
+	field bitfields.BitField, e error,
+) {
+	// Return a bitfields.BitField given a struct field tag,
+	// with the length and offset of the former set
+	// to those indicated by the tag.
+
+	var (
+		cached bool
+		length int
+		offset int
+	)
+
+	field, cached = c.bitFieldCache[tag]
+	if cached {
+		return
+	}
+
+	length, offset, e = parseStructFieldTag(tag)
+	if e != nil {
+		return
+	}
+
+	field, e = bitfields.NewBitField(length, offset)
+	if e != nil {
+		return
+	}
+
+	c.bitFieldCache[tag] = field
 
 	return
 }
@@ -228,31 +263,6 @@ func getStructFieldDetails(structure interface{}) (
 		details.Kinds[i] = structField.Type.Kind()
 		details.Tags[i] = structField.Tag
 		details.Values[i] = structValue.Field(i)
-	}
-
-	return
-}
-
-func bitFieldFromStructFieldTag(tag reflect.StructTag) (
-	field bitfields.BitField, e error,
-) {
-	// Return a bitfields.BitField given a struct field tag,
-	// with the length and offset of the former set
-	// to those indicated by the tag.
-
-	var (
-		length int
-		offset int
-	)
-
-	length, offset, e = parseStructFieldTag(tag)
-	if e != nil {
-		return
-	}
-
-	field, e = bitfields.NewBitField(length, offset)
-	if e != nil {
-		return
 	}
 
 	return
