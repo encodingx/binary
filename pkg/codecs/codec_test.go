@@ -77,7 +77,7 @@ func TestCodec(t *testing.T) {
 
 	codec = NewCodec()
 
-	bytes, e = codec.Marshal(structure0)
+	bytes, e = codec.Marshal(&structure0)
 	if e != nil {
 		t.Error(e)
 	}

@@ -36,31 +36,39 @@ func NewCodec() *codec {
 	return &codec{bitFieldCache: make(map[reflect.StructTag]bitfields.BitField)}
 }
 
-func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
+func (c codec) Marshal(pointer interface{}) (bytes []byte, e error) {
 	// Implement interface Codec.
 
 	var (
-		byteSlice []byte
-		details   structFieldDetails
-		field     bitfields.BitField
-		i         int
-		nFields   int
+		byteSlice   []byte
+		field       bitfields.BitField
+		fieldType   reflect.StructField
+		fieldValue  reflect.Value
+		i           int
+		nFields     int
+		structType  reflect.Type
+		structValue reflect.Value
 	)
 
 	bytes = make([]byte, constants.WordLengthInBytes)
 
-	nFields, details, e = getStructFieldDetails(structure)
+	structType, structValue, e = reflectStruct(pointer)
 	if e != nil {
 		return
 	}
 
+	nFields = structType.NumField()
+
 	for i = 0; i < nFields; i++ {
-		field, e = c.bitFieldFromStructFieldTag(details.Tags[i])
+		fieldType = structType.Field(i)
+		fieldValue = structValue.Field(i)
+
+		field, e = c.bitFieldFromStructFieldTag(fieldType.Tag)
 		if e != nil {
 			return
 		}
 
-		switch details.Kinds[i] {
+		switch fieldValue.Kind() {
 		case reflect.Uint8:
 			fallthrough
 
@@ -76,7 +84,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 		case reflect.Uint:
 			byteSlice, e = field.ByteSliceFromUint32(
 				uint32(
-					details.Values[i].Uint(),
+					fieldValue.Uint(),
 				),
 			)
 			if e != nil {
@@ -85,7 +93,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 
 		case reflect.Bool:
 			byteSlice, e = field.ByteSliceFromBool(
-				details.Values[i].Bool(),
+				fieldValue.Bool(),
 			)
 			if e != nil {
 				return
@@ -93,7 +101,7 @@ func (c codec) Marshal(structure interface{}) (bytes []byte, e error) {
 
 		default:
 			e = fmt.Errorf(unsupportedError,
-				details.Kinds[i].String(),
+				fieldValue.Kind().String(),
 			)
 
 			return
@@ -109,26 +117,34 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 	// Implement interface Codec.
 
 	var (
-		details     structFieldDetails
 		field       bitfields.BitField
+		fieldType   reflect.StructField
+		fieldValue  reflect.Value
 		i           int
 		nFields     int
+		structType  reflect.Type
+		structValue reflect.Value
 		valueBool   bool
 		valueUint32 uint32
 	)
 
-	nFields, details, e = getStructFieldDetails(pointer)
+	structType, structValue, e = reflectStruct(pointer)
 	if e != nil {
 		return
 	}
 
+	nFields = structType.NumField()
+
 	for i = 0; i < nFields; i++ {
-		field, e = c.bitFieldFromStructFieldTag(details.Tags[i])
+		fieldType = structType.Field(i)
+		fieldValue = structValue.Field(i)
+
+		field, e = c.bitFieldFromStructFieldTag(fieldType.Tag)
 		if e != nil {
 			return
 		}
 
-		switch details.Kinds[i] {
+		switch fieldValue.Kind() {
 		case reflect.Uint8:
 			fallthrough
 
@@ -147,7 +163,7 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 				return
 			}
 
-			details.Values[i].SetUint(
+			fieldValue.SetUint(
 				uint64(valueUint32),
 			)
 
@@ -157,11 +173,11 @@ func (c codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 				return
 			}
 
-			details.Values[i].SetBool(valueBool)
+			fieldValue.SetBool(valueBool)
 
 		default:
 			e = fmt.Errorf(unsupportedError,
-				details.Kinds[i].String(),
+				fieldValue.Kind().String(),
 			)
 
 			return
@@ -210,59 +226,38 @@ type structFieldDetails struct {
 	Values []reflect.Value
 }
 
-func getStructFieldDetails(structure interface{}) (
-	nFields int,
-	details structFieldDetails,
-	e error,
+func reflectStruct(pointer interface{}) (
+	goType reflect.Type, goValue reflect.Value, e error,
 ) {
-	// Count the number of fields in a struct and
-	// return a structFieldDetails containing three slices of that length
-	// carrying the kinds, struct tags and values of those fields.
+	// Verify that pointer is indeed a pointer to a struct, and
+	// return a reflect.Type and reflect.Value
+	// representing the Go type and value of the struct.
 
 	const (
-		nonStructError = "Type %s is not a struct, or a pointer to a struct."
+		notPointerError = "Type %s is not a pointer."
+		notStructError  = "Type %s is not a struct."
 	)
 
-	var (
-		structField reflect.StructField
-		structType  reflect.Type
-		structValue reflect.Value
+	goType = reflect.TypeOf(pointer)
+	goValue = reflect.ValueOf(pointer)
 
-		i int
-	)
-
-	structType = reflect.TypeOf(structure)
-
-	structValue = reflect.ValueOf(structure)
-
-	if structType.Kind() == reflect.Ptr {
-		structType = structType.Elem()
-
-		structValue = structValue.Elem()
-	}
-
-	if structType.Kind() != reflect.Struct {
-		e = fmt.Errorf(nonStructError,
-			structType.Name(),
+	if goType.Kind() != reflect.Ptr {
+		e = fmt.Errorf(notPointerError,
+			goType.Name(),
 		)
 
 		return
 	}
 
-	nFields = structType.NumField()
+	goType = goType.Elem()
+	goValue = goValue.Elem()
 
-	details = structFieldDetails{
-		Kinds:  make([]reflect.Kind, nFields),
-		Tags:   make([]reflect.StructTag, nFields),
-		Values: make([]reflect.Value, nFields),
-	}
+	if goType.Kind() != reflect.Struct {
+		e = fmt.Errorf(notStructError,
+			goType.Name(),
+		)
 
-	for i = 0; i < nFields; i++ {
-		structField = structType.Field(i)
-
-		details.Kinds[i] = structField.Type.Kind()
-		details.Tags[i] = structField.Tag
-		details.Values[i] = structValue.Field(i)
+		return
 	}
 
 	return

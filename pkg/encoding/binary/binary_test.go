@@ -73,7 +73,7 @@ func BenchmarkMarshal(b *testing.B) {
 	)
 
 	for i = 0; i < b.N; i++ {
-		_, e = Marshal(structure0)
+		_, e = Marshal(&structure0)
 		if e != nil {
 			b.Error(e)
 		}

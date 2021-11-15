@@ -13,8 +13,8 @@ var (
 	defaultCodec = codecs.NewCodec()
 )
 
-func Marshal(structure interface{}) ([]byte, error) {
-	return defaultCodec.Marshal(structure)
+func Marshal(pointer interface{}) ([]byte, error) {
+	return defaultCodec.Marshal(pointer)
 }
 
 func Unmarshal(bytes []byte, pointer interface{}) error {
