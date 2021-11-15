@@ -1,5 +1,5 @@
 # Encode and Decode Binary Message and File Formats in Go
-This module provides the missing `Marshal()` and `Unmarshal()` functions in `encoding/binary` of the Go standard library.
+This module wraps the package `encoding/binary` of the Go standard library and provides the missing `Marshal()` and `Unmarshal()` functions.
 
 ## Working with Binary Formats in Go
 ### Relevant Questions Posted on Stackoverflow
@@ -87,7 +87,7 @@ func main() {
 		e     error
 	)
 
-	bytes, e = binary.Marshal(structure0)
+	bytes, e = binary.Marshal(&structure0)
 	if e != nil {
 		log.Fatalln(e)
 	}
@@ -104,6 +104,15 @@ func main() {
 	// Output: main.rfc791InternetHeaderWord0{Version:0x4, InternetHeaderLength:0x5, TypeOfServicePrecedence:0x2, TypeOfServiceDelay:true, TypeOfServiceThroughput:false, TypeOfServiceReliability:true, TypeOfServiceReserved:0x0, TotalLength:0x760e}
 }
 ```
+
+### Struct Tag Format
+`bitfield:"<length>,<offset>"`
+
+#### Length
+The bit-length of a field.
+
+#### Offset
+The number of places the bit field should be shifted left from the rightmost section of a 32-bit sequence for its position in that sequence to be appropriate.
 
 ## Binary Message and File Formats
 ### Message Formats
