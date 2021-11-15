@@ -109,7 +109,7 @@ func main() {
 `bitfield:"<length>,<offset>"`
 
 #### Length
-The bit-length of a field.
+The bit-length of a field. The sum of lengths of all fields must not exceed 32.
 
 #### Offset
 The number of places the bit field should be shifted left from the rightmost section of a 32-bit sequence for its position in that sequence to be appropriate.
