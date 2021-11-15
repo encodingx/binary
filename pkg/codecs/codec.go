@@ -220,12 +220,6 @@ func (c codec) bitFieldFromStructFieldTag(tag reflect.StructTag) (
 	return
 }
 
-type structFieldDetails struct {
-	Kinds  []reflect.Kind
-	Tags   []reflect.StructTag
-	Values []reflect.Value
-}
-
 func reflectStruct(pointer interface{}) (
 	goType reflect.Type, goValue reflect.Value, e error,
 ) {
