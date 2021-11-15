@@ -205,15 +205,15 @@ func main() {
 	}
 
 	log.Printf(formatBytes, bytes)
-	// Output: [01000101 01010100 01110110 00001110]
+	// [01000101 01010100 01110110 00001110]
 
 	e = binary.Unmarshal(bytes, &structure1)
 	if e != nil {
 		log.Fatalln(e)
 	}
 
-	log.Printf(formatStruct, structure1)
-	// Output: main.rfc791InternetHeaderWord0{Version:0x4, InternetHeaderLength:0x5, TypeOfServicePrecedence:0x2, TypeOfServiceDelay:true, TypeOfServiceThroughput:false, TypeOfServiceReliability:true, TypeOfServiceReserved:0x0, TotalLength:0x760e}
+	log.Printf(formatStruct, structure1 == structure0)
+	// true
 }
 ```
 
