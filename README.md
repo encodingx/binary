@@ -217,7 +217,9 @@ func main() {
 }
 ```
 
-### Struct Tag Format
+### Struct Tags
+The encoding of every struct field is determined by a struct tag of the following key and format:
+
 `bitfield:"<length>,<offset>"`
 
 #### Length
