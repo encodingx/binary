@@ -4,9 +4,14 @@ provides the missing `Marshal()` and `Unmarshal()` functions
 a la `encoding/json` and `encoding/xml`.
 
 ## Binary Message and File Formats
+Messsage and file formats speecify how bits are arranged to encode information.
+Control over individual bits or groups of smaller than a byte is often required
+to put together and take apart these binary structures.
+
 ### Message Formats
 Example taken from [RFC 791](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
 defining the Internet Protocol:
+
 ```
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -61,9 +66,12 @@ defining the Internet Protocol:
           000 - Routine
 ```
 
+Note how the Internet Datagram Header is visualised as a series of 32-bit words.
+
 ### File Formats
 Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
 defining the GZIP file format:
+
 ```
    1.2. Intended audience
 
@@ -118,11 +126,20 @@ defining the GZIP file format:
 ```
 
 ## Working with Binary Formats in Go
-### Relevant Questions Posted on Stackoverflow
+The smallest data structure Go provides is the basic type `byte` (= `int8`).
+Bitwise logical and shift operators are however available.
+
+### Relevant Questions Posted on StackOverflow
+Suggestions on StackOverflow in response to the above-described need
+are limited to the use of bitwise operators.
+
 * [Golang: Parse bit values from a byte](https://stackoverflow.com/questions/54809254/golang-parse-bit-values-from-a-byte)
 * [Creating 8 bit binary data from 4,3, and 1 bit data in Golang](https://stackoverflow.com/questions/61885659/creating-8-bit-binary-data-from-4-3-and-1-bit-data-in-golang)
 
 ## An Elegant Solution
+Encoding and decoding binary formats in Go should be a matter of
+attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`.
+
 ```go
 package main
 
@@ -220,6 +237,8 @@ func main() {
 	// true
 }
 ```
+
+Large structures can be encoded and decoded in 32-bit instalments.
 
 ### Struct Tags
 The encoding of every struct field is determined by a struct tag
