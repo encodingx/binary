@@ -66,7 +66,8 @@ defining the Internet Protocol:
           000 - Routine
 ```
 
-Note how the Internet Datagram Header is visualised as a series of 32-bit words.
+Note how the Internet Datagram Header is visualised as a series
+of six 32-bit "words".
 
 ### File Formats
 Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
@@ -247,11 +248,12 @@ of the following key and format:
 `bitfield:"<length>,<offset>"`
 
 #### Length
-The bit-length of a field.
-The sum of lengths of all fields must be exactly 32.
+`<length>` refers to an integer representing the bit-length of a field, i.e.
+the number of bits in the field.
 
 #### Offset
-The number of places the bit field should be shifted left
+`<offset>` refers to an integer
+representing the number of places the bit field should be shifted left
 from the rightmost section of a 32-bit sequence
 for its position in that sequence to be appropriate.
-Also the number of places to the right of the rightmost bit of the field.
+It is also the number of places to the right of the rightmost bit of the field.
