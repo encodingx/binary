@@ -1,9 +1,12 @@
 # Encode and Decode Binary Formats in Go
-This module wraps the package `encoding/binary` of the Go standard library and provides the missing `Marshal()` and `Unmarshal()` functions.
+This module wraps the package `encoding/binary` of the Go standard library and
+provides the missing `Marshal()` and `Unmarshal()` functions
+a la `encoding/json` and `encoding/xml`.
 
 ## Binary Message and File Formats
 ### Message Formats
-Example taken from [RFC 791](https://datatracker.ietf.org/doc/html/rfc791#section-3.1) defining the Internet Protocol:
+Example taken from [RFC 791](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+defining the Internet Protocol:
 ```
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -59,7 +62,8 @@ Example taken from [RFC 791](https://datatracker.ietf.org/doc/html/rfc791#sectio
 ```
 
 ### File Formats
-Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5) defining the GZIP file format:
+Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
+defining the GZIP file format:
 ```
    1.2. Intended audience
 
@@ -218,12 +222,17 @@ func main() {
 ```
 
 ### Struct Tags
-The encoding of every struct field is determined by a struct tag of the following key and format:
+The encoding of every struct field is determined by a struct tag
+of the following key and format:
 
 `bitfield:"<length>,<offset>"`
 
 #### Length
-The bit-length of a field. The sum of lengths of all fields must not exceed 32.
+The bit-length of a field.
+The sum of lengths of all fields must be exactly 32.
 
 #### Offset
-The number of places the bit field should be shifted left from the rightmost section of a 32-bit sequence for its position in that sequence to be appropriate.
+The number of places the bit field should be shifted left
+from the rightmost section of a 32-bit sequence
+for its position in that sequence to be appropriate.
+Also the number of places to the right of the rightmost bit of the field.
