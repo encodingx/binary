@@ -237,7 +237,7 @@ func reflectStruct(pointer interface{}) (
 
 	if goType.Kind() != reflect.Ptr {
 		e = fmt.Errorf(notPointerError,
-			goType.Name(),
+			goType.String(),
 		)
 
 		return
@@ -248,7 +248,7 @@ func reflectStruct(pointer interface{}) (
 
 	if goType.Kind() != reflect.Struct {
 		e = fmt.Errorf(notStructError,
-			goType.Name(),
+			goType.String(),
 		)
 
 		return
@@ -263,6 +263,8 @@ func parseStructFieldTag(tag reflect.StructTag) (length, offset int, e error) {
 	const (
 		key    = "bitfield"
 		format = "%d,%d"
+
+		tagError = "Could not parse struct tag `%s`: %w"
 	)
 
 	_, e = fmt.Sscanf(
@@ -271,6 +273,8 @@ func parseStructFieldTag(tag reflect.StructTag) (length, offset int, e error) {
 		&length, &offset,
 	)
 	if e != nil {
+		e = fmt.Errorf(tagError, tag, e)
+
 		return
 	}
 
