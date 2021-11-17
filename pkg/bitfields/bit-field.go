@@ -134,7 +134,7 @@ func (f bitField) byteSlice(rawUint32 uint32) (byteSlice []byte, e error) {
 
 	byteSlice = make([]byte, constants.WordLengthInBytes)
 
-	if rawUint32 >= (1 << f.length) {
+	if rawUint32 > (1<<f.length - 1) {
 		e = fmt.Errorf(overflowError, rawUint32, f.length)
 
 		return
