@@ -29,7 +29,7 @@ to put together and take apart these binary structures.
 ### Message Formats
 Messages are the lifeblood of network applications.
 The following specifications describe the anatomy of TCP/IP headers
-at the beginning of every internet datagram (a.k.a. "packet").
+at the beginning of every internet datagram (more fondly known as a "packet").
 It is highly unlikely that a developer
 would ever need to implement these protocols
 (since in Go, the package [`net`](https://pkg.go.dev/net)
