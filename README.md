@@ -19,7 +19,7 @@ for converting Go structs into text-based data formats
 [XML](https://pkg.go.dev/encoding/xml#Marshal))
 and vice versa,
 but their counterparts for binary formats
-are sorely missing from the `encoding/binary`.
+are sorely missing from the package `encoding/binary`.
 
 ## Binary Message and File Formats
 Message and file formats specify how bits are arranged to encode information.
