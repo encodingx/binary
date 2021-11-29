@@ -202,7 +202,7 @@ the basic type `byte` (alias of `uint8`), and `bool`.
 Both are eight bits long.
 To manipulate data at the level of bits
 would require the use of bitwise logical and shift [operators](https://go.dev/ref/spec#Arithmetic_operators)
-`&`, `|`, `^`, `&^`, `<<`, and `>>`.
+AND `&`, OR `|`, XOR `^`, AND NOT `&^`, left shift `<<`, and right shift `>>`.
 
 ### Relevant Questions Posted on StackOverflow
 Suggestions on StackOverflow in response to the above-described need
