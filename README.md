@@ -193,8 +193,8 @@ as a sequence of bytes.
 
 Package [`compress/gzip`](https://pkg.go.dev/compress/gzip)
 in the Go standard library spares developers the need to (de)serialise
-or even to understand the file format,
-but the example is included here as a stand-in for custom formats.
+or even to understand the GZIP file format,
+but the example is included here as a stand-in for other, custom formats.
 
 ## Working with Binary Formats in Go
 The smallest data structures Go provides are
