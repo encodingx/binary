@@ -363,7 +363,7 @@ for i = 0; i < len(internetHeaderWords); i++ {
 ```
 
 ### Struct Tags
-The encoding of every struct field is determined by a struct tag
+The encoding of every struct field is determined by a compulsory struct tag
 of the following key and format:
 
 `bitfield:"<length>,<offset>"`
