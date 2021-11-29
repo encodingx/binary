@@ -379,6 +379,6 @@ from the rightmost section of a 32-bit sequence
 for its position in that sequence to be appropriate.
 It is also the number of places to the right of the rightmost bit of the field.
 
-Notice how in a fully utilised 32-bit word,
+In a fully utilised 32-bit word,
 the offset of every field is the cumulative sum of their lengths,
-when viewed from the rightmost field to the leftmost.
+starting from the rightmost field.
