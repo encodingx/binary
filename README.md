@@ -218,6 +218,9 @@ are limited to the use of bitwise operators.
 Encoding and decoding binary formats in Go should be a matter of
 attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`,
 in the same fashion as JSON (un)marshalling familiar to many Go developers.
+This module is meant to be imported in lieu of `encoding/binary`.
+Exported variables, types and functions of the standard library package
+pass through and are available as if that package had been imported.
 
 ```go
 package main
