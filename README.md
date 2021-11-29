@@ -7,7 +7,7 @@ a la `encoding/json` and `encoding/xml`.
 
 ## Binary Message and File Formats
 Message and file formats specify how bits are arranged to encode information.
-Control over individual bits or groups of smaller than a byte is often required
+Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
 ### Message Formats
