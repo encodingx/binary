@@ -7,7 +7,8 @@ a la `encoding/json` and `encoding/xml`.
 
 ## Intended Audience
 This module is useful to developers
-implementing binary message and file format specifications.
+implementing binary message and file format specifications
+using the Go programming language.
 Whereas stable implementations of open-source formats
 are most likely readily available,
 proprietary formats often require bespoke solutions.
