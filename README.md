@@ -30,6 +30,9 @@ to put together and take apart these binary structures.
 Messages are the lifeblood of network applications.
 The following specifications describe the anatomy of TCP/IP headers
 at the beginning of every internet datagram (a.k.a. "packet").
+It is highly unlikely that a developer
+would ever need to implement these protocols,
+but they make appropriate illustrations of binary message formats.
 
 #### RFC 791 Internet Protocol
 ##### Section [3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1) Internet Header Format
