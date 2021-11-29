@@ -17,8 +17,9 @@ The Go standard library provides convenient functions
 for converting Go structs into text-based data formats
 (such as [JSON](https://pkg.go.dev/encoding/json#Marshal) and
 [XML](https://pkg.go.dev/encoding/xml#Marshal))
-and vice versa, but
-their counterparts are sorely missing from the `encoding/binary`.
+and vice versa,
+but their counterparts for binary formats
+are sorely missing from the `encoding/binary`.
 
 ## Binary Message and File Formats
 Message and file formats specify how bits are arranged to encode information.
