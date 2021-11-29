@@ -14,9 +14,10 @@ are readily available,
 proprietary formats often require bespoke solutions.
 The Go standard library provides convenient functions
 `Marshal()` and `Unmarshal()`
-for text-based data formats
-such as [JSON](https://pkg.go.dev/encoding/json#Marshal) and
-[XML](https://pkg.go.dev/encoding/xml#Marshal),
+for converting Go structs into text-based data formats
+(such as [JSON](https://pkg.go.dev/encoding/json#Marshal) and
+[XML](https://pkg.go.dev/encoding/xml#Marshal))
+and vice versa, but
 their counterparts are sorely missing from the `encoding/binary`.
 
 ## Binary Message and File Formats
