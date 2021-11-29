@@ -32,7 +32,7 @@ The following specifications describe the anatomy of TCP/IP headers
 at the beginning of every internet datagram (a.k.a. "packet").
 
 #### RFC 791 Internet Protocol
-Section [3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+##### Section [3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
 Internet Header Format
 ```
     0                   1                   2                   3
@@ -92,7 +92,7 @@ Notice how the Internet Datagram Header is visualised as a series
 of five or more 32-bit "words".
 
 #### RFC 793 Transmission Control Protocol
-Section [3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
+##### Section [3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
 Header Format
 ```
   TCP Header Format
