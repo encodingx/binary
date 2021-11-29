@@ -44,9 +44,9 @@ defining the Internet Protocol:
     ...
 
       Bits 0-2:  Precedence.
-      Bit    3:  0 = Normal Delay,      1 = Low Delay.
-      Bits   4:  0 = Normal Throughput, 1 = High Throughput.
-      Bits   5:  0 = Normal Relibility, 1 = High Relibility.
+      Bit    3:  0 = Normal Delay,       1 = Low Delay.
+      Bits   4:  0 = Normal Throughput,  1 = High Throughput.
+      Bits   5:  0 = Normal Reliability, 1 = High Reliability.
       Bit  6-7:  Reserved for Future Use.
 
          0     1     2     3     4     5     6     7
