@@ -371,6 +371,9 @@ of the following key and format:
 
 `bitfield:"<length>,<offset>"`
 
+Unused or "reserved" fields should nonetheless by defined and tagged
+even though they contain all zeroes.
+
 #### Length
 `<length>` is an integer representing the bit-length of a field, i.e.
 the number of bits in the field.
