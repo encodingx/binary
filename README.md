@@ -33,6 +33,8 @@ at the beginning of every internet datagram (a.k.a. "packet").
 It is highly unlikely that a developer
 would ever need to implement these protocols,
 but they make appropriate illustrations of binary message formats.
+In Go, the package [`net`](https://pkg.go.dev/net) supplies types and methods
+that abstract away these low-level details.
 
 #### RFC 791 Internet Protocol
 ##### Section [3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1) Internet Header Format
