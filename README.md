@@ -9,8 +9,8 @@ a la `encoding/json` and `encoding/xml`.
 This module is useful to developers
 implementing binary message and file format specifications
 using the Go programming language.
-Whereas stable implementations of open-source formats
-are most likely readily available,
+Whereas stable implementations of most open-source formats
+are readily available,
 proprietary formats often require bespoke solutions.
 The Go standard library provides convenient functions
 `Marshal()` and `Unmarshal()`
