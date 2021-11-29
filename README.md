@@ -5,15 +5,26 @@ of the Go standard library and
 provides the missing `Marshal()` and `Unmarshal()` functions
 a la `encoding/json` and `encoding/xml`.
 
+## Intended Audience
+This module is useful to developers
+implementing binary message and file format specifications.
+Whereas stable implementations of open-source formats
+are most likely readily available,
+proprietary formats often require bespoke solutions.
+
 ## Binary Message and File Formats
 Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
 ### Message Formats
-Example taken from [RFC 791](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
-defining the Internet Protocol:
+Messages are the lifeblood of network applications.
+The following specifications describe the anatomy of TCP/IP headers
+at the beginning of every internet datagram (a.k.a. "packet").
 
+#### RFC 791 Internet Protocol
+Section [3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+Internet Header Format
 ```
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -71,7 +82,43 @@ defining the Internet Protocol:
 Notice how the Internet Datagram Header is visualised as a series
 of five or more 32-bit "words".
 
+#### RFC 793 Transmission Control Protocol
+Section [3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
+Header Format
+```
+  TCP Header Format
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |          Source Port          |       Destination Port        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                        Sequence Number                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Acknowledgment Number                      |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Data |           |U|A|P|R|S|F|                               |
+   | Offset| Reserved  |R|C|S|S|Y|I|            Window             |
+   |       |           |G|K|H|T|N|N|                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Checksum            |         Urgent Pointer        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Options                    |    Padding    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                             data                              |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                            TCP Header Format
+
+          Note that one tick mark represents one bit position.
+
+                               Figure 3.
+```
+
 ### File Formats
+
+#### RFC 1952 GZIP File Format Specification
 Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
 defining the GZIP file format:
 
