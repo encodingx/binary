@@ -220,7 +220,7 @@ attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`,
 in the same fashion as JSON (un)marshalling familiar to many Go developers.
 This module is meant to be imported in lieu of `encoding/binary`.
 Exported variables, types and functions of the standard library package
-pass through and are available as if that package had been imported.
+pass through and are available as though that package had been imported.
 
 ```go
 package main
