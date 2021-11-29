@@ -124,10 +124,13 @@ of five or more 32-bit "words".
 ```
 
 ### File Formats
+Binary file formats are not significantly different from message formats
+from an application developer's perspective,
+since the operating system and programming language abstract both types
+as a sequence of bytes.
 
 #### RFC 1952 GZIP File Format Specification
-Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
-defining the GZIP file format:
+Section [2.2](https://datatracker.ietf.org/doc/html/rfc1952#page-5) File format
 
 ```
    1.2. Intended audience
