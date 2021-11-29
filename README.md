@@ -129,8 +129,8 @@ from an application developer's perspective,
 since the operating system and programming language abstract both types
 as a sequence of bytes.
 
-#### RFC 1952 GZIP File Format Specification
-Section [2.2](https://datatracker.ietf.org/doc/html/rfc1952#page-5) File format
+#### [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952) GZIP File Format Specification
+##### Various sections
 
 ```
    1.2. Intended audience
