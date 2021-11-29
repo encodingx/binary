@@ -68,8 +68,8 @@ defining the Internet Protocol:
           000 - Routine
 ```
 
-Note how the Internet Datagram Header is visualised as a series
-of six 32-bit "words".
+Notice how the Internet Datagram Header is visualised as a series
+of five or more 32-bit "words".
 
 ### File Formats
 Example taken from [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#page-5)
