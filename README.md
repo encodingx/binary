@@ -320,6 +320,7 @@ func main() {
 }
 ```
 
+The fields can only be unsigned integers or booleans. Named types are allowed.
 Large structures can be encoded and decoded in 32-bit instalments.
 There are plans to support words of variable length up to 64 bits
 (the longest data types that support bitwise operators in Go are 64-bits long),
