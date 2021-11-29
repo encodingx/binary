@@ -198,7 +198,7 @@ but the example is included here as a stand-in for other, custom formats.
 
 ## Working with Binary Formats in Go
 The smallest data structures Go provides are
-the basic type `byte` (alias of `uint8`), and `bool`.
+the basic type `byte` (alias of `uint8`, an unsigned 8-bit integer), and `bool`.
 Both are eight bits long.
 To manipulate data at the level of bits
 would require the use of bitwise logical and shift [operators](https://go.dev/ref/spec#Arithmetic_operators) such as
