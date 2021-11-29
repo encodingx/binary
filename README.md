@@ -1,5 +1,7 @@
 # Encode and Decode Binary Formats in Go
-This module wraps the package `encoding/binary` of the Go standard library and
+This module wraps the package
+[`encoding/binary`](https://pkg.go.dev/encoding/binary)
+of the Go standard library and
 provides the missing `Marshal()` and `Unmarshal()` functions
 a la `encoding/json` and `encoding/xml`.
 
