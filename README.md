@@ -319,6 +319,46 @@ func main() {
 
 Large structures can be encoded and decoded in 32-bit instalments.
 
+```go
+type rfc791InternetHeader struct {
+	rfc791InternetHeaderWord0
+	rfc791InternetHeaderWord1
+	rfc791InternetHeaderWord2
+	rfc791InternetHeaderWord3
+	rfc791InternetHeaderWord4
+}
+
+const (
+	bytesPerWord = 4
+)
+
+var (
+	bytes               []byte
+	internetHeader      rfc791InternetHeader
+	internetHeaderBytes []byte
+
+	e error
+	i int
+
+	internetHeaderWords = []interface{}{
+		&internetHeader.rfc791InternetHeaderWord0,
+		&internetHeader.rfc791InternetHeaderWord1,
+		&internetHeader.rfc791InternetHeaderWord2,
+		&internetHeader.rfc791InternetHeaderWord3,
+		&internetHeader.rfc791InternetHeaderWord4,
+	}
+)
+
+for i = 0; i < len(internetHeaderWords); i++ {
+	bytes, e = binary.Marshal(internetHeaderWords[i])
+	if e != nil {
+		// ...
+	}
+
+	copy(internetHeaderBytes[bytesPerWord*i:], bytes)
+}
+```
+
 ### Struct Tags
 The encoding of every struct field is determined by a struct tag
 of the following key and format:
