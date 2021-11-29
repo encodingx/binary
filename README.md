@@ -94,6 +94,10 @@ but they make appropriate illustrations of binary message formats.
 
 Notice how the Internet Datagram Header is visualised as a series
 of five or more 32-bit "words".
+The number of bits found in a word is an artifact of CPU architecture and
+is closely related to the number of bits
+that can be processed by the arithmetic logic unit of a CPU
+in a single operation.
 
 #### RFC 793 Transmission Control Protocol
 ##### Section [3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1) Header Format
