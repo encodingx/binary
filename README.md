@@ -216,7 +216,8 @@ are limited to the use of bitwise operators.
 
 ## An Elegant Solution
 Encoding and decoding binary formats in Go should be a matter of
-attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`.
+attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`,
+in the same fashion as JSON (un)marshalling familiar to many Go developers.
 
 ```go
 package main
