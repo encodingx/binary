@@ -127,8 +127,8 @@ defining the GZIP file format:
 ```
 
 ## Working with Binary Formats in Go
-The smallest data structure Go provides is the basic type `byte`
-(alias of `int8`).
+The smallest data structures Go provides are
+the basic type `byte` (alias of `uint8`), and `bool` (also eight bytes long).
 Bitwise logical and shift operators are however available.
 
 ### Relevant Questions Posted on StackOverflow
