@@ -33,7 +33,7 @@ at the beginning of every internet datagram (more fondly known as a "packet").
 It is highly unlikely that a developer
 would ever need to implement these protocols
 (since in Go, the package [`net`](https://pkg.go.dev/net)
-supplies types and methods that abstract away these low-level details),
+supplies types and methods that abstract away low-level details),
 but they make appropriate illustrations of binary message formats.
 
 #### RFC 791 Internet Protocol
