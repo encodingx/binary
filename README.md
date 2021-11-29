@@ -318,6 +318,8 @@ func main() {
 ```
 
 Large structures can be encoded and decoded in 32-bit instalments.
+There are plans to support words of variable length up to 64 bits,
+but only 32-bit words are supported in the meantime.
 
 ```go
 type rfc791InternetHeader struct {
@@ -366,11 +368,11 @@ of the following key and format:
 `bitfield:"<length>,<offset>"`
 
 #### Length
-`<length>` refers to an integer representing the bit-length of a field, i.e.
+`<length>` is an integer representing the bit-length of a field, i.e.
 the number of bits in the field.
 
 #### Offset
-`<offset>` refers to an integer
+`<offset>` is an integer
 representing the number of places the bit field should be shifted left
 from the rightmost section of a 32-bit sequence
 for its position in that sequence to be appropriate.
