@@ -318,7 +318,8 @@ func main() {
 ```
 
 Large structures can be encoded and decoded in 32-bit instalments.
-There are plans to support words of variable length up to 64 bits,
+There are plans to support words of variable length up to 64 bits
+(the longest data types that supports bitwise operators in Go are 64-bits long),
 but only 32-bit words are supported in the meantime.
 
 ```go
