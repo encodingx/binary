@@ -6,7 +6,7 @@ provides the missing `Marshal()` and `Unmarshal()` functions
 a la `encoding/json` and `encoding/xml`.
 
 ## Binary Message and File Formats
-Messsage and file formats speecify how bits are arranged to encode information.
+Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups of smaller than a byte is often required
 to put together and take apart these binary structures.
 
