@@ -191,6 +191,10 @@ as a sequence of bytes.
                bit 7   reserved
 ```
 
+Package [`compress/gzip`](https://pkg.go.dev/compress/gzip)
+in the Go standard library spares developers from bit-level manipulation,
+but the example is included here as a stand-in for custom file formats.
+
 ## Working with Binary Formats in Go
 The smallest data structures Go provides are
 the basic type `byte` (alias of `uint8`), and `bool`.
