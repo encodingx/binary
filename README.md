@@ -214,7 +214,7 @@ are limited to the use of bitwise operators.
 * [Golang: Parse bit values from a byte](https://stackoverflow.com/questions/54809254/golang-parse-bit-values-from-a-byte)
 * [Creating 8 bit binary data from 4,3, and 1 bit data in Golang](https://stackoverflow.com/questions/61885659/creating-8-bit-binary-data-from-4-3-and-1-bit-data-in-golang)
 
-## An Elegant Solution
+### Using This Module
 Encoding and decoding binary formats in Go should be a matter of
 attaching tags to struct fields and calling `Marshal()`/`Unmarshal()`,
 in the same fashion as JSON (un)marshalling familiar to many Go developers.
