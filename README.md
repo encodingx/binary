@@ -132,8 +132,9 @@ defining the GZIP file format:
 The smallest data structures Go provides are
 the basic type `byte` (alias of `uint8`), and `bool`.
 Both are eight bits long.
-
-Bitwise logical and shift operators are however available.
+To manipulate data at the level of bits
+would require the use of bitwise logical and shift [operators](https://go.dev/ref/spec#Arithmetic_operators)
+`&`, `|`, `^`, `&^`, `<<`, and `>>`.
 
 ### Relevant Questions Posted on StackOverflow
 Suggestions on StackOverflow in response to the above-described need
