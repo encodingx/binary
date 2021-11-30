@@ -83,6 +83,8 @@ type TestFormat13Bad struct {
 	TestWord2 uint `word:"40"` // word is not a struct
 }
 
+type TestFormat14Bad uint // format is not a struct
+
 type TestWord0 struct {
 	//                                   2   1         0
 	//                                   321098765432109876543210
