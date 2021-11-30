@@ -16,8 +16,10 @@ func NewWordLengthNotMultipleOf8Error(formatName, wordName string,
 ) {
 	e = &wordLengthNotMultipleOf8Error{
 		wordError: wordError{
-			formatName: formatName,
-			wordName:   wordName,
+			formatError: formatError{
+				formatName: formatName,
+			},
+			wordName: wordName,
 		},
 		wordLength: wordLength,
 	}

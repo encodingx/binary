@@ -17,8 +17,10 @@ func NewWordLengthNotSumOfFieldLengthsError(formatName, wordName string,
 ) {
 	e = &wordLengthNotSumOfFieldLengthsError{
 		wordError: wordError{
-			formatName: formatName,
-			wordName:   wordName,
+			formatError: formatError{
+				formatName: formatName,
+			},
+			wordName: wordName,
 		},
 		wordLength:        wordLength,
 		sumOfFieldLengths: sumOfFieldLengths,

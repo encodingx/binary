@@ -11,8 +11,10 @@ type wordMissingStructTagError struct {
 func NewWordMissingStructTagError(formatName, wordName string) (e error) {
 	e = &wordMissingStructTagError{
 		wordError: wordError{
-			formatName: formatName,
-			wordName:   wordName,
+			formatError: formatError{
+				formatName: formatName,
+			},
+			wordName: wordName,
 		},
 	}
 

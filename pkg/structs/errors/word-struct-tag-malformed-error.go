@@ -11,8 +11,10 @@ type wordStructTagMalformedError struct {
 func NewWordStructTagMalformedError(formatName, wordName string) (e error) {
 	e = &wordStructTagMalformedError{
 		wordError: wordError{
-			formatName: formatName,
-			wordName:   wordName,
+			formatError: formatError{
+				formatName: formatName,
+			},
+			wordName: wordName,
 		},
 	}
 

@@ -17,8 +17,10 @@ func NewWordLengthExceedsLimitError(formatName, wordName string,
 ) {
 	e = &wordLengthExceedsLimitError{
 		wordError: wordError{
-			formatName: formatName,
-			wordName:   wordName,
+			formatError: formatError{
+				formatName: formatName,
+			},
+			wordName: wordName,
 		},
 		wordLength:      wordLength,
 		wordLengthLimit: wordLengthLimit,
