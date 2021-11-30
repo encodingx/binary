@@ -18,12 +18,12 @@ type TestFormat2Bad struct {
 	TestWord2    `word:"40"`
 }
 
-type TestFormat3Bad struct {
+type deprecatedTestFormat3Bad struct {
 	// DEPRECATED: see comments to deprecated word
 
-	TestWord0    `word:"24"`
-	TestWord1    `word:"32"`
-	TestWord5Bad `word:"40"`
+	TestWord0              `word:"24"`
+	TestWord1              `word:"32"`
+	deprecatedTestWord5Bad `word:"40"`
 }
 
 type deprecatedTestFormat4Bad struct {
@@ -131,7 +131,7 @@ type TestWord4Bad struct {
 	TestField3 uint `bitfield:"11,0"` //                      |---------|
 }
 
-type TestWord5Bad struct {
+type deprecatedTestWord5Bad struct {
 	// DEPRECATED: union of cases in which fields have gaps and overlaps
 	// between them
 
