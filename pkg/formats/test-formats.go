@@ -61,7 +61,7 @@ type TestFormat9Bad struct {
 }
 
 type TestFormat10Bad struct {
-	TestWord0 `word:"16"` // word length different from actual
+	TestWord0 `word:"16"` // word length different from sum of field lengths
 	TestWord1 `word:"32"`
 	TestWord2 `word:"40"`
 }
