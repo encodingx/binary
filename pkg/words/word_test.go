@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestField(t *testing.T) {
+func TestWord(t *testing.T) {
 	const (
 		nCases = 10
 	)
