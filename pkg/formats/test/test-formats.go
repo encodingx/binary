@@ -1,4 +1,4 @@
-package formats
+package test
 
 type TestFormat0 struct {
 	TestWord0 `word:"24"`
