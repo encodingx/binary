@@ -44,10 +44,12 @@ type TestFormat6Bad struct {
 	TestWord8Bad `word:"40"`
 }
 
-type TestFormat7Bad struct {
-	TestWord9Bad `word:"20"` // word length not a multiple of 8
-	TestWord1    `word:"32"`
-	TestWord2    `word:"40"`
+type deprecatedTestFormat7Bad struct {
+	// DEPRECATED: see comments to deprecated word
+
+	deprecatedTestWord9Bad `word:"20"` // word length not a multiple of 8
+	TestWord1              `word:"32"`
+	TestWord2              `word:"40"`
 }
 
 type TestFormat8Bad struct {
@@ -167,7 +169,11 @@ type TestWord8Bad struct {
 	TestField5 uint `bitfield:"8,0"`   //                                 |------|
 }
 
-type TestWord9Bad struct {
+type deprecatedTestWord9Bad struct {
+	// DEPRECATED: prevented by enforcement of rules
+	// requiring word lengths declared in struct tags to be multiples of 8 and
+	// sum of lengths of fields to be equal to word length declared in tags
+
 	// total length not multiple of 8    1         0
 	//                                   98765432109876543210
 	TestField0 uint `bitfield:"8,12"` // |------|
