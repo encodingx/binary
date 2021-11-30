@@ -32,7 +32,42 @@ func TestFormat(t *testing.T) {
 			&testFormat14Bad,
 		}
 
+		lengthsInBits = []uint{
+			96,
+			96,
+			96,
+			96,
+			96,
+			96,
+			64,
+			96,
+			88,
+			136,
+			0,
+			96,
+			0,
+		}
+
+		lengthsInBytes = []uint{
+			12,
+			12,
+			12,
+			12,
+			12,
+			12,
+			8,
+			12,
+			11,
+			11,
+			0,
+			12,
+			0,
+		}
+
 		nWords = []uint{
+			3,
+			3,
+			3,
 			3,
 			3,
 			3,
@@ -87,6 +122,18 @@ func TestFormat(t *testing.T) {
 				t.Error(e)
 			}
 		}
+
+		assert.Equal(t,
+			lengthsInBits[i], f.LengthInBits(),
+			"The value returned by Format.LengthInBits() "+
+				"should be equal to the expected value given the struct.",
+		)
+
+		assert.Equal(t,
+			lengthsInBytes[i], f.LengthInBytes(),
+			"The value returned by Format.LengthInBytes() "+
+				"should be equal to the expected value given the struct.",
+		)
 
 		assert.Equal(t,
 			nWords[i], f.NWords(),

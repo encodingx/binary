@@ -11,7 +11,9 @@ import (
 
 func TestFormatStructParser(t *testing.T) {
 	const (
-		nWords uint = 3
+		formatLengthInBits  uint = 96
+		formatLengthInBytes uint = 12
+		nWords              uint = 3
 	)
 
 	var (
@@ -111,6 +113,18 @@ func TestFormatStructParser(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
+
+	assert.Equal(t,
+		formatLengthInBits, format.LengthInBits(),
+		"Method LengthInBits() of a Format parsed should "+
+			"return the expected length of the Format in number of bits.",
+	)
+
+	assert.Equal(t,
+		formatLengthInBytes, format.LengthInBytes(),
+		"Method LengthInBytes() of a Format parsed should "+
+			"return the expected length of the Format in number of bytes.",
+	)
 
 	assert.Equal(t,
 		nWords, format.NWords(),

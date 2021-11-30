@@ -11,6 +11,12 @@ type Format interface {
 	// A Format represents a binary message or file format made up of Words.
 	// See package `words` for the defintion of a Word.
 
+	LengthInBits() uint
+	// Return the sum of the lengths of Words in the Format, in number of bits.
+
+	LengthInBytes() uint
+	// Return the sum of the lengths of Words in the Format, in number of bytes.
+
 	NWords() uint
 	// Return the number of Words in a Format.
 
@@ -20,6 +26,7 @@ type Format interface {
 
 type format struct {
 	sliceOfWords []words.Word
+	lengthInBits uint
 }
 
 func NewFormatFromType(typeReflection reflect.Type) (f *format, e error) {
@@ -57,7 +64,11 @@ func NewFormatFromType(typeReflection reflect.Type) (f *format, e error) {
 		return
 	}
 
-	f = new(format)
+	f = &format{
+		sliceOfWords: make([]words.Word,
+			typeReflection.NumField(),
+		),
+	}
 
 	for i = 0; i < typeReflection.NumField(); i++ {
 		word, e = words.NewWordFromStructField(
@@ -68,10 +79,28 @@ func NewFormatFromType(typeReflection reflect.Type) (f *format, e error) {
 			return
 		}
 
-		f.addWordToSlice(word)
+		f.sliceOfWords[i] = word
+
+		f.lengthInBits += word.LengthInBits()
 	}
 
 	return
+}
+
+func (f *format) LengthInBits() uint {
+	// Implement interface Format.
+
+	return f.lengthInBits
+}
+
+func (f *format) LengthInBytes() uint {
+	// Implement interface Format.
+
+	const (
+		bitsPerByte = 8
+	)
+
+	return f.lengthInBits / bitsPerByte
 }
 
 func (f *format) NWords() (nWords uint) {
@@ -88,12 +117,4 @@ func (f *format) Word(index uint) words.Word {
 	// Implement interface Format.
 
 	return f.sliceOfWords[index]
-}
-
-func (f *format) addWordToSlice(word words.Word) {
-	// Add a Word to f.sliceOfWords.
-
-	f.sliceOfWords = append(f.sliceOfWords, word)
-
-	return
 }
