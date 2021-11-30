@@ -81,14 +81,16 @@ type TestFormat13Bad struct {
 	TestField2 byte `bitfield:"8,0"` // bitfield in format
 }
 
-type TestWord0 struct { //               2   1         0
+type TestWord0 struct {
+	//                                   2   1         0
 	//                                   321098765432109876543210
 	TestField0 byte `bitfield:"8,16"` // |------|
 	TestField1 byte `bitfield:"8,8"`  //         |------|
 	TestField2 byte `bitfield:"8,0"`  //                 |------|
 }
 
-type TestWord1 struct { //               3 2         1         0
+type TestWord1 struct {
+	//                                   3 2         1         0
 	//                                   10987654321098765432109876543210
 	TestField0 byte `bitfield:"5,27"` // |---|
 	TestField1 byte `bitfield:"7,20"` //      |-----|
@@ -96,7 +98,8 @@ type TestWord1 struct { //               3 2         1         0
 	TestField3 byte `bitfield:"11,0"` //                      |---------|
 }
 
-type TestWord2 struct { //                3         2         1         0
+type TestWord2 struct {
+	//                                    3         2         1         0
 	//                                    9876543210987654321098765432109876543210
 	TestField0 byte `bitfield:"3,37"`  // |-|
 	TestField1 byte `bitfield:"10,27"` //    |--------|
@@ -105,23 +108,26 @@ type TestWord2 struct { //                3         2         1         0
 	TestField4 byte `bitfield:"8,0"`   //                                 |------|
 }
 
-type TestWord3Bad struct { //            2   1         0
-	// gap between fields                321098765432109876543210
+type TestWord3Bad struct {
+	// gap between fields                2   1         0
+	//                                   321098765432109876543210
 	TestField0 byte `bitfield:"6,18"` // |----|
 	TestField1 byte `bitfield:"8,8"`  //         |------|
 	TestField2 byte `bitfield:"8,0"`  //                 |------|
 }
 
-type TestWord4Bad struct { //            3 2         1         0
-	// overlapping fields                10987654321098765432109876543210
+type TestWord4Bad struct {
+	// overlapping fields                3 2         1         0
+	//                                   10987654321098765432109876543210
 	TestField0 byte `bitfield:"5,27"` // |---|
 	TestField1 byte `bitfield:"9,18"` //      |-------|
 	TestField2 byte `bitfield:"9,11"` //             |-------|
 	TestField3 byte `bitfield:"11,0"` //                      |---------|
 }
 
-type TestWord5Bad struct { //             3         2         1         0
-	// gap and overlap between fields     9876543210987654321098765432109876543210
+type TestWord5Bad struct {
+	// gap and overlap between fields     3         2         1         0
+	//                                    9876543210987654321098765432109876543210
 	TestField0 byte `bitfield:"3,29"`  // |-|
 	TestField1 byte `bitfield:"10,19"` //    |--------|
 	TestField2 byte `bitfield:"6,11"`  //                |----|
@@ -129,22 +135,25 @@ type TestWord5Bad struct { //             3         2         1         0
 	TestField4 byte `bitfield:"8,0"`   //                                 |------|
 }
 
-type TestWord6Bad struct { //           2   1         0
-	// missing field                    321098765432109876543210
+type TestWord6Bad struct {
+	// missing field                    2   1         0
+	//                                  321098765432109876543210
 	TestField1 byte `bitfield:"8,8"` //         |------|
 	TestField2 byte `bitfield:"8,0"` //                 |------|
 }
 
-type TestWord7Bad struct { //            3 2         1         0
-	// missing struct tag                10987654321098765432109876543210
+type TestWord7Bad struct {
+	// missing struct tag                3 2         1         0
+	//                                   10987654321098765432109876543210
 	TestField0 byte `bitfield:"5,27"` // |---|
 	TestField1 byte
 	TestField2 byte `bitfield:"9,11"` //             |-------|
 	TestField3 byte `bitfield:"11,0"` //                      |---------|
 }
 
-type TestWord8Bad struct { //             3         2         1         0
-	// repeated fields                    9876543210987654321098765432109876543210
+type TestWord8Bad struct {
+	// repeated fields                    3         2         1         0
+	//                                    9876543210987654321098765432109876543210
 	TestField0 byte `bitfield:"3,37"`  // |-|
 	TestField1 byte `bitfield:"10,27"` //    |--------|
 	TestField2 byte `bitfield:"6,21"`  //              |----|
@@ -153,8 +162,9 @@ type TestWord8Bad struct { //             3         2         1         0
 	TestField5 byte `bitfield:"8,0"`   //                                 |------|
 }
 
-type TestWord9Bad struct { //            1         0
-	// total length not mulitple of 8    98765432109876543210
+type TestWord9Bad struct {
+	// total length not multiple of 8    1         0
+	//                                   98765432109876543210
 	TestField0 byte `bitfield:"8,12"` // |------|
 	TestField1 byte `bitfield:"8,4"`  //         |------|
 	TestField2 byte `bitfield:"4,0"`  //                 |--|
