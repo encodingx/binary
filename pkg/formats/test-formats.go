@@ -76,9 +76,9 @@ type TestFormat12Bad struct {
 }
 
 type TestFormat13Bad struct {
-	TestWord0  `word:"24"`
-	TestWord1  `word:"32"`
-	TestField2 uint `bitfield:"8,0"` // bitfield in format
+	TestWord0 `word:"24"`
+	TestWord1 `word:"32"`
+	TestWord2 uint `word:"40"` // word is not a struct
 }
 
 type TestWord0 struct {
