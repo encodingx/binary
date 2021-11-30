@@ -4,11 +4,6 @@ import (
 	"fmt"
 )
 
-type wordError struct {
-	formatName string
-	wordName   string
-}
-
 type wordLengthNotMultipleOf8Error struct {
 	wordError
 	wordLength uint
