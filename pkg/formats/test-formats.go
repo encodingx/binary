@@ -185,3 +185,11 @@ type TestWord12Bad struct {
 	TestField2 byte `bitfield:"9,11"` // field size overflows type
 	TestField3 uint `bitfield:"11,0"`
 }
+
+type TestWord13Bad struct {
+	TestField0 uint `bitfield:"3,37"`
+	TestField1 uint `bitfield:"10,27"`
+	TestField2 uint `bitfield:"6,21"`
+	TestField3 uint `bitfield:"13,8"`
+	TestField4 uint `bitfield:"8,0` // malformed struct tag
+}
