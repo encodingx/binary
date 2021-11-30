@@ -57,7 +57,7 @@ type TestFormat8Bad struct {
 type TestFormat9Bad struct {
 	TestWord0 `word:"24"`
 	TestWord1 `word:"32"`
-	TestWord2 `worm:"40"` // misspelt struct tag
+	TestWord2 `worm:"40"` // malformed struct tag
 }
 
 type TestFormat10Bad struct {
