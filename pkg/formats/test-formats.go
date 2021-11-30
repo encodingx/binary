@@ -68,7 +68,7 @@ type TestFormat10Bad struct {
 
 type TestFormat11Bad struct {
 	TestWord0 `word:"24"`
-	TestWord1 `word:"72"` // word size exceeds limit
+	TestWord1 `word:"72"` // word length exceeds limit
 	TestWord2 `word:"40"`
 }
 
