@@ -132,10 +132,10 @@ type TestWord4Bad struct {
 type TestWord5Bad struct {
 	// gap and overlap between fields     3         2         1         0
 	//                                    9876543210987654321098765432109876543210
-	TestField0 uint `bitfield:"3,29"`  // |-|
-	TestField1 uint `bitfield:"10,19"` //    |--------|
-	TestField2 uint `bitfield:"6,11"`  //                |----|
-	TestField3 uint `bitfield:"13,0"`  //                    |-----------|
+	TestField0 uint `bitfield:"3,37"`  // |-|
+	TestField1 uint `bitfield:"10,27"` //    |--------|
+	TestField2 uint `bitfield:"6,19"`  //                |----|
+	TestField3 uint `bitfield:"13,8"`  //                    |-----------|
 	TestField4 uint `bitfield:"8,0"`   //                                 |------|
 }
 
