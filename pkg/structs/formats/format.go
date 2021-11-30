@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/joel-ling/go-bitfields/pkg/structs/errors"
-	"github.com/joel-ling/go-bitfields/pkg/words"
+	"github.com/joel-ling/go-bitfields/pkg/structs/words"
 )
 
 type Format interface {
