@@ -16,11 +16,15 @@ type Field interface {
 	OffsetInBits() uint
 	// Return the number of bits to the right of the rightmost bit of a Field
 	// in a Word.
+
+	Kind() reflect.Kind
+	// Return the reflect.Kind of the Field.
 }
 
 type field struct {
 	lengthInBits uint
 	offsetInBits uint
+	kind         reflect.Kind
 }
 
 func NewFieldFromStructField(structField reflect.StructField,
@@ -53,7 +57,11 @@ func NewFieldFromStructField(structField reflect.StructField,
 		structFieldKindSize uint
 	)
 
-	switch structField.Type.Kind() {
+	f = &field{
+		kind: structField.Type.Kind(),
+	}
+
+	switch f.kind {
 	case reflect.Uint:
 		structFieldKindSize = sizeUint
 
@@ -77,7 +85,7 @@ func NewFieldFromStructField(structField reflect.StructField,
 			formatName,
 			wordName,
 			structField.Name,
-			structField.Type.Kind().String(),
+			f.kind.String(),
 		)
 
 		return
@@ -92,8 +100,6 @@ func NewFieldFromStructField(structField reflect.StructField,
 
 		return
 	}
-
-	f = new(field)
 
 	structFieldTagValue, structFieldTagKeyOK = structField.Tag.Lookup(
 		structFieldTagKey,
@@ -153,4 +159,10 @@ func (f *field) OffsetInBits() uint {
 	// Implement interface Field.
 
 	return f.offsetInBits
+}
+
+func (f *field) Kind() reflect.Kind {
+	// Implement interface Field.
+
+	return f.kind
 }

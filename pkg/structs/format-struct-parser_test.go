@@ -1,6 +1,7 @@
 package structs
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/joel-ling/go-bitfields/pkg/structs/formats"
@@ -74,6 +75,27 @@ func TestFormatStructParser(t *testing.T) {
 			},
 		}
 
+		fieldKinds = [][]reflect.Kind{
+			[]reflect.Kind{
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+			},
+			[]reflect.Kind{
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+			},
+			[]reflect.Kind{
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+				reflect.Uint,
+			},
+		}
+
 		e      error
 		i      uint
 		j      uint
@@ -130,6 +152,14 @@ func TestFormatStructParser(t *testing.T) {
 				"Chained methods Word(i).Field(j).OffsetInBits "+
 					"of a Format parsed "+
 					"should return the expected Field offset in bits.",
+			)
+
+			assert.Equal(t,
+				fieldKinds[i][j],
+				format.Word(i).Field(j).Kind(),
+				"Chained methods Word(i).Field(j).Kind "+
+					"of a Format parsed "+
+					"should return the expected reflect.Kind of a Field.",
 			)
 		}
 	}

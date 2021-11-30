@@ -81,6 +81,17 @@ func TestField(t *testing.T) {
 			21,
 		}
 
+		kinds = []reflect.Kind{
+			reflect.Uint,
+			reflect.Uint,
+			reflect.Uint,
+			reflect.Uint,
+			reflect.Uint8,
+			reflect.Uint,
+			reflect.Uint,
+			reflect.Uint,
+		}
+
 		expectError = []bool{
 			true,
 			false,
@@ -136,6 +147,12 @@ func TestField(t *testing.T) {
 			offsetsInBits[i], f.OffsetInBits(),
 			"The value returned by Field.OffsetInBits() "+
 				"should be equal to the relevant value in the struct tag.",
+		)
+
+		assert.Equal(t,
+			kinds[i], f.Kind(),
+			"The value returned by Field.Kind() "+
+				"should be equal to the reflect.Kind in the struct definition.",
 		)
 
 		assert.Equal(t,
