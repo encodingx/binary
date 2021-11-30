@@ -6,14 +6,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFieldHasGapOrOverlapToLeftError(t *testing.T) {
+func TestFieldHasGapOrOverlapToRightError(t *testing.T) {
 	const (
 		fieldName  = "fieldName"
 		formatName = "formatName"
 		wordName   = "wordName"
 
 		message = "There is a gap or overlap " +
-			"to the left of field fieldName " +
+			"to the right of field fieldName " +
 			"in word wordName " +
 			"in format formatName."
 	)
@@ -22,7 +22,7 @@ func TestFieldHasGapOrOverlapToLeftError(t *testing.T) {
 		e error
 	)
 
-	e = NewFieldHasGapOrOverlapToLeftError(formatName, wordName, fieldName)
+	e = NewFieldHasGapOrOverlapToRightError(formatName, wordName, fieldName)
 
 	assert.Equal(t,
 		message, e.Error(),

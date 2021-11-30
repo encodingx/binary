@@ -4,16 +4,16 @@ import (
 	"fmt"
 )
 
-type fieldHasGapOrOverlapToLeftError struct {
+type fieldHasGapOrOverlapToRightError struct {
 	fieldError
 }
 
-func NewFieldHasGapOrOverlapToLeftError(
+func NewFieldHasGapOrOverlapToRightError(
 	formatName, wordName, fieldName string,
 ) (
 	e error,
 ) {
-	e = &fieldHasGapOrOverlapToLeftError{
+	e = &fieldHasGapOrOverlapToRightError{
 		fieldError: fieldError{
 			wordError: wordError{
 				formatError: formatError{
@@ -28,10 +28,10 @@ func NewFieldHasGapOrOverlapToLeftError(
 	return
 }
 
-func (e fieldHasGapOrOverlapToLeftError) Error() (message string) {
+func (e fieldHasGapOrOverlapToRightError) Error() (message string) {
 	const (
 		format = "There is a gap or overlap " +
-			"to the left of field %s " +
+			"to the right of field %s " +
 			"in word %s " +
 			"in format %s."
 	)
