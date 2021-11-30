@@ -187,7 +187,7 @@ type TestWord11Bad struct {
 type TestWord12Bad struct {
 	TestField0 uint `bitfield:"5,27"`
 	TestField1 uint `bitfield:"7,20"`
-	TestField2 byte `bitfield:"9,11"` // field size overflows type
+	TestField2 byte `bitfield:"9,11"` // field length overflows type
 	TestField3 uint `bitfield:"11,0"`
 }
 
