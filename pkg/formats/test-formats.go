@@ -24,10 +24,12 @@ type TestFormat3Bad struct {
 	TestWord5Bad `word:"40"`
 }
 
-type TestFormat4Bad struct {
-	TestWord6Bad `word:"24"`
-	TestWord1    `word:"32"`
-	TestWord2    `word:"40"`
+type deprecatedTestFormat4Bad struct {
+	// DEPRECATED: see comments to deprecated word
+
+	deprecatedTestWord6Bad `word:"24"`
+	TestWord1              `word:"32"`
+	TestWord2              `word:"40"`
 }
 
 type TestFormat5Bad struct {
@@ -135,7 +137,10 @@ type TestWord5Bad struct {
 	TestField4 uint `bitfield:"8,0"`   //                                 |------|
 }
 
-type TestWord6Bad struct {
+type deprecatedTestWord6Bad struct {
+	// DEPRECATED: subset of case in which word length declared in struct tag
+	// is different from the sum of the lengths of all fields in the word
+
 	// missing field                    2   1         0
 	//                                  321098765432109876543210
 	TestField1 uint `bitfield:"8,8"` //         |------|
