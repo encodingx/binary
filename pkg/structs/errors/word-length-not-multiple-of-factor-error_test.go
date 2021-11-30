@@ -6,23 +6,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWordLengthNotMultipleOf8Error(t *testing.T) {
+func TestWordLengthNotMultipleOfFactorError(t *testing.T) {
 	const (
+		factor     = 8
 		formatName = "formatName"
-		wordName   = "wordName"
 		wordLength = 13
+		wordName   = "wordName"
 
 		message = "Length 13 bits " +
 			"of word wordName " +
 			"in format formatName " +
-			"is not a multiple of eight."
+			"is not a multiple of 8."
 	)
 
 	var (
 		e error
 	)
 
-	e = NewWordLengthNotMultipleOf8Error(formatName, wordName, wordLength)
+	e = NewWordLengthNotMultipleOfFactorError(
+		formatName, wordName,
+		wordLength, factor,
+	)
 
 	assert.Equal(t,
 		message, e.Error(),

@@ -4,17 +4,18 @@ import (
 	"fmt"
 )
 
-type wordLengthNotMultipleOf8Error struct {
+type wordLengthNotMultipleOfFactorError struct {
 	wordError
 	wordLength uint
+	factor     uint
 }
 
-func NewWordLengthNotMultipleOf8Error(formatName, wordName string,
-	wordLength uint,
+func NewWordLengthNotMultipleOfFactorError(formatName, wordName string,
+	wordLength, factor uint,
 ) (
 	e error,
 ) {
-	e = &wordLengthNotMultipleOf8Error{
+	e = &wordLengthNotMultipleOfFactorError{
 		wordError: wordError{
 			formatError: formatError{
 				formatName: formatName,
@@ -22,23 +23,25 @@ func NewWordLengthNotMultipleOf8Error(formatName, wordName string,
 			wordName: wordName,
 		},
 		wordLength: wordLength,
+		factor:     factor,
 	}
 
 	return
 }
 
-func (e wordLengthNotMultipleOf8Error) Error() (message string) {
+func (e wordLengthNotMultipleOfFactorError) Error() (message string) {
 	const (
 		format = "Length %d bits " +
 			"of word %s " +
 			"in format %s " +
-			"is not a multiple of eight."
+			"is not a multiple of %d."
 	)
 
 	message = fmt.Sprintf(format,
 		e.wordLength,
 		e.wordName,
 		e.formatName,
+		e.factor,
 	)
 
 	return
