@@ -72,6 +72,15 @@ type TestFormat11Bad struct {
 	TestWord2 `word:"40"`
 }
 
+type TestFormat12Bad struct {
+}
+
+type TestFormat13Bad struct {
+	TestWord0  `word:"24"`
+	TestWord1  `word:"32"`
+	TestField2 byte `bitfield:"8,0"` // bitfield in format
+}
+
 type TestWord0 struct { //               2   1         0
 	//                                   321098765432109876543210
 	TestField0 byte `bitfield:"8,16"` // |------|
