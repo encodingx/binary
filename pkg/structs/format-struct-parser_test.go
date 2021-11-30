@@ -3,8 +3,8 @@ package structs
 import (
 	"testing"
 
-	"github.com/joel-ling/go-bitfields/pkg/formats"
-	"github.com/joel-ling/go-bitfields/pkg/formats/test"
+	"github.com/joel-ling/go-bitfields/pkg/structs/formats"
+	"github.com/joel-ling/go-bitfields/pkg/structs/formats/test"
 	"github.com/stretchr/testify/assert"
 )
 
