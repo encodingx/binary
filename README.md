@@ -138,6 +138,14 @@ func main() {
 }
 ```
 
+### Struct Tags
+#### Words
+A format is made up of one or more "words" of up to 64 bits in length,
+in multiples of eight.
+The length of a word in bits must be indicated by a struct tag
+of the following format:
+`word:"<length>"`
+
 ```go
 package demo
 
@@ -148,7 +156,19 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 	RFC791InternetHeaderFormatWord3 `word:"32"`
 	RFC791InternetHeaderFormatWord4 `word:"32"`
 }
+```
 
+#### Fields
+A word is made of one or more fields of up to 64 bits in length.
+The length and offset of a word in bits must be indicated by a struct tag
+of the following format:
+
+`bitfield:"<length>,<offset>"`
+
+Unused or "reserved" fields should nonetheless by defined and tagged
+even though they contain all zeroes.
+
+```go
 type RFC791InternetHeaderFormatWord0 struct {
 	Version     uint8  `bitfield:"4,28"`
 	IHL         uint8  `bitfield:"4,24"`
@@ -160,3 +180,12 @@ type RFC791InternetHeaderFormatWord0 struct {
 	TotalLength uint16 `bitfield:"16,0"`
 }
 ```
+
+##### Offset
+`<offset>` is an integer
+representing the number of places the bit field should be shifted left
+from the rightmost section of a word
+for its position in that sequence to be appropriate.
+It is also the number of places to the right of the rightmost bit of the field.
+The offset of every field is the cumulative sum of their lengths,
+starting from the rightmost field.
