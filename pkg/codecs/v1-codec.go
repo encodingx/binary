@@ -155,23 +155,38 @@ func (c *v1Codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 	// Implement interface Codec.
 
 	var (
-		bytesI []byte
-		bytesJ []byte
 		format formats.Format
-		i      uint
-		j      uint
-		k      uint
-		l      uint
-		length uint
-		offset uint
-		value  uint64
-		values reflect.Value
 	)
 
 	format, e = c.formatStructParser.ParseFormatStruct(pointer)
 	if e != nil {
 		return
 	}
+
+	e = unmarshalFormat(format,
+		reflect.ValueOf(pointer).Elem(),
+		bytes,
+	)
+	if e != nil {
+		return
+	}
+
+	return
+}
+
+func unmarshalFormat(
+	format formats.Format, valueReflection reflect.Value, bytes []byte,
+) (
+	e error,
+) {
+	// Ensure that the length of the byte slice matches the format, and
+	// dispatch sections of the slice to be unmarshalled into words.
+
+	var (
+		i uint
+		j uint
+		k uint
+	)
 
 	if uint(len(bytes)) != format.LengthInBytes() {
 		e = errors.NewFormatLengthMismatchError(
@@ -182,41 +197,79 @@ func (c *v1Codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
 		return
 	}
 
-	values = reflect.ValueOf(pointer).Elem()
-
 	for i = 0; i < format.NWords(); i++ {
-		l = k + format.Word(i).LengthInBytes()
+		k = j + format.Word(i).LengthInBytes()
 
-		bytesI = bytes[k:l]
+		unmarshalWord(
+			format.Word(i),
+			valueReflection.Field(int(i)),
+			bytes[j:k],
+		)
 
-		k = l
+		j = k
+	}
 
-		for j = 0; j < format.Word(i).NFields(); j++ {
-			bytesJ = make([]byte, maximumWordLengthInBytes)
+	return
+}
 
-			copy(bytesJ[maximumWordLengthInBytes-format.Word(i).LengthInBytes():],
-				bytesI,
-			)
+func unmarshalWord(
+	word words.Word, valueReflection reflect.Value, bytes []byte,
+) {
+	// Pad the bytes of a word into a right-aligned slice of fixed length, and
+	// unmarshal every field in the word from that slice.
 
-			length = format.Word(i).Field(j).LengthInBits()
-			offset = format.Word(i).Field(j).OffsetInBits()
+	var (
+		bytesI []byte
+		i      uint
+	)
 
-			value = binary.BigEndian.Uint64(bytesJ) >> offset & (1<<length - 1)
+	for i = 0; i < word.NFields(); i++ {
+		bytesI = make([]byte, maximumWordLengthInBytes)
 
-			switch format.Word(i).Field(j).Kind() {
-			case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				fallthrough
+		copy(
+			bytesI[maximumWordLengthInBytes-word.LengthInBytes():],
+			bytes,
+		)
 
-			case reflect.Uint:
-				values.Field(int(i)).Field(int(j)).SetUint(value)
+		unmarshalField(
+			word.Field(i),
+			valueReflection.Field(int(i)),
+			bytesI,
+		)
+	}
 
-			case reflect.Bool:
-				if value == 1 {
-					values.Field(int(i)).Field(int(j)).SetBool(true)
-				}
-			}
+	return
+}
+
+func unmarshalField(
+	field fields.Field, valueReflection reflect.Value, bytes []byte,
+) {
+	// Recover the value of a field from a bitwise OR sum of bit-shifted values
+	// by reversing the bit shift and
+	// performing a bitwise AND with the bit mask of the field.
+	// Convert integers to booleans if applicable and set values by reflection.
+
+	var (
+		value uint64
+	)
+
+	value = binary.BigEndian.Uint64(bytes) >>
+		field.OffsetInBits() & (1<<field.LengthInBits() - 1)
+
+	switch field.Kind() {
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		fallthrough
+
+	case reflect.Uint:
+		valueReflection.SetUint(value)
+
+	case reflect.Bool:
+		switch value {
+		case 1:
+			valueReflection.SetBool(true)
+		default:
+			valueReflection.SetBool(false)
 		}
-
 	}
 
 	return
