@@ -185,3 +185,18 @@ from the rightmost section of a word for its position to be appropriate.
 It is also the number of places to the right of the rightmost bit of the field.
 The offset of every field is the cumulative sum of their lengths,
 starting from the rightmost field.
+
+### Performance
+```bash
+pkg/encoding/binary$ go test -bench=. -benchmem
+```
+```
+goos: linux
+goarch: amd64
+pkg: github.com/joel-ling/go-bitfields/pkg/encoding/binary
+cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
+BenchmarkMarshal   	 1437392	       794.8 ns/op	      64 B/op	       6 allocs/op
+BenchmarkUnmarshal 	  951822	      1276 ns/op	     192 B/op	      24 allocs/op
+PASS
+ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	3.027s
+```
