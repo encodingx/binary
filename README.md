@@ -181,8 +181,7 @@ type RFC791InternetHeaderFormatWord0 struct {
 ##### Offset
 `<offset>` is an integer
 representing the number of places the bit field should be shifted left
-from the rightmost section of a word
-for its position in that sequence to be appropriate.
+from the rightmost section of a word for its position to be appropriate.
 It is also the number of places to the right of the rightmost bit of the field.
 The offset of every field is the cumulative sum of their lengths,
 starting from the rightmost field.
