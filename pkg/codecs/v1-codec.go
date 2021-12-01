@@ -48,10 +48,33 @@ func (c *v1Codec) Marshal(pointer interface{}) (bytes []byte, e error) {
 	return
 }
 
+func (c *v1Codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
+	// Implement interface Codec.
+
+	var (
+		format formats.Format
+	)
+
+	format, e = c.formatStructParser.ParseFormatStruct(pointer)
+	if e != nil {
+		return
+	}
+
+	e = unmarshalFormat(format,
+		reflect.ValueOf(pointer).Elem(),
+		bytes,
+	)
+	if e != nil {
+		return
+	}
+
+	return
+}
+
 func marshalFormat(format formats.Format, valueReflection reflect.Value) (
 	bytes []byte, e error,
 ) {
-	// Merge byte slices containing words,
+	// Merge byte slices marshalled from words,
 	// in the order they appear in the format.
 
 	var (
@@ -147,29 +170,6 @@ func marshalField(field fields.Field, valueReflection reflect.Value) (
 	}
 
 	value = value << field.OffsetInBits()
-
-	return
-}
-
-func (c *v1Codec) Unmarshal(bytes []byte, pointer interface{}) (e error) {
-	// Implement interface Codec.
-
-	var (
-		format formats.Format
-	)
-
-	format, e = c.formatStructParser.ParseFormatStruct(pointer)
-	if e != nil {
-		return
-	}
-
-	e = unmarshalFormat(format,
-		reflect.ValueOf(pointer).Elem(),
-		bytes,
-	)
-	if e != nil {
-		return
-	}
 
 	return
 }
