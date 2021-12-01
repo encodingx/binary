@@ -10,7 +10,7 @@ import (
 // Original features
 
 var (
-	defaultCodec = codecs.NewCodec()
+	defaultCodec = codecs.NewV1Codec()
 )
 
 func Marshal(pointer interface{}) ([]byte, error) {

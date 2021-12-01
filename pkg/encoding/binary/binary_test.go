@@ -2,68 +2,70 @@ package binary
 
 import (
 	"testing"
-)
 
-type rfc791InternetHeaderWord0 struct {
-	// Reference: RFC 791 Internet Protocol, Section 3.1 Internet Header Format
-	// https://datatracker.ietf.org/doc/html/rfc791#section-3.1
-
-	Version                  uint                           `bitfield:"4,28"`
-	InternetHeaderLength     uint                           `bitfield:"4,24"`
-	TypeOfServicePrecedence  rfc791InternetHeaderPrecedence `bitfield:"3,21"`
-	TypeOfServiceDelay       bool                           `bitfield:"1,20"`
-	TypeOfServiceThroughput  bool                           `bitfield:"1,19"`
-	TypeOfServiceReliability bool                           `bitfield:"1,18"`
-	TypeOfServiceReserved    uint                           `bitfield:"2,16"`
-	TotalLength              uint                           `bitfield:"16,0"`
-}
-
-type rfc791InternetHeaderPrecedence byte
-
-const (
-	rfc791InternetHeaderPrecedenceRoutine rfc791InternetHeaderPrecedence = iota
-	rfc791InternetHeaderPrecedencePriority
-	rfc791InternetHeaderPrecedenceImmediate
-	rfc791InternetHeaderPrecedenceFlash
-	rfc791InternetHeaderPrecedenceFlashOverride
-	rfc791InternetHeaderPrecedenceCRITICOrECP
-	rfc791InternetHeaderPrecedenceInternetworkControl
-	rfc791InternetHeaderPrecedenceNetworkControl
+	"github.com/joel-ling/go-bitfields/pkg/structs/demo"
 )
 
 const (
-	internetHeaderLength  = 5
-	internetHeaderVersion = 4
+	destinationAddressOctet = 8
+	fragmentOffset          = 8191
+	headerChecksum          = 0
+	identification          = 0
+	sourceAddressOctet      = 1
+	timeToLive              = 1
+	totalLength             = 65535
 
-	internetHeaderDelayNormal = false
-	internetHeaderDelayLow    = true
-
-	internetHeaderThroughputNormal = false
-	internetHeaderThroughputHigh   = true
-
-	internetHeaderReliabilityNormal = false
-	internetHeaderReliabilityHigh   = true
-
-	internetHeaderTotalLength = 30222
-
-	reserved = 0
+	formatBytes  = "%08b"
+	formatStruct = "%#v"
 )
 
 var (
-	binary = []byte{0b01000101, 0b01010100, 0b1110110, 0b00001110}
-
-	structure0 = rfc791InternetHeaderWord0{
-		Version:                  internetHeaderVersion,
-		InternetHeaderLength:     internetHeaderLength,
-		TypeOfServicePrecedence:  rfc791InternetHeaderPrecedenceImmediate,
-		TypeOfServiceDelay:       internetHeaderDelayLow,
-		TypeOfServiceThroughput:  internetHeaderThroughputNormal,
-		TypeOfServiceReliability: internetHeaderReliabilityHigh,
-		TypeOfServiceReserved:    reserved,
-		TotalLength:              internetHeaderTotalLength,
+	struct0 = demo.RFC791InternetHeaderFormatWithoutOptions{
+		demo.RFC791InternetHeaderFormatWord0{
+			Version:     demo.RFC791InternetHeaderVersion,
+			IHL:         demo.RFC791InternetHeaderLengthWithoutOptions,
+			Precedence:  demo.RFC791InternetHeaderPrecedenceNetworkControl,
+			Delay:       demo.RFC791InternetHeaderDelayNormal,
+			Throughput:  demo.RFC791InternetHeaderThroughputHigh,
+			Reliability: demo.RFC791InternetHeaderReliabilityNormal,
+			TotalLength: totalLength,
+		},
+		demo.RFC791InternetHeaderFormatWord1{
+			Identification: identification,
+			FlagsBit1:      demo.RFC791InternetHeaderFlagsBit1DoNotFragment,
+			FlagsBit2:      demo.RFC791InternetHeaderFlagsBit2LastFragment,
+			FragmentOffset: fragmentOffset,
+		},
+		demo.RFC791InternetHeaderFormatWord2{
+			TimeToLive:     timeToLive,
+			Protocol:       demo.RFC791InternetHeaderProtocolTCP,
+			HeaderChecksum: headerChecksum,
+		},
+		demo.RFC791InternetHeaderFormatWord3{
+			SourceAddressOctet0: sourceAddressOctet,
+			SourceAddressOctet1: sourceAddressOctet,
+			SourceAddressOctet2: sourceAddressOctet,
+			SourceAddressOctet3: sourceAddressOctet,
+		},
+		demo.RFC791InternetHeaderFormatWord4{
+			DestinationAddressOctet0: destinationAddressOctet,
+			DestinationAddressOctet1: destinationAddressOctet,
+			DestinationAddressOctet2: destinationAddressOctet,
+			DestinationAddressOctet3: destinationAddressOctet,
+		},
 	}
 
-	structure1 = rfc791InternetHeaderWord0{}
+	struct1 demo.RFC791InternetHeaderFormatWithoutOptions
+
+	bytes = []byte{
+		0b01000101, 0b11101000, 0b11111111, 0b11111111,
+		0b00000000, 0b00000000, 0b01011111, 0b11111111,
+		0b00000001, 0b00000110, 0b00000000, 0b00000000,
+		0b00000001, 0b00000001, 0b00000001, 0b00000001,
+		0b00001000, 0b00001000, 0b00001000, 0b00001000,
+	}
+
+	e error
 )
 
 func BenchmarkMarshal(b *testing.B) {
@@ -73,7 +75,7 @@ func BenchmarkMarshal(b *testing.B) {
 	)
 
 	for i = 0; i < b.N; i++ {
-		_, e = Marshal(&structure0)
+		_, e = Marshal(&struct0)
 		if e != nil {
 			b.Error(e)
 		}
@@ -87,9 +89,9 @@ func BenchmarkUnmarshal(b *testing.B) {
 	)
 
 	for i = 0; i < b.N; i++ {
-		e = Unmarshal(binary, &structure1)
+		e = Unmarshal(bytes, &struct1)
 		if e != nil {
-			return
+			b.Error(e)
 		}
 	}
 }

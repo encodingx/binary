@@ -15,6 +15,11 @@ const (
 	maximumWordLengthInBytes = 8
 )
 
+type Codec interface {
+	Marshal(interface{}) ([]byte, error)
+	Unmarshal([]byte, interface{}) error
+}
+
 type v1Codec struct {
 	formatStructParser structs.FormatStructParser
 }
