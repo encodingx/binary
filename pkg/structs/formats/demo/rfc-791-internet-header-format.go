@@ -51,11 +51,11 @@ type RFC791InternetHeaderFormatWord0 struct {
 	// >   bit words, and thus points to the beginning of the data.  Note that
 	// >   the minimum value for a correct header is 5.
 
-	TypeOfServicePrecedence  uint8 `bitfield:"3,21"`
-	TypeOfServiceDelay       bool  `bitfield:"1,20"`
-	TypeOfServiceThroughput  bool  `bitfield:"1,19"`
-	TypeOfServiceReliability bool  `bitfield:"1,18"`
-	TypeOfServiceReserved    uint8 `bitfield:"2,16"`
+	Precedence  uint8 `bitfield:"3,21"`
+	Delay       bool  `bitfield:"1,20"`
+	Throughput  bool  `bitfield:"1,19"`
+	Reliability bool  `bitfield:"1,18"`
+	Reserved    uint8 `bitfield:"2,16"`
 	// > Type of Service:  8 bits
 	// >
 	// >   The Type of Service provides an indication of the abstract
@@ -111,29 +111,29 @@ const (
 )
 
 const (
-	RFC791InternetHeaderTypeOfServicePrecedenceNetworkControl      = 0b111
-	RFC791InternetHeaderTypeOfServicePrecedenceInternetworkControl = 0b110
-	RFC791InternetHeaderTypeOfServicePrecedenceCRITICECP           = 0b101
-	RFC791InternetHeaderTypeOfServicePrecedenceFlashOverride       = 0b100
-	RFC791InternetHeaderTypeOfServicePrecedenceFlash               = 0b011
-	RFC791InternetHeaderTypeOfServicePrecedenceImmediate           = 0b010
-	RFC791InternetHeaderTypeOfServicePrecedencePriority            = 0b001
-	RFC791InternetHeaderTypeOfServicePrecedenceRoutine             = 0b000
+	RFC791InternetHeaderPrecedenceNetworkControl      = 0b111
+	RFC791InternetHeaderPrecedenceInternetworkControl = 0b110
+	RFC791InternetHeaderPrecedenceCRITICECP           = 0b101
+	RFC791InternetHeaderPrecedenceFlashOverride       = 0b100
+	RFC791InternetHeaderPrecedenceFlash               = 0b011
+	RFC791InternetHeaderPrecedenceImmediate           = 0b010
+	RFC791InternetHeaderPrecedencePriority            = 0b001
+	RFC791InternetHeaderPrecedenceRoutine             = 0b000
 )
 
 const (
-	RFC791InternetHeaderTypeOfServiceDelayNormal = false
-	RFC791InternetHeaderTypeOfServiceDelayLow    = true
+	RFC791InternetHeaderDelayNormal = false
+	RFC791InternetHeaderDelayLow    = true
 )
 
 const (
-	RFC791InternetHeaderTypeOfServiceThroughputNormal = false
-	RFC791InternetHeaderTypeOfServiceThroughputHigh   = true
+	RFC791InternetHeaderThroughputNormal = false
+	RFC791InternetHeaderThroughputHigh   = true
 )
 
 const (
-	RFC791InternetHeaderTypeOfServiceReliabilityNormal = false
-	RFC791InternetHeaderTypeOfServiceReliabilityHigh   = true
+	RFC791InternetHeaderReliabilityNormal = false
+	RFC791InternetHeaderReliabilityHigh   = true
 )
 
 type RFC791InternetHeaderFormatWord1 struct {
