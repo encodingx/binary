@@ -143,8 +143,7 @@ func main() {
 A format is made up of one or more "words" of up to 64 bits in length,
 in multiples of eight.
 The length of a word in bits must be indicated by a struct tag
-of the following format:
-`word:"<length>"`
+of the format `word:"<length>"`.
 
 ```go
 package demo
@@ -161,9 +160,7 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 #### Fields
 A word is made of one or more fields of up to 64 bits in length.
 The length and offset of a word in bits must be indicated by a struct tag
-of the following format:
-
-`bitfield:"<length>,<offset>"`
+of the format `bitfield:"<length>,<offset>"`.
 
 Unused or "reserved" fields should nonetheless by defined and tagged
 even though they contain all zeroes.
