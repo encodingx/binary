@@ -169,9 +169,6 @@ must be equal to the word length declared in the [format struct](#formats).
 Unused or "reserved" fields should nonetheless by defined and tagged
 even though they contain all zeroes.
 
-As of Version 1.0.0, fields must be one of the supported types
-`uint`, `uint8` a.k.a. `byte`, `uint16`, `uint32`, `uint64` and `bool`.
-
 ```go
 type RFC791InternetHeaderFormatWord0 struct {
 	Version     uint8  `bitfield:"4,28"`
@@ -184,6 +181,9 @@ type RFC791InternetHeaderFormatWord0 struct {
 	TotalLength uint16 `bitfield:"16,0"`
 }
 ```
+
+As of Version 1.0.0, supported field types are
+`uint`, `uint8` a.k.a. `byte`, `uint16`, `uint32`, `uint64` and `bool`.
 
 ##### Offset
 `<offset>` is an integer
