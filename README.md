@@ -206,3 +206,34 @@ BenchmarkUnmarshal 	  951822	      1276 ns/op	     192 B/op	      24 allocs/op
 PASS
 ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	3.027s
 ```
+
+```bash
+pkg/encoding/binary$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench .
+pkg/encoding/binary$ go tool pprof cpu.prof
+```
+```
+(pprof) top 15 -cum
+Showing nodes accounting for 1.42s, 46.10% of 3.08s total
+Dropped 39 nodes (cum <= 0.02s)
+Showing top 15 nodes out of 75
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      2.97s 96.43%  testing.(*B).launch
+         0     0%     0%      2.97s 96.43%  testing.(*B).runN
+     0.02s  0.65%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Marshal
+         0     0%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
+         0     0%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
+     0.13s  4.22%  4.87%      1.66s 53.90%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalFormat
+     0.25s  8.12% 12.99%      1.29s 41.88%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalWord
+     0.01s  0.32% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Unmarshal
+         0     0% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
+         0     0% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
+     0.05s  1.62% 14.94%      1.16s 37.66%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalFormat
+     0.18s  5.84% 20.78%      1.05s 34.09%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalWord
+     0.09s  2.92% 23.70%      0.93s 30.19%  runtime.makeslice
+     0.47s 15.26% 38.96%      0.84s 27.27%  runtime.mallocgc
+     0.22s  7.14% 46.10%      0.37s 12.01%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalField
+```
+
+Profiling reveals that about 30% of CPU time is spent on slice allocation.
+Future iterations of the module would reduce the number of byte slices created
+during unmarshalling.
