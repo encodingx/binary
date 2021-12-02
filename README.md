@@ -140,9 +140,8 @@ func main() {
 
 ### Struct Tags
 #### Formats
-A "format" is a struct that represents a binary message or file format.
-A format is made up of one or more "words" (see section on words below).
-
+A "format" is a struct that represents a binary message or file format,
+made up of one or more "words" (see section on words below).
 A format struct must have one or more fields,
 all of which must be structs and bear a tag of the format `word:"<length>"`,
 where `<length>` is an integer multiple of (eight up to a limit of 64)
