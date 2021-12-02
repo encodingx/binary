@@ -144,6 +144,9 @@ in [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
 of RFC 791 defining the Internet Protocol.
 
 ```
+ A summary of the contents of the internet header follows:
+
+
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -159,24 +162,51 @@ of RFC 791 defining the Internet Protocol.
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                    Options                    |    Padding    |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
                     Example Internet Datagram Header
+
                                Figure 4.
+
   Note that each tick mark represents one bit position.
-  ...
+
+  Version:  4 bits
+
+    The Version field indicates the format of the internet header.  This
+    document describes version 4.
+
+  IHL:  4 bits
+
+    Internet Header Length is the length of the internet header in 32
+    bit words, and thus points to the beginning of the data.  Note that
+    the minimum value for a correct header is 5.
+
   Type of Service:  8 bits
-    ...
+
+    The Type of Service provides an indication of the abstract
+    parameters of the quality of service desired.  These parameters are
+    to be used to guide the selection of the actual service parameters
+    when transmitting a datagram through a particular network.  Several
+    networks offer service precedence, which somehow treats high
+    precedence traffic as more important than other traffic (generally
+    by accepting only traffic above a certain precedence at time of high
+    load).  The major choice is a three way tradeoff between low-delay,
+    high-reliability, and high-throughput.
+
       Bits 0-2:  Precedence.
-      Bit    3:  0 = Normal Delay,       1 = Low Delay.
-      Bits   4:  0 = Normal Throughput,  1 = High Throughput.
-      Bits   5:  0 = Normal Reliability, 1 = High Reliability.
+      Bit    3:  0 = Normal Delay,      1 = Low Delay.
+      Bits   4:  0 = Normal Throughput, 1 = High Throughput.
+      Bits   5:  0 = Normal Relibility, 1 = High Relibility.
       Bit  6-7:  Reserved for Future Use.
+
          0     1     2     3     4     5     6     7
       +-----+-----+-----+-----+-----+-----+-----+-----+
       |                 |     |     |     |     |     |
       |   PRECEDENCE    |  D  |  T  |  R  |  0  |  0  |
       |                 |     |     |     |     |     |
       +-----+-----+-----+-----+-----+-----+-----+-----+
+
         Precedence
+
           111 - Network Control
           110 - Internetwork Control
           101 - CRITIC/ECP
