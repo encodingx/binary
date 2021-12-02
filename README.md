@@ -1,7 +1,7 @@
 # Marshal and Unmarshal Binary Formats in Go
-This module wraps the package
+This module is a drop-in replacement of the standard library package
 [`encoding/binary`](https://pkg.go.dev/encoding/binary)
-of the Go standard library and
+of the Go programming language and
 provides the missing `Marshal()` and `Unmarshal()` functions
 a la `encoding/json` and `encoding/xml`.
 
