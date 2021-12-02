@@ -201,10 +201,10 @@ goos: linux
 goarch: amd64
 pkg: github.com/joel-ling/go-bitfields/pkg/encoding/binary
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
-BenchmarkMarshal   	 1437392	       794.8 ns/op	      64 B/op	       6 allocs/op
-BenchmarkUnmarshal 	  951822	      1276 ns/op	     192 B/op	      24 allocs/op
+BenchmarkMarshal   	 1211152	       845.1 ns/op	      64 B/op	       6 allocs/op
+BenchmarkUnmarshal 	 1370266	       878.1 ns/op	      64 B/op	       8 allocs/op
 PASS
-ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	3.027s
+ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	4.200s
 ```
 
 #### CPU Profiling
@@ -213,27 +213,26 @@ pkg/encoding/binary$ go tool pprof cpu.prof
 ```
 ```
 (pprof) top 15 -cum
-Showing nodes accounting for 1.42s, 46.10% of 3.08s total
-Dropped 39 nodes (cum <= 0.02s)
-Showing top 15 nodes out of 75
+(pprof) top 15 -cum
+Showing nodes accounting for 1.68s, 43.75% of 3.84s total
+Dropped 30 nodes (cum <= 0.02s)
+Showing top 15 nodes out of 70
       flat  flat%   sum%        cum   cum%
-         0     0%     0%      2.97s 96.43%  testing.(*B).launch
-         0     0%     0%      2.97s 96.43%  testing.(*B).runN
-     0.02s  0.65%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Marshal
-         0     0%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
-         0     0%  0.65%      1.75s 56.82%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
-     0.13s  4.22%  4.87%      1.66s 53.90%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalFormat
-     0.25s  8.12% 12.99%      1.29s 41.88%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalWord
-     0.01s  0.32% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Unmarshal
-         0     0% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
-         0     0% 13.31%      1.22s 39.61%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
-     0.05s  1.62% 14.94%      1.16s 37.66%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalFormat
-     0.18s  5.84% 20.78%      1.05s 34.09%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalWord
-     0.09s  2.92% 23.70%      0.93s 30.19%  runtime.makeslice
-     0.47s 15.26% 38.96%      0.84s 27.27%  runtime.mallocgc
-     0.22s  7.14% 46.10%      0.37s 12.01%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalField
+         0     0%     0%      3.75s 97.66%  testing.(*B).launch
+         0     0%     0%      3.75s 97.66%  testing.(*B).runN
+     0.04s  1.04%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Unmarshal
+         0     0%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
+         0     0%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
+     0.22s  5.73%  6.77%      1.89s 49.22%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalFormat
+     0.02s  0.52%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Marshal
+         0     0%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
+         0     0%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
+     0.10s  2.60%  9.90%      1.63s 42.45%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalFormat
+     0.29s  7.55% 17.45%      1.59s 41.41%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalWord
+     0.18s  4.69% 22.14%      1.38s 35.94%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalWord
+     0.05s  1.30% 23.44%      0.73s 19.01%  runtime.makeslice
+     0.36s  9.38% 32.81%      0.68s 17.71%  runtime.mallocgc
+     0.42s 10.94% 43.75%      0.59s 15.36%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalField
 ```
 
-Profiling reveals that about 30% of CPU time is spent on slice allocation.
-Future iterations of the module would reduce the number of byte slices created
-during unmarshalling.
+Profiling reveals that about 20% of CPU time is spent on slice allocation.

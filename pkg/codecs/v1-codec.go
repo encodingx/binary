@@ -186,6 +186,8 @@ func unmarshalFormat(
 ) {
 	// Ensure that the length of the byte slice matches the format, and
 	// dispatch sections of the slice to be unmarshalled into words.
+	// The words should be aligned to the right of the re-sliced slice,
+	// which should be of fixed length whenever possible.
 
 	var (
 		i uint
@@ -205,12 +207,12 @@ func unmarshalFormat(
 	for i = 0; i < format.NWords(); i++ {
 		k = j + format.Word(i).LengthInBytes()
 
-        if k < maximumWordLengthInBytes {
-            j = 0
+		if k < maximumWordLengthInBytes {
+			j = 0
 
-        } else {
-            j = k - maximumWordLengthInBytes
-        }
+		} else {
+			j = k - maximumWordLengthInBytes
+		}
 
 		unmarshalWord(
 			format.Word(i),
@@ -227,7 +229,8 @@ func unmarshalFormat(
 func unmarshalWord(
 	word words.Word, valueReflection reflect.Value, bytes []byte,
 ) {
-	// Pad the bytes of a word into a right-aligned slice of fixed length, and
+	// Pad the bytes of a word into a right-aligned slice of fixed length
+	// if it is not already so, and
 	// unmarshal every field in the word from that slice.
 
 	var (
@@ -236,12 +239,17 @@ func unmarshalWord(
 	)
 
 	for i = 0; i < word.NFields(); i++ {
-		bytesI = make([]byte, maximumWordLengthInBytes)
+		if len(bytes) < maximumWordLengthInBytes {
+			bytesI = make([]byte, maximumWordLengthInBytes)
 
-		copy(
-			bytesI[maximumWordLengthInBytes-word.LengthInBytes():],
-			bytes,
-		)
+			copy(
+				bytesI[maximumWordLengthInBytes-len(bytes):],
+				bytes,
+			)
+
+		} else {
+			bytesI = bytes
+		}
 
 		unmarshalField(
 			word.Field(i),
