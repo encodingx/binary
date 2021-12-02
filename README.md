@@ -139,11 +139,14 @@ func main() {
 ```
 
 ### Struct Tags
-#### Words
-A format is made up of one or more "words" of up to 64 bits in length,
-in multiples of eight.
-The length of a word in bits must be indicated by a struct tag
-of the format `word:"<length>"`.
+#### Formats
+A "format" is a struct that represents a binary message or file format.
+A format is made up of one or more "words" (see section on words below).
+
+A format struct must have one or more fields,
+all of which must be structs and bear a tag of the format `word:"<length>"`,
+where `<length>` is an integer multiple of (eight up to a limit of 64)
+indicating the number of bits in the word.
 
 ```go
 package demo
@@ -157,7 +160,7 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 }
 ```
 
-#### Fields
+#### Words
 A word is made of one or more fields of up to 64 bits in length.
 The length and offset of a word in bits must be indicated by a struct tag
 of the format `bitfield:"<length>,<offset>"`.
