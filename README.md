@@ -207,6 +207,7 @@ PASS
 ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	3.027s
 ```
 
+#### CPU Profiling
 ```bash
 pkg/encoding/binary$ go tool pprof cpu.prof
 ```
