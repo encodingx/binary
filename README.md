@@ -50,6 +50,72 @@ This module is meant to be imported in lieu of `encoding/binary`.
 Exported variables, types and functions of the standard library package
 pass through and are available as though that package had been imported.
 
+### Structs
+#### Words
+A word is made of one or more fields of up to 64 bits in length.
+The length and offset (see [definition](#offset)) of a field in number of bits
+must be indicated by a struct tag of the format `bitfield:"<length>,<offset>"`.
+There should be no gaps nor overlaps between fields, and
+the sum of the lengths of all fields in a word
+must be equal to the word length declared in the [format struct](#formats).
+Unused or "reserved" fields should nonetheless by defined and tagged
+even though they contain all zeroes.
+
+```go
+package demo
+
+type RFC791InternetHeaderFormatWord0 struct {
+	Version     uint8  `bitfield:"4,28"`
+	IHL         uint8  `bitfield:"4,24"`
+	Precedence  uint8  `bitfield:"3,21"`
+	Delay       bool   `bitfield:"1,20"`
+	Throughput  bool   `bitfield:"1,19"`
+	Reliability bool   `bitfield:"1,18"`
+	Reserved    uint8  `bitfield:"2,16"`
+	TotalLength uint16 `bitfield:"16,0"`
+}
+```
+
+As of Version 1, supported field types are
+`uint`, `uint8` a.k.a. `byte`, `uint16`, `uint32`, `uint64` and `bool`.
+[Defined types](https://go.dev/ref/spec#Type_definitions)
+(e.g. `type RFC791InternetHeaderPrecedence uint8`)
+having the above underlying types are compatible.
+
+##### Offset
+`<offset>` is an integer
+representing the number of places the bit field should be shifted left
+from the rightmost section of a word for its position to be appropriate.
+It is also the number of places to the right of the rightmost bit of the field.
+The offset of every field is the sum of the lengths of all fields to its right.
+
+#### Formats
+A "format" is a struct that represents a binary message or file format,
+made up of one or more "words" (see [section](#words) on words below).
+A format struct must have one or more fields,
+all of which must be structs and bear a tag of the format `word:"<length>"`,
+where `<length>` is an integer multiple of eight (up to a limit of 64)
+indicating the number of bits in the word.
+
+```go
+package demo
+
+type RFC791InternetHeaderFormatWithoutOptions struct {
+	RFC791InternetHeaderFormatWord0 `word:"32"`
+	RFC791InternetHeaderFormatWord1 `word:"32"`
+	RFC791InternetHeaderFormatWord2 `word:"32"`
+	RFC791InternetHeaderFormatWord3 `word:"32"`
+	RFC791InternetHeaderFormatWord4 `word:"32"`
+}
+```
+
+#### Example
+It is highly unlikely that a developer
+would ever need to implement the Internet Protocol
+(since in Go, the package [`net`](https://pkg.go.dev/net)
+supplies types and methods that abstract away low-level details),
+but it makes an appropriate illustration of binary message formats.
+
 ```go
 package main
 
@@ -223,65 +289,6 @@ the [definition](https://github.com/joel-ling/go-bitfields/blob/v1.0.2/internal/
 of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
 Values of constants in the struct literal in the example code above
 are declared in the same file containing the struct definition.
-
-### Structs
-#### Formats
-A "format" is a struct that represents a binary message or file format,
-made up of one or more "words" (see [section](#words) on words below).
-A format struct must have one or more fields,
-all of which must be structs and bear a tag of the format `word:"<length>"`,
-where `<length>` is an integer multiple of eight (up to a limit of 64)
-indicating the number of bits in the word.
-
-```go
-package demo
-
-type RFC791InternetHeaderFormatWithoutOptions struct {
-	RFC791InternetHeaderFormatWord0 `word:"32"`
-	RFC791InternetHeaderFormatWord1 `word:"32"`
-	RFC791InternetHeaderFormatWord2 `word:"32"`
-	RFC791InternetHeaderFormatWord3 `word:"32"`
-	RFC791InternetHeaderFormatWord4 `word:"32"`
-}
-```
-
-#### Words
-A word is made of one or more fields of up to 64 bits in length.
-The length and offset (see [definition](#offset)) of a field in number of bits
-must be indicated by a struct tag of the format `bitfield:"<length>,<offset>"`.
-There should be no gaps nor overlaps between fields, and
-the sum of the lengths of all fields in a word
-must be equal to the word length declared in the [format struct](#formats).
-Unused or "reserved" fields should nonetheless by defined and tagged
-even though they contain all zeroes.
-
-```go
-package demo
-
-type RFC791InternetHeaderFormatWord0 struct {
-	Version     uint8  `bitfield:"4,28"`
-	IHL         uint8  `bitfield:"4,24"`
-	Precedence  uint8  `bitfield:"3,21"`
-	Delay       bool   `bitfield:"1,20"`
-	Throughput  bool   `bitfield:"1,19"`
-	Reliability bool   `bitfield:"1,18"`
-	Reserved    uint8  `bitfield:"2,16"`
-	TotalLength uint16 `bitfield:"16,0"`
-}
-```
-
-As of Version 1, supported field types are
-`uint`, `uint8` a.k.a. `byte`, `uint16`, `uint32`, `uint64` and `bool`.
-[Defined types](https://go.dev/ref/spec#Type_definitions)
-(e.g. `type RFC791InternetHeaderPrecedence uint8`)
-having the above underlying types are compatible.
-
-##### Offset
-`<offset>` is an integer
-representing the number of places the bit field should be shifted left
-from the rightmost section of a word for its position to be appropriate.
-It is also the number of places to the right of the rightmost bit of the field.
-The offset of every field is the sum of the lengths of all fields to its right.
 
 ### Performance
 ```bash
