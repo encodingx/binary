@@ -1,4 +1,4 @@
-# Encode and Decode Binary Formats in Go
+# Marshal and Unmarshal Binary Formats in Go
 Future iterations of the module would reduce the number of byte slices created
 during unmarshalling.
 This module wraps the package
