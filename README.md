@@ -138,6 +138,60 @@ func main() {
 }
 ```
 
+Compare the first word (four bytes) in the output of `Marshal()`
+to the specifications of the Internet Header
+in [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+of RFC 791 defining the Internet Protocol.
+
+```
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |Version|  IHL  |Type of Service|          Total Length         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |         Identification        |Flags|      Fragment Offset    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Time to Live |    Protocol   |         Header Checksum       |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                       Source Address                          |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Destination Address                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Options                    |    Padding    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                    Example Internet Datagram Header
+                               Figure 4.
+  Note that each tick mark represents one bit position.
+  ...
+  Type of Service:  8 bits
+    ...
+      Bits 0-2:  Precedence.
+      Bit    3:  0 = Normal Delay,       1 = Low Delay.
+      Bits   4:  0 = Normal Throughput,  1 = High Throughput.
+      Bits   5:  0 = Normal Reliability, 1 = High Reliability.
+      Bit  6-7:  Reserved for Future Use.
+         0     1     2     3     4     5     6     7
+      +-----+-----+-----+-----+-----+-----+-----+-----+
+      |                 |     |     |     |     |     |
+      |   PRECEDENCE    |  D  |  T  |  R  |  0  |  0  |
+      |                 |     |     |     |     |     |
+      +-----+-----+-----+-----+-----+-----+-----+-----+
+        Precedence
+          111 - Network Control
+          110 - Internetwork Control
+          101 - CRITIC/ECP
+          100 - Flash Override
+          011 - Flash
+          010 - Immediate
+          001 - Priority
+          000 - Routine
+```
+
+The rest of the document is omitted for brevity.
+Similar excerpts from Section 3.1 of RFC 791 are quoted in comments to
+the [definition](https://github.com/joel-ling/go-bitfields/blob/v1.0.2/internal/structs/demo/rfc-791-internet-header-format.go)
+of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
+
 ### Structs
 #### Formats
 A "format" is a struct that represents a binary message or file format,
