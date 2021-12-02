@@ -332,4 +332,4 @@ Showing top 20 nodes out of 75
 ```
 
 Profiling reveals that about 20% of CPU time is spent on slice allocation.
-Accessing struct field values consumes about 15%.
+Accessing struct field values consumes another 15%.
