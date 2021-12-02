@@ -164,8 +164,8 @@ A word is made of one or more fields of up to 64 bits in length.
 The length and offset (see [definition](#offset)) of a field in number of bits
 must be indicated by a struct tag of the format `bitfield:"<length>,<offset>"`.
 There should be no gaps nor overlaps between fields, and
-the sum of the lengths of all the fields in a word
-must be equal to the declared length of the word.
+the sum of the lengths of all fields in a word
+must be equal to the word length declared in the [format struct](#formats).
 Unused or "reserved" fields should nonetheless by defined and tagged
 even though they contain all zeroes.
 
