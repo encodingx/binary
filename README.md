@@ -1,4 +1,6 @@
 # Encode and Decode Binary Formats in Go
+Future iterations of the module would reduce the number of byte slices created
+during unmarshalling.
 This module wraps the package
 [`encoding/binary`](https://pkg.go.dev/encoding/binary)
 of the Go standard library and
@@ -170,6 +172,8 @@ Unused or "reserved" fields should nonetheless by defined and tagged
 even though they contain all zeroes.
 
 ```go
+package demo
+
 type RFC791InternetHeaderFormatWord0 struct {
 	Version     uint8  `bitfield:"4,28"`
 	IHL         uint8  `bitfield:"4,24"`
@@ -212,11 +216,10 @@ ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	4.200s
 pkg/encoding/binary$ go tool pprof cpu.prof
 ```
 ```
-(pprof) top 15 -cum
-(pprof) top 15 -cum
-Showing nodes accounting for 1.68s, 43.75% of 3.84s total
+(pprof) top 20 -cum
+Showing nodes accounting for 2.68s, 69.79% of 3.84s total
 Dropped 30 nodes (cum <= 0.02s)
-Showing top 15 nodes out of 70
+Showing top 20 nodes out of 70
       flat  flat%   sum%        cum   cum%
          0     0%     0%      3.75s 97.66%  testing.(*B).launch
          0     0%     0%      3.75s 97.66%  testing.(*B).runN
@@ -233,6 +236,12 @@ Showing top 15 nodes out of 70
      0.05s  1.30% 23.44%      0.73s 19.01%  runtime.makeslice
      0.36s  9.38% 32.81%      0.68s 17.71%  runtime.mallocgc
      0.42s 10.94% 43.75%      0.59s 15.36%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalField
+     0.38s  9.90% 53.65%      0.57s 14.84%  reflect.Value.Field
+     0.37s  9.64% 63.28%      0.49s 12.76%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalField
+     0.19s  4.95% 68.23%      0.19s  4.95%  github.com/joel-ling/go-bitfields/pkg/structs/words.(*word).Field
+     0.01s  0.26% 68.49%      0.14s  3.65%  github.com/joel-ling/go-bitfields/pkg/structs.(*formatStructParser).ParseFormatStruct
+     0.05s  1.30% 69.79%      0.13s  3.39%  runtime.mapaccess2
 ```
 
 Profiling reveals that about 20% of CPU time is spent on slice allocation.
+Accessing struct field values consumes about 15%.
