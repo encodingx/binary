@@ -149,11 +149,11 @@ offers a gentle introduction to the topic.
                bit 7   reserved
 ```
 
-## Working with Binary Formats in Go
 Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
+## Working with Binary Formats in Go
 The smallest data structures Go provides are
 the basic type `byte` (alias of `uint8`, an unsigned 8-bit integer), and `bool`,
 both eight bits long.
