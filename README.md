@@ -139,8 +139,9 @@ func main() {
 ```
 
 Compare the first word (four bytes) in the output of `Marshal()`
-to the specifications of the Internet Header
+to the specifications for bit fields in that word
 in [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+"Internet Header Format"
 of RFC 791 defining the Internet Protocol.
 
 ```
