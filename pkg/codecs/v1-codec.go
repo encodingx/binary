@@ -205,6 +205,13 @@ func unmarshalFormat(
 	for i = 0; i < format.NWords(); i++ {
 		k = j + format.Word(i).LengthInBytes()
 
+        if k < maximumWordLengthInBytes {
+            j = 0
+
+        } else {
+            j = k - maximumWordLengthInBytes
+        }
+
 		unmarshalWord(
 			format.Word(i),
 			valueReflection.Field(int(i)),
