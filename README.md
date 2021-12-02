@@ -194,7 +194,7 @@ The offset of every field is the sum of the lengths of all fields to its right.
 
 ### Performance
 ```bash
-pkg/encoding/binary$ go test -bench=. -benchmem
+pkg/encoding/binary$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
 ```
 ```
 goos: linux
@@ -208,7 +208,6 @@ ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	3.027s
 ```
 
 ```bash
-pkg/encoding/binary$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench .
 pkg/encoding/binary$ go tool pprof cpu.prof
 ```
 ```
