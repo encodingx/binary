@@ -222,6 +222,8 @@ The rest of the document is omitted for brevity.
 Similar excerpts from Section 3.1 of RFC 791 are quoted in comments to
 the [definition](https://github.com/joel-ling/go-bitfields/blob/v1.0.2/internal/structs/demo/rfc-791-internet-header-format.go)
 of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
+Values of constants in the struct literal in the example code above
+are declared in the same file containing the struct definition.
 
 ### Structs
 #### Formats
