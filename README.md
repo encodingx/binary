@@ -274,6 +274,7 @@ type RFC791InternetHeaderFormatWord0 struct {
 As of Version 1, supported field types are
 `uint`, `uint8` a.k.a. `byte`, `uint16`, `uint32`, `uint64` and `bool`.
 [Defined types](https://go.dev/ref/spec#Type_definitions)
+(e.g. `type RFC791InternetHeaderPrecedence uint8`)
 having the above underlying types are compatible.
 
 ##### Offset
