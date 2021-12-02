@@ -21,7 +21,12 @@ and vice versa,
 but their counterparts for binary formats
 are sorely missing from the package `encoding/binary`.
 
-### Message Formats
+### Binary Formats
+Message and file formats specify how bits are arranged to encode information.
+Control over individual bits or groups smaller than a byte is often required
+to put together and take apart these binary structures.
+
+#### Message Formats
 Messages are the lifeblood of network applications.
 The following specifications
 quoted from [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
@@ -58,6 +63,13 @@ at the beginning of every internet datagram (more fondly known as a "packet").
   Note that each tick mark represents one bit position.
 ```
 
+It is highly unlikely that a developer
+would ever need to implement these protocols
+(since in Go, the package [`net`](https://pkg.go.dev/net)
+supplies types and methods that abstract away low-level details),
+but they makes an appropriate illustration of binary message formats.
+
+
 ```
   TCP Header Format
 
@@ -89,7 +101,7 @@ at the beginning of every internet datagram (more fondly known as a "packet").
                                Figure 3.
 ```
 
-### File Formats
+#### File Formats
 Binary file formats are not significantly different from message formats
 from an application developer's perspective.
 [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
@@ -149,9 +161,10 @@ offers a gentle introduction to the topic.
                bit 7   reserved
 ```
 
-Message and file formats specify how bits are arranged to encode information.
-Control over individual bits or groups smaller than a byte is often required
-to put together and take apart these binary structures.
+Package [`compress/gzip`](https://pkg.go.dev/compress/gzip)
+in the Go standard library spares developers the need to (de)serialise
+or even to understand the GZIP file format,
+but the example is included here as a stand-in for other, custom formats.
 
 ## Working with Binary Formats in Go
 The smallest data structures Go provides are
@@ -238,12 +251,6 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 ```
 
 ### Example
-It is highly unlikely that a developer
-would ever need to implement the Internet Protocol
-(since in Go, the package [`net`](https://pkg.go.dev/net)
-supplies types and methods that abstract away low-level details),
-but it makes an appropriate illustration of binary message formats.
-
 ```go
 package main
 
