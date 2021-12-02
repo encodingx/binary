@@ -21,12 +21,12 @@ and vice versa,
 but their counterparts for binary formats
 are sorely missing from the package `encoding/binary`.
 
-### Binary Formats
+## Binary Formats
 Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
-#### Message Formats
+### Message Formats
 Messages are the lifeblood of network applications.
 The following specifications
 quoted from [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
@@ -101,7 +101,7 @@ but they make appropriate illustrations of binary message formats.
                                Figure 3.
 ```
 
-#### File Formats
+### File Formats
 Binary file formats are not significantly different from message formats
 from an application developer's perspective.
 [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
@@ -340,9 +340,7 @@ func main() {
 ```
 
 Compare the first word (four bytes) in the output of `Marshal()`
-to the specifications for the first 32 bits of the Internet Header
-in [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
-of RFC 791 defining the Internet Protocol.
+to the specifications for the first 32 bits of the Internet Header.
 
 ```
     0                   1                   2                   3
@@ -376,9 +374,9 @@ of RFC 791 defining the Internet Protocol.
     high-reliability, and high-throughput.
 
       Bits 0-2:  Precedence.
-      Bit    3:  0 = Normal Delay,      1 = Low Delay.
-      Bits   4:  0 = Normal Throughput, 1 = High Throughput.
-      Bits   5:  0 = Normal Relibility, 1 = High Relibility.
+      Bit    3:  0 = Normal Delay,       1 = Low Delay.
+      Bits   4:  0 = Normal Throughput,  1 = High Throughput.
+      Bits   5:  0 = Normal Reliability, 1 = High Reliability.
       Bit  6-7:  Reserved for Future Use.
 
          0     1     2     3     4     5     6     7
@@ -407,7 +405,10 @@ of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
 Values of constants in the struct literal in the example code above
 are declared in the same file containing the struct definition.
 
-### Performance
+## Performance and Optimisation
+This module has been optimised for performance.
+Suggestions to improve are welcome.
+
 ```bash
 pkg/encoding/binary$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
 ```
