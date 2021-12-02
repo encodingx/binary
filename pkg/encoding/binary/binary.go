@@ -4,7 +4,7 @@ import (
 	stdlib "encoding/binary"
 	"io"
 
-	"github.com/joel-ling/go-bitfields/pkg/codecs"
+	"github.com/joel-ling/go-bitfields/internal/codecs"
 )
 
 // Original features

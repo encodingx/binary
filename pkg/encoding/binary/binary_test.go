@@ -3,7 +3,7 @@ package binary
 import (
 	"testing"
 
-	"github.com/joel-ling/go-bitfields/pkg/structs/demo"
+	"github.com/joel-ling/go-bitfields/internal/structs/demo"
 )
 
 const (

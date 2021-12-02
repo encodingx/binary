@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/pkg/structs/errors"
+	"github.com/joel-ling/go-bitfields/internal/structs/errors"
 )
 
 type Field interface {

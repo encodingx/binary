@@ -3,7 +3,7 @@ package structs
 import (
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/pkg/structs/formats"
+	"github.com/joel-ling/go-bitfields/internal/structs/formats"
 )
 
 type FormatStructParser interface {

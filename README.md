@@ -217,30 +217,30 @@ pkg/encoding/binary$ go tool pprof cpu.prof
 ```
 ```
 (pprof) top 20 -cum
-Showing nodes accounting for 2.68s, 69.79% of 3.84s total
-Dropped 30 nodes (cum <= 0.02s)
-Showing top 20 nodes out of 70
+Showing nodes accounting for 2.56s, 68.09% of 3.76s total
+Dropped 36 nodes (cum <= 0.02s)
+Showing top 20 nodes out of 75
       flat  flat%   sum%        cum   cum%
-         0     0%     0%      3.75s 97.66%  testing.(*B).launch
-         0     0%     0%      3.75s 97.66%  testing.(*B).runN
-     0.04s  1.04%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Unmarshal
-         0     0%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
-         0     0%  1.04%         2s 52.08%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
-     0.22s  5.73%  6.77%      1.89s 49.22%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalFormat
-     0.02s  0.52%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/codecs.(*v1Codec).Marshal
-         0     0%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
-         0     0%  7.29%      1.75s 45.57%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
-     0.10s  2.60%  9.90%      1.63s 42.45%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalFormat
-     0.29s  7.55% 17.45%      1.59s 41.41%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalWord
-     0.18s  4.69% 22.14%      1.38s 35.94%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalWord
-     0.05s  1.30% 23.44%      0.73s 19.01%  runtime.makeslice
-     0.36s  9.38% 32.81%      0.68s 17.71%  runtime.mallocgc
-     0.42s 10.94% 43.75%      0.59s 15.36%  github.com/joel-ling/go-bitfields/pkg/codecs.unmarshalField
-     0.38s  9.90% 53.65%      0.57s 14.84%  reflect.Value.Field
-     0.37s  9.64% 63.28%      0.49s 12.76%  github.com/joel-ling/go-bitfields/pkg/codecs.marshalField
-     0.19s  4.95% 68.23%      0.19s  4.95%  github.com/joel-ling/go-bitfields/pkg/structs/words.(*word).Field
-     0.01s  0.26% 68.49%      0.14s  3.65%  github.com/joel-ling/go-bitfields/pkg/structs.(*formatStructParser).ParseFormatStruct
-     0.05s  1.30% 69.79%      0.13s  3.39%  runtime.mapaccess2
+         0     0%     0%      3.65s 97.07%  testing.(*B).launch
+         0     0%     0%      3.65s 97.07%  testing.(*B).runN
+     0.01s  0.27%  0.27%      2.02s 53.72%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
+     0.01s  0.27%  0.53%      2.01s 53.46%  github.com/joel-ling/go-bitfields/internal/codecs.(*v1Codec).Unmarshal
+         0     0%  0.53%      2.01s 53.46%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
+     0.11s  2.93%  3.46%      1.97s 52.39%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalFormat
+     0.31s  8.24% 11.70%      1.78s 47.34%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalWord
+     0.02s  0.53% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/internal/codecs.(*v1Codec).Marshal
+         0     0% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
+         0     0% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
+     0.15s  3.99% 16.22%      1.57s 41.76%  github.com/joel-ling/go-bitfields/internal/codecs.marshalFormat
+     0.23s  6.12% 22.34%      1.16s 30.85%  github.com/joel-ling/go-bitfields/internal/codecs.marshalWord
+     0.11s  2.93% 25.27%      0.91s 24.20%  runtime.makeslice
+     0.37s  9.84% 35.11%      0.80s 21.28%  runtime.mallocgc
+     0.30s  7.98% 43.09%      0.60s 15.96%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalField
+     0.32s  8.51% 51.60%      0.42s 11.17%  github.com/joel-ling/go-bitfields/internal/codecs.marshalField
+     0.28s  7.45% 59.04%      0.40s 10.64%  reflect.Value.Field
+     0.19s  5.05% 64.10%      0.19s  5.05%  github.com/joel-ling/go-bitfields/internal/structs/words.(*word).Field
+     0.15s  3.99% 68.09%      0.18s  4.79%  reflect.Value.SetUint
+         0     0% 68.09%      0.11s  2.93%  runtime.(*mcache).nextFree
 ```
 
 Profiling reveals that about 20% of CPU time is spent on slice allocation.

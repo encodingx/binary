@@ -3,8 +3,8 @@ package formats
 import (
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/pkg/structs/errors"
-	"github.com/joel-ling/go-bitfields/pkg/structs/words"
+	"github.com/joel-ling/go-bitfields/internal/structs/errors"
+	"github.com/joel-ling/go-bitfields/internal/structs/words"
 )
 
 type Format interface {
