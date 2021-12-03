@@ -1,25 +1,20 @@
 # Marshal and Unmarshal Binary Formats in Go
-This module is a drop-in replacement for the standard library package
-[`encoding/binary`](https://pkg.go.dev/encoding/binary)
-of the Go programming language and
-provides the missing `Marshal()` and `Unmarshal()` functions
-a la `encoding/json` and `encoding/xml`.
+The Go standard library features packages for marshalling structs
+into text-based message and file formats, and vice versa.
+Packages `encoding/json` and `encoding/xml` are well known
+for the convenient functions `Marshal()` and `Unmarshal()` they provide
+that leverage the declarative nature of struct tags.
+These functions are however missing from
+[`encoding/binary`](https://pkg.go.dev/encoding/binary),
+leaving developers without an accessible and intuitive way
+to work with binary formats.
 
-## Intended Audience
-This module is useful to developers
-implementing binary message and file format specifications
-using the Go programming language.
-Whereas stable implementations of most open-source formats
-are readily available,
-proprietary formats often require bespoke solutions.
-The Go standard library provides convenient functions
-`Marshal()` and `Unmarshal()`
-for converting Go structs into text-based data formats
-(such as [JSON](https://pkg.go.dev/encoding/json#Marshal) and
-[XML](https://pkg.go.dev/encoding/xml#Marshal))
-and vice versa,
-but their counterparts for binary formats
-are sorely missing from the package `encoding/binary`.
+This module is a drop-in replacement for `encoding/binary`
+supplying the missing functions
+so that developers can define custom binary formats using only struct tags and
+convert between structs and byte slices
+using `Marshal()` and `Unmarshal()` with their familiar signatures,
+all while retaining precise, bit-level control over data structures.
 
 ## Binary Formats
 Message and file formats specify how bits are arranged to encode information.
