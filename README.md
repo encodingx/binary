@@ -22,14 +22,13 @@ Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
 ### Message Formats
-Messages are the lifeblood of network applications.
 The following specifications
 quoted from [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
 of RFC 791 Internet Protocol and
 [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
 of RFC 793 Transmission Control Protocol
 describe the anatomy of TCP/IP headers
-at the beginning of every internet datagram (more fondly known as a "packet").
+at the beginning of every internet datagram ("packet").
 
 ```
  A summary of the contents of the internet header follows:
@@ -62,8 +61,7 @@ It is highly unlikely that a developer
 would ever need to implement these protocols,
 since in Go the standard library package [`net`](https://pkg.go.dev/net)
 supplies types and methods that abstract away low-level details,
-but they make appropriate illustrations of binary message formats
-(and demystify some ubiquitous mechanisms taken for granted).
+but they make appropriate illustrations of binary message formats.
 
 ```
   TCP Header Format
@@ -100,8 +98,7 @@ but they make appropriate illustrations of binary message formats
 Binary file formats are not significantly different from message formats
 from an application developer's perspective.
 [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
-describing the GZIP File Format Specification
-offers a gentle introduction to the topic.
+describes the GZIP File Format Specification.
 
 ```
    1.2. Intended audience
