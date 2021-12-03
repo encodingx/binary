@@ -219,6 +219,9 @@ As of Version 1, supported field types are
 (e.g. `type RFC791InternetHeaderPrecedence uint8`)
 having the above underlying types are compatible.
 
+A word struct cannot be marshalled/unmarshalled by itself;
+it must be a field in a format struct, explained below.
+
 ##### Offset
 `<offset>` is an integer
 representing the number of places the bit field should be shifted left
@@ -245,6 +248,9 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 	RFC791InternetHeaderFormatWord4 `word:"32"`
 }
 ```
+
+`Marshal()` and `Unmarshal()` expect a pointer to a format struct
+as an argument.
 
 ### Example
 ```go
