@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/joel-ling/go-bitfields/internal/structs/formats"
-	"github.com/joel-ling/go-bitfields/internal/structs/test"
+	"github.com/encodingx/binary/internal/structs/formats"
+	"github.com/encodingx/binary/internal/structs/test"
 	"github.com/stretchr/testify/assert"
 )
 

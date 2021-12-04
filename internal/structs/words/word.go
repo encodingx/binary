@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/internal/structs/errors"
-	"github.com/joel-ling/go-bitfields/internal/structs/fields"
+	"github.com/encodingx/binary/internal/structs/errors"
+	"github.com/encodingx/binary/internal/structs/fields"
 )
 
 const (

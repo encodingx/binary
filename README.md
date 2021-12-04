@@ -256,8 +256,8 @@ package main
 import (
 	"log"
 
-	"github.com/joel-ling/go-bitfields/pkg/encoding/binary"
-	"github.com/joel-ling/go-bitfields/pkg/structs/demo"
+	"github.com/encodingx/binary"
+	"github.com/encodingx/binary/pkg/demo"
 )
 
 func main() {
@@ -270,7 +270,7 @@ func main() {
 		timeToLive              = 1
 		totalLength             = 65535
 
-		formatBytes  = "%08b"
+		formatBytes = "%08b"
 	)
 
 	var (
@@ -399,8 +399,7 @@ to the specifications for the first 32 bits of the Internet Header.
 
 The rest of the document is omitted for brevity.
 Similar excerpts from Section 3.1 of RFC 791 are quoted in comments to
-the [definition](https://github.com/joel-ling/go-bitfields/blob/v1.0.2/internal/structs/demo/rfc-791-internet-header-format.go)
-of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
+the definition of struct `demo.RFC791InternetHeaderFormatWithoutOptions`.
 Values of constants in the struct literal in the example code above
 are declared in the same file containing the struct definition.
 
@@ -409,50 +408,15 @@ This module has been optimised for performance.
 Suggestions to improve are welcome.
 
 ```bash
-pkg/encoding/binary$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
+$ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
 ```
 ```
 goos: linux
 goarch: amd64
-pkg: github.com/joel-ling/go-bitfields/pkg/encoding/binary
+pkg: github.com/encodingx/binary
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
-BenchmarkMarshal   	 1211152	       845.1 ns/op	      64 B/op	       6 allocs/op
-BenchmarkUnmarshal 	 1370266	       878.1 ns/op	      64 B/op	       8 allocs/op
+BenchmarkMarshal   	 1206807	       851.9 ns/op	      64 B/op	       6 allocs/op
+BenchmarkUnmarshal 	 1376592	       876.0 ns/op	      64 B/op	       8 allocs/op
 PASS
-ok  	github.com/joel-ling/go-bitfields/pkg/encoding/binary	4.200s
+ok  	github.com/encodingx/binary	4.015s
 ```
-
-#### CPU Profiling
-```bash
-pkg/encoding/binary$ go tool pprof cpu.prof
-```
-```
-(pprof) top 20 -cum
-Showing nodes accounting for 2.56s, 68.09% of 3.76s total
-Dropped 36 nodes (cum <= 0.02s)
-Showing top 20 nodes out of 75
-      flat  flat%   sum%        cum   cum%
-         0     0%     0%      3.65s 97.07%  testing.(*B).launch
-         0     0%     0%      3.65s 97.07%  testing.(*B).runN
-     0.01s  0.27%  0.27%      2.02s 53.72%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkUnmarshal
-     0.01s  0.27%  0.53%      2.01s 53.46%  github.com/joel-ling/go-bitfields/internal/codecs.(*v1Codec).Unmarshal
-         0     0%  0.53%      2.01s 53.46%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Unmarshal (inline)
-     0.11s  2.93%  3.46%      1.97s 52.39%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalFormat
-     0.31s  8.24% 11.70%      1.78s 47.34%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalWord
-     0.02s  0.53% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/internal/codecs.(*v1Codec).Marshal
-         0     0% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.BenchmarkMarshal
-         0     0% 12.23%      1.62s 43.09%  github.com/joel-ling/go-bitfields/pkg/encoding/binary.Marshal (inline)
-     0.15s  3.99% 16.22%      1.57s 41.76%  github.com/joel-ling/go-bitfields/internal/codecs.marshalFormat
-     0.23s  6.12% 22.34%      1.16s 30.85%  github.com/joel-ling/go-bitfields/internal/codecs.marshalWord
-     0.11s  2.93% 25.27%      0.91s 24.20%  runtime.makeslice
-     0.37s  9.84% 35.11%      0.80s 21.28%  runtime.mallocgc
-     0.30s  7.98% 43.09%      0.60s 15.96%  github.com/joel-ling/go-bitfields/internal/codecs.unmarshalField
-     0.32s  8.51% 51.60%      0.42s 11.17%  github.com/joel-ling/go-bitfields/internal/codecs.marshalField
-     0.28s  7.45% 59.04%      0.40s 10.64%  reflect.Value.Field
-     0.19s  5.05% 64.10%      0.19s  5.05%  github.com/joel-ling/go-bitfields/internal/structs/words.(*word).Field
-     0.15s  3.99% 68.09%      0.18s  4.79%  reflect.Value.SetUint
-         0     0% 68.09%      0.11s  2.93%  runtime.(*mcache).nextFree
-```
-
-Profiling reveals that about 20% of CPU time is spent on slice allocation.
-Accessing struct field values consumes another 15%.
