@@ -13,8 +13,7 @@ This module is a drop-in replacement for `encoding/binary`
 supplying the missing functions
 so that developers can define custom binary formats using only struct tags and
 convert between structs and byte slices
-using `Marshal()` and `Unmarshal()` with their familiar signatures,
-all while retaining precise, bit-level control over data structures.
+using `Marshal()` and `Unmarshal()` with their familiar signatures.
 
 ## Binary Formats
 Message and file formats specify how bits are arranged to encode information.
