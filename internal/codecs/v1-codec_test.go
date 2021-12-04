@@ -3,7 +3,7 @@ package codecs
 import (
 	"testing"
 
-	"github.com/joel-ling/go-bitfields/internal/structs/test"
+	"github.com/encodingx/binary/internal/structs/test"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,11 +4,11 @@ import (
 	"encoding/binary"
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/internal/codecs/errors"
-	"github.com/joel-ling/go-bitfields/internal/structs"
-	"github.com/joel-ling/go-bitfields/internal/structs/fields"
-	"github.com/joel-ling/go-bitfields/internal/structs/formats"
-	"github.com/joel-ling/go-bitfields/internal/structs/words"
+	"github.com/encodingx/binary/internal/codecs/errors"
+	"github.com/encodingx/binary/internal/structs"
+	"github.com/encodingx/binary/internal/structs/fields"
+	"github.com/encodingx/binary/internal/structs/formats"
+	"github.com/encodingx/binary/internal/structs/words"
 )
 
 const (

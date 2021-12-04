@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/joel-ling/go-bitfields/internal/structs/errors"
+	"github.com/encodingx/binary/internal/structs/errors"
 )
 
 type Field interface {
