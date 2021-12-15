@@ -11,7 +11,7 @@ Feature: Marshal
             """
             A format specifies how bits are arranged to encode information.
             """
-        And this format is a series of "bit fields"
+        And the format is a series of "bit fields"
             """
             A bit field is one or more adjacent bits representing a value,
             and should not be confused with struct fields.
@@ -22,8 +22,8 @@ Feature: Marshal
             The length of a word is limited by computer architecture
             and programming language design (64 bits in Go).
             """
-        And a format is represented by a struct type
-        And the struct type nests exported struct type(s) representing word(s)
+        And a format is represented by a type definition of a "format-struct"
+        And the format-struct nests one or more exported "word-structs"
         And the words are tagged to indicate their lengths in number of bits
         And the length of each word is a multiple of eight in the range [8, 64]
             """
@@ -35,13 +35,14 @@ Feature: Marshal
                 RFC791InternetHeaderFormatWord4 `word:"32"`
             }
             """
-        And each word-struct has exported field(s) representing bit field(s)
+        And each word-struct has exported field(s) corresponding to bit field(s)
         And the fields are of unsigned integer or boolean types
-        And the fields are tagged to indicate their lengths in number of bits
-        And the length of each field does not overflow the type of the field
+        And the fields are tagged to indicate the lengths of those bit fields
+        And the length of each bit field does not overflow the type of the field
             """
-            A field overflows its type when it has bits to represent values
-            outside the set of values that can be represented by that type.
+            A bit field overflows a type
+            when it is long enough to represent values
+            outside the set of values of the type.
             """
         And the sum of lengths of all fields is equal to the length of that word
             """
