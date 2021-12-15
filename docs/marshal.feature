@@ -35,7 +35,7 @@ Feature: Marshal
                 RFC791InternetHeaderFormatWord4 `word:"32"`
             }
             """
-        And each word struct has exported field(s) representing bit field(s)
+        And each word-struct has exported field(s) representing bit field(s)
         And the fields are of unsigned integer or boolean types
         And the fields are tagged to indicate their lengths in number of bits
         And the length of each field does not overflow the type of the field
@@ -58,9 +58,8 @@ Feature: Marshal
             """
 
     Scenario:
-        Given a proper struct variable representing a binary message or file
+        Given a format-struct variable representing a binary message or file
             """
-            // See Background for a definition of a "proper" struct.
             internetHeader = RFC791InternetHeaderFormatWithoutOptions{
                 RFC791InternetHeaderFormatWord0{
                     Version: 4,
@@ -85,14 +84,113 @@ Feature: Marshal
 
             bytes, e = binary.Marshal(&internetHeader)
             """
-        Then Marshal() should return the message/file as a slice of bytes
+        Then Marshal() should return a slice of bytes and a nil error
         And I should see struct field values reflected as bits in those bytes
             """
             log.Printf("%08b", bytes)
             // [01000101 ...]
-            """
-        And Marshal() should return a nil error alongside that byte slice
-            """
+
             log.Println(e == nil)
             // true
+            """
+
+    Scenario:
+        Given a variable that is not a pointer
+        When I pass to Marshal() as an argument such a variable
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Argument to Marshal() should be a pointer to a format-struct.
+            Argument to Marshal() is not a pointer.
+            """
+
+    Scenario:
+        Given a pointer that does not point to a struct variable
+        When I pass to Marshal() such a pointer
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Argument to Marshal() should be a pointer to a format-struct.
+            Argument to Marshal() does not point to a struct variable.
+            """
+
+    Scenario:
+        Given a format-struct with no exported fields
+        When I pass to Marshal() a pointer to such a format-struct
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            A format-struct should nest exported word-structs.
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            with no exported fields.
+            """
+
+    Scenario:
+        Given an exported field in a format-struct is not of type struct
+        When I pass to Marshal() a pointer to such a format-struct
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            A format-struct should nest exported word-structs.
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            with an exported field 'NameOfStructField' that is not a struct.
+            """
+
+    Scenario:
+        Given an exported field in a format-struct with no struct tag
+        When I pass to Marshal() a pointer to such a format-struct
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Exported fields in a format-struct should be tagged
+            with a key "word" and a value
+            indicating the length of the word in number of bits
+            (e.g. `word:"32"`).
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            with an exported field 'NameOfStructField' that has no struct tag.
+            """
+
+    Scenario:
+        Given an exported field in a format-struct with a malformed struct tag
+            """
+            A struct tag is malformed when its key is not "word"
+            or when its value cannot be parsed as an unsigned integer.
+            """
+        When I pass to Marshal() a pointer to such a format-struct
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Exported fields in a format-struct should be tagged
+            with a key "word" and a value
+            indicating the length of the word in number of bits
+            (e.g. `word:"32"`).
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            with an exported field 'NameOfStructField'
+            that has a malformed struct tag: <message of wrapped error>.
+            """
+
+    Scenario:
+        Given the length of a word is not a multiple of eight in the range [8, 64]
+        When I pass to Marshal() a pointer to a format-struct containing such a word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            The length of a word should be a multiple of eight
+            in the range [8, 64].
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            containing a word-struct '<NameOfStructField>' of length <length>
+            not in {8, 16, 24, ... 64}.
+            """
+
+    Scenario:
+        Given the length of a word is not equal to the sum of lengths of its bit fields
+        When I pass to Marshal() a pointer to a format-struct containing such a word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            The length of a word
+            should be equal to the sum of lengths of its bit fields.
+            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            containing a word-struct '<NameOfStructField>' of length <length>
+            not equal to the sum of the lengths of its bit fields, <sum>.
             """
