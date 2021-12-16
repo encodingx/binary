@@ -53,7 +53,7 @@ Suggestions on StackOverflow are limited to the use of bitwise operators.
 * [How to pack the C bit field struct via encoding package in GO?](https://stackoverflow.com/questions/60180827/how-to-pack-the-c-bit-field-struct-via-encoding-package-in-go)
 
 ## Behaviour-Driven Specifications
-The following is an excerpt from the [specifications](docs/binary.feature)
+The following are excerpts from the [specifications](docs/binary.feature)
 of this module.
 
 ```gherkin
