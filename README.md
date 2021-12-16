@@ -123,7 +123,10 @@ Feature: Marshal and Unmarshal
             outside the set of values of the type.
             """
         And the sum of lengths of all fields is equal to the length of that word
+```
 
+### `Marshal()`
+```gherkin
     Scenario: Marshal a struct into a byte slice
         Given a format-struct variable representing a binary message or file
 ```
@@ -171,7 +174,10 @@ Feature: Marshal and Unmarshal
             The length of a format is the sum of lengths of the words in it.
             The length of a word is the sum of lengths of the bit fields in it.
             """
+```
 
+### `Unmarshal()`
+```gherkin
     Scenario: Unmarshal a byte slice into a struct
         Given a format-struct type representing a binary message or file format
 ```
