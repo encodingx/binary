@@ -1,4 +1,4 @@
-package demo
+package rfc791
 
 type RFC791InternetHeaderFormatWithoutOptions struct {
 	// Reference: Section 3.1 "Internet Header Format" of

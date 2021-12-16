@@ -3,7 +3,7 @@ package binary
 import (
 	"testing"
 
-	"github.com/encodingx/binary/pkg/demo"
+	"github.com/encodingx/binary/pkg/rfc791"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,34 +18,34 @@ const (
 )
 
 var (
-	internetHeaderStruct = demo.RFC791InternetHeaderFormatWithoutOptions{
-		demo.RFC791InternetHeaderFormatWord0{
-			Version:     demo.RFC791InternetHeaderVersion,
-			IHL:         demo.RFC791InternetHeaderLengthWithoutOptions,
-			Precedence:  demo.RFC791InternetHeaderPrecedenceNetworkControl,
-			Delay:       demo.RFC791InternetHeaderDelayNormal,
-			Throughput:  demo.RFC791InternetHeaderThroughputHigh,
-			Reliability: demo.RFC791InternetHeaderReliabilityNormal,
+	internetHeaderStruct = rfc791.RFC791InternetHeaderFormatWithoutOptions{
+		rfc791.RFC791InternetHeaderFormatWord0{
+			Version:     rfc791.RFC791InternetHeaderVersion,
+			IHL:         rfc791.RFC791InternetHeaderLengthWithoutOptions,
+			Precedence:  rfc791.RFC791InternetHeaderPrecedenceNetworkControl,
+			Delay:       rfc791.RFC791InternetHeaderDelayNormal,
+			Throughput:  rfc791.RFC791InternetHeaderThroughputHigh,
+			Reliability: rfc791.RFC791InternetHeaderReliabilityNormal,
 			TotalLength: totalLength,
 		},
-		demo.RFC791InternetHeaderFormatWord1{
+		rfc791.RFC791InternetHeaderFormatWord1{
 			Identification: identification,
-			FlagsBit1:      demo.RFC791InternetHeaderFlagsBit1DoNotFragment,
-			FlagsBit2:      demo.RFC791InternetHeaderFlagsBit2LastFragment,
+			FlagsBit1:      rfc791.RFC791InternetHeaderFlagsBit1DoNotFragment,
+			FlagsBit2:      rfc791.RFC791InternetHeaderFlagsBit2LastFragment,
 			FragmentOffset: fragmentOffset,
 		},
-		demo.RFC791InternetHeaderFormatWord2{
+		rfc791.RFC791InternetHeaderFormatWord2{
 			TimeToLive:     timeToLive,
-			Protocol:       demo.RFC791InternetHeaderProtocolTCP,
+			Protocol:       rfc791.RFC791InternetHeaderProtocolTCP,
 			HeaderChecksum: headerChecksum,
 		},
-		demo.RFC791InternetHeaderFormatWord3{
+		rfc791.RFC791InternetHeaderFormatWord3{
 			SourceAddressOctet0: sourceAddressOctet,
 			SourceAddressOctet1: sourceAddressOctet,
 			SourceAddressOctet2: sourceAddressOctet,
 			SourceAddressOctet3: sourceAddressOctet,
 		},
-		demo.RFC791InternetHeaderFormatWord4{
+		rfc791.RFC791InternetHeaderFormatWord4{
 			DestinationAddressOctet0: destinationAddressOctet,
 			DestinationAddressOctet1: destinationAddressOctet,
 			DestinationAddressOctet2: destinationAddressOctet,
@@ -63,7 +63,7 @@ var (
 )
 
 var (
-	internetHeaderStruct1 demo.RFC791InternetHeaderFormatWithoutOptions
+	internetHeaderStruct1 rfc791.RFC791InternetHeaderFormatWithoutOptions
 )
 
 func TestMarshal(t *testing.T) {
