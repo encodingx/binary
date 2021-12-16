@@ -406,3 +406,20 @@ Feature: Marshal and Unmarshal
             | function  | a byte slice of zero length and |
             | Marshal   | a byte slice of zero length and |
             | Unmarshal |                                 |
+
+    Scenario:
+        Given a format-struct type representing a binary message or file format
+        And a slice of bytes containing a binary message or file
+        And the lengths of the slice and the format (in bits) are not equal
+        When I pass to function Unmarshal() the slice of bytes as an argument
+        And I pass to the function a pointer to the struct as a second argument
+        Then Unmarshal() should return an error
+            """
+            Unmarshal error:
+            A byte slice into which a format-struct would be unmarshalled
+            should have the same length as the format represented by the struct.
+            The length of a format is the sum of the lengths of the words in it.
+            Argument to Unmarshal() points to a format-struct '[NameOfStructType]'
+            of length [length0] not equal to length [length1] of the byte slice.
+            (Lengths are measured in number of bits.)
+            """
