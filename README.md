@@ -24,6 +24,7 @@ to put together and take apart these binary structures.
 of RFC 791 Internet Protocol and
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
 of RFC 793 Transmission Control Protocol
+
 describe the anatomy of TCP/IP headers
 at the beginning of every internet datagram ("packet").
 
