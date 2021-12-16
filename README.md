@@ -31,7 +31,7 @@ of RFC 793 Transmission Control Protocol
 ### File Formats
 Binary file formats are not significantly different from message formats
 from an application developer's perspective.
-[RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
+[RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#section-2)
 describes the GZIP File Format Specification.
 
 ## Working with Binary Formats in Go
