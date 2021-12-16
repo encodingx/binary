@@ -157,6 +157,8 @@ Feature: Marshal and Unmarshal
             """
 ```
 
+See the rest of the [specifications](docs/binary.feature) for error scenarios.
+
 ## Binary Formats
 Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
