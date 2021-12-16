@@ -1,4 +1,4 @@
-# Version 2
+# Version 1.2
 
 Feature: Marshal and Unmarshal
 
@@ -136,7 +136,7 @@ Feature: Marshal and Unmarshal
     Scenario:
         Given a variable that is not a pointer
         When I pass to <function> as an argument such a variable
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Argument to <function> should be a pointer to a format-struct.
@@ -144,14 +144,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a pointer that does not point to a struct variable
         When I pass to <function> such a pointer
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Argument to <function> should be a pointer to a format-struct.
@@ -159,14 +159,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a format-struct with no exported fields
         When I pass to <function> a pointer to such a format-struct
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             A format-struct should nest exported word-structs.
@@ -175,14 +175,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given an exported field in a format-struct is not of type struct
         When I pass to <function> a pointer to such a format-struct
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             A format-struct should nest exported word-structs.
@@ -191,14 +191,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given an exported field in a format-struct with no struct tag
         When I pass to <function> a pointer to such a format-struct
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Exported fields in a format-struct should be tagged
@@ -210,9 +210,9 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given an exported field in a format-struct with a malformed struct tag
@@ -221,7 +221,7 @@ Feature: Marshal and Unmarshal
             or when its value cannot be parsed as an unsigned integer.
             """
         When I pass to <function> a pointer to such a format-struct
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Exported fields in a format-struct should be tagged
@@ -234,14 +234,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word of length not a multiple of eight in the range [8, 64]
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             The length of a word should be a multiple of eight
@@ -252,14 +252,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word-struct containing no exported fields
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             A word-struct should nest exported fields representing bit fields.
@@ -269,9 +269,9 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word-struct containing a field of unsupported type
@@ -279,7 +279,7 @@ Feature: Marshal and Unmarshal
             Supported types are uint, uintN where N = {8, 16, 32, 64} and bool.
             """
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             The fields of a word-struct should be of type uintN or bool.
@@ -289,14 +289,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word-struct containing a field with no struct tag
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Exported fields in a word-struct should be tagged
@@ -309,9 +309,9 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word-struct containing a field with a malformed struct tag
@@ -320,7 +320,7 @@ Feature: Marshal and Unmarshal
             or when its value cannot be parsed as an unsigned integer.
             """
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             Exported fields in a word-struct should be tagged
@@ -334,9 +334,31 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
+
+    Scenario:
+        Given a word-struct containing a field with a v1.1-style struct tag
+            """
+            type RFC791InternetHeaderFormatWord0 struct {
+                Version     uint8  `bitfield:"4,28"`
+                IHL         uint8  `bitfield:"4,24"`
+                Precedence  uint8  `bitfield:"3,21"`
+                Delay       bool   `bitfield:"1,20"`
+                Throughput  bool   `bitfield:"1,19"`
+                Reliability bool   `bitfield:"1,18"`
+                Reserved    uint8  `bitfield:"2,16"`
+                TotalLength uint16 `bitfield:"16,0"`
+            }
+            """
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return <a byte slice and> a nil error
+
+        Examples:
+            | function  | a byte slice and |
+            | Marshal   | a byte slice and |
+            | Unmarshal |                  |
 
     Scenario:
         Given a word-struct with a bit field of length overflowing its type
@@ -346,7 +368,7 @@ Feature: Marshal and Unmarshal
             outside the set of values of the type.
             """
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             The number of unique values a bit field can contain
@@ -358,14 +380,14 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
 
     Scenario:
         Given a word of length not equal to the sum of lengths of its bit fields
         When I pass to <function> a pointer to a format-struct nesting such word
-        Then <function> should return a byte slice of zero length and an error
+        Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
             The length of a word
@@ -376,6 +398,6 @@ Feature: Marshal and Unmarshal
             """
 
         Examples:
-            | function  |
-            | Marshal   |
-            | Unmarshal |
+            | function  | a byte slice of zero length and |
+            | Marshal   | a byte slice of zero length and |
+            | Unmarshal |                                 |
