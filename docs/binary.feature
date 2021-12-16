@@ -99,6 +99,11 @@ Feature: Marshal and Unmarshal
             log.Println(e == nil)
             // true
             """
+        And I should see that the lengths of the slice and the format are equal
+            """
+            The length of a format is the sum of lengths of the words in it.
+            The length of a word is the sum of lengths of the bit fields in it.
+            """
 
     Scenario: Unmarshal a byte slice into a struct
         Given a format-struct type representing a binary message or file format
@@ -115,10 +120,6 @@ Feature: Marshal and Unmarshal
             // [01000101 ...]
             """
         And the lengths of the slice and the format (measured in bits) are equal
-            """
-            The length of a format is the sum of lengths of the words in it.
-            The length of a word is the sum of lengths of the bit fields in it.
-            """
         When I pass to function Unmarshal() the slice of bytes as an argument
         And I pass to the function a pointer to the struct as a second argument
             """
