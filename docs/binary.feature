@@ -19,9 +19,8 @@ Feature: Marshal and Unmarshal
             """
         And adjacent bit fields are grouped into "words"
             """
-            A word is a series of bits that can be simultaneously processed.
-            The length of a word is limited by computer architecture
-            and programming language design (64 bits in Go).
+            A word is a series of bits that can be simultaneously processed
+            by a given computer architecture and programming language.
             """
         And a format is represented by a type definition of a "format-struct"
         And the format-struct nests one or more exported "word-structs"
