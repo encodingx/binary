@@ -3,7 +3,7 @@
 Feature: Marshal and Unmarshal
 
     As a Go developer implementing a binary message or file format,
-    I want a pair of functions
+    I want a pair of functions "Marshal/Unmarshal" like those in "encoding/json"
     that convert a struct into a series of bits and vice versa
     so that I can avoid the complexities of custom bit manipulation.
 
