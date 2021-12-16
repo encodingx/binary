@@ -22,10 +22,10 @@ Feature: Marshal and Unmarshal
             A word is a series of bits that can be simultaneously processed
             by a given computer architecture and programming language.
             """
+
         And a format is represented by a type definition of a "format-struct"
         And the format-struct nests one or more exported "word-structs"
         And the words are tagged to indicate their lengths in number of bits
-        And the length of each word is a multiple of eight in the range [8, 64]
             """
             type RFC791InternetHeaderFormatWithoutOptions struct {
                 RFC791InternetHeaderFormatWord0 `word:"32"`
@@ -35,16 +35,11 @@ Feature: Marshal and Unmarshal
                 RFC791InternetHeaderFormatWord4 `word:"32"`
             }
             """
+        And the length of each word is a multiple of eight in the range [8, 64]
+
         And each word-struct has exported field(s) corresponding to bit field(s)
         And the fields are of unsigned integer or boolean types
         And the fields are tagged to indicate the lengths of those bit fields
-        And the length of each bit field does not overflow the type of the field
-            """
-            A bit field overflows a type
-            when it is long enough to represent values
-            outside the set of values of the type.
-            """
-        And the sum of lengths of all fields is equal to the length of that word
             """
             type RFC791InternetHeaderFormatWord0 struct {
                 Version     uint8  `bitfield:"4"`
@@ -57,6 +52,13 @@ Feature: Marshal and Unmarshal
                 TotalLength uint16 `bitfield:"16"`
             }
             """
+        And the length of each bit field does not overflow the type of the field
+            """
+            A bit field overflows a type
+            when it is long enough to represent values
+            outside the set of values of the type.
+            """
+        And the sum of lengths of all fields is equal to the length of that word
 
     Scenario: Marshal a struct into a byte slice
         Given a format-struct variable representing a binary message or file
