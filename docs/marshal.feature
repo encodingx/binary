@@ -73,7 +73,7 @@ Feature: Marshal
         And the struct field values do not overflow corresponding bit fields
             """
             A struct field value overflows its corresponding bit field
-            when it exceeds the range of values
+            when it falls outside the range of values
             that can be represented by that bit field given its length.
             """
         When I pass to function Marshal() a pointer to that struct variable
@@ -122,7 +122,7 @@ Feature: Marshal
             """
             Marshal error:
             A format-struct should nest exported word-structs.
-            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
             with no exported fields.
             """
 
@@ -133,8 +133,8 @@ Feature: Marshal
             """
             Marshal error:
             A format-struct should nest exported word-structs.
-            Argument to Marshal() points to a format-struct '<NameOfStructType>'
-            with an exported field 'NameOfStructField' that is not a struct.
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            with an exported field '<NameOfStructField>' that is not a struct.
             """
 
     Scenario:
@@ -147,8 +147,8 @@ Feature: Marshal
             with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to Marshal() points to a format-struct '<NameOfStructType>'
-            with an exported field 'NameOfStructField' that has no struct tag.
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            with an exported field '<NameOfStructField>' that has no struct tag.
             """
 
     Scenario:
@@ -165,27 +165,108 @@ Feature: Marshal
             with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to Marshal() points to a format-struct '<NameOfStructType>'
-            with an exported field 'NameOfStructField'
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            with an exported field '<NameOfStructField>'
             that has a malformed struct tag: <message of wrapped error>.
             """
 
     Scenario:
-        Given the length of a word is not a multiple of eight in the range [8, 64]
-        When I pass to Marshal() a pointer to a format-struct containing such a word
+        Given a word of length not a multiple of eight in the range [8, 64]
+        When I pass to Marshal() a pointer to a format-struct nesting such word
         Then Marshal() should return a byte slice of zero length and an error
             """
             Marshal error:
             The length of a word should be a multiple of eight
             in the range [8, 64].
-            Argument to Marshal() points to a format-struct '<NameOfStructType>'
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
             containing a word-struct '<NameOfStructField>' of length <length>
             not in {8, 16, 24, ... 64}.
             """
 
     Scenario:
-        Given the length of a word is not equal to the sum of lengths of its bit fields
-        When I pass to Marshal() a pointer to a format-struct containing such a word
+        Given a word-struct containing no exported fields
+        When I pass to Marshal() a pointer to a format-struct nesting such word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            A word-struct should nest exported fields representing bit fields.
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            containing a word-struct '<FieldName>' of type '<WordStructType>',
+            which has no exported fields.
+            """
+
+    Scenario:
+        Given a word-struct containing a field of unsupported type
+            """
+            Supported types are uint, uintN where N = {8, 16, 32, 64} and bool.
+            """
+        When I pass to Marshal() a pointer to a format-struct nesting such word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            The fields of a word-struct should be of type uintN or bool.
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            containing a word-struct '<FieldName0>' of type '<WordStructType>',
+            which has a field '<FieldName1>' of unsupported type '<FieldType>'.
+            """
+
+    Scenario:
+        Given a word-struct containing a field with no struct tag
+        When I pass to Marshal() a pointer to a format-struct nesting such word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Exported fields in a word-struct should be tagged
+            with a key "bitfield" and a value
+            indicating the length of the bit field in number of bits
+            (e.g. `bitfield:"1"`).
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            containing a word-struct '<FieldName0>' of type '<WordStructType>',
+            which has a field '<FieldName1>' that has no struct tag.
+            """
+
+    Scenario:
+        Given a word-struct containing a field with a malformed struct tag
+            """
+            A struct tag is malformed when its key is not "bitfield"
+            or when its value cannot be parsed as an unsigned integer.
+            """
+        When I pass to Marshal() a pointer to a format-struct nesting such word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            Exported fields in a word-struct should be tagged
+            with a key "bitfield" and a value
+            indicating the length of the bit field in number of bits
+            (e.g. `bitfield:"1"`).
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            containing a word-struct '<FieldName0>' of type '<WordStructType>',
+            which has a field '<FieldName1>' that has a malformed struct tag:
+            <message of wrapped error>.
+            """
+
+    Scenario:
+        Given a word-struct with a bit field of length overflowing its type
+            """
+            A bit field overflows a type
+            when it is long enough to represent values
+            outside the set of values of the type.
+            """
+        When I pass to Marshal() a pointer to a format-struct nesting such word
+        Then Marshal() should return a byte slice of zero length and an error
+            """
+            Marshal error:
+            The number of unique values a bit field can contain
+            must not exceed the size of its type.
+            Argument to Marshal() points to a format-struct '<FormatStructType>'
+            containing a word-struct '<FieldName0>' of type '<WordStructType>',
+            which has a bit field '<FieldName1>' of length <length>
+            exceeding the size of type <FieldType>, <size>.
+            """
+
+    Scenario:
+        Given a word of length not equal to the sum of lengths of its bit fields
+        When I pass to Marshal() a pointer to a format-struct nesting such word
         Then Marshal() should return a byte slice of zero length and an error
             """
             Marshal error:
