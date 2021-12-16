@@ -20,13 +20,13 @@ Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
 ### Message Formats
+Describing the anatomy of TCP/IP headers
+at the beginning of every internet datagram ("packet")
+are
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
-of RFC 791 Internet Protocol and
+of RFC 791 Internet Protocol, and
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
 of RFC 793 Transmission Control Protocol
-
-describe the anatomy of TCP/IP headers
-at the beginning of every internet datagram ("packet").
 
 ### File Formats
 Binary file formats are not significantly different from message formats
