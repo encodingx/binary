@@ -1,9 +1,10 @@
 # Version 2
 
-Feature: Marshal
+Feature: Marshal and Unmarshal
 
     As a Go developer implementing a binary message or file format,
-    I want a function that converts a struct into a series of bits
+    I want a pair of functions
+    that convert a struct into a series of bits and vice versa
     so that I can avoid the complexities of custom bit manipulation.
 
     Background:
@@ -58,7 +59,7 @@ Feature: Marshal
             }
             """
 
-    Scenario:
+    Scenario: Marshal a struct into a byte slice
         Given a format-struct variable representing a binary message or file
             """
             internetHeader = RFC791InternetHeaderFormatWithoutOptions{
@@ -95,61 +96,123 @@ Feature: Marshal
             // true
             """
 
+    Scenario: Unmarshal a byte slice into a struct
+        Given a format-struct type representing a binary message or file format
+            """
+            var internetHeader RFC791InternetHeaderFormatWithoutOptions
+            """
+        And a slice of bytes containing a binary message or file
+            """
+            var bytes []byte
+
+            // ...
+
+            log.Printf("%08b", bytes)
+            // [01000101 ...]
+            """
+        And the lengths of the slice and the format (measured in bits) are equal
+            """
+            The length of a format is the sum of lengths of the words in it.
+            The length of a word is the sum of lengths of the bit fields in it.
+            """
+        When I pass to function Unmarshal() the slice of bytes as an argument
+        And I pass to the function a pointer to the struct as a second argument
+            """
+            e = binary.Unmarshal(bytes, &internetHeader)
+            """
+        Then Unmarshal() should return a nil error
+        And I should see struct field values matching the bits in those bytes
+            """
+            log.Println(e == nil)
+            // true
+
+            log.Println(internetHeader.RFC791InternetHeaderFormatWord0.Version)
+            // 4
+
+            log.Println(internetHeader.RFC791InternetHeaderFormatWord0.IHL)
+            // 5
+            """
+
     Scenario:
         Given a variable that is not a pointer
-        When I pass to Marshal() as an argument such a variable
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> as an argument such a variable
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
-            Argument to Marshal() should be a pointer to a format-struct.
-            Argument to Marshal() is not a pointer.
+            <function> error:
+            Argument to <function> should be a pointer to a format-struct.
+            Argument to <function> is not a pointer.
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given a pointer that does not point to a struct variable
-        When I pass to Marshal() such a pointer
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> such a pointer
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
-            Argument to Marshal() should be a pointer to a format-struct.
-            Argument to Marshal() does not point to a struct variable.
+            <function> error:
+            Argument to <function> should be a pointer to a format-struct.
+            Argument to <function> does not point to a struct variable.
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given a format-struct with no exported fields
-        When I pass to Marshal() a pointer to such a format-struct
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to such a format-struct
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             A format-struct should nest exported word-structs.
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             with no exported fields.
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given an exported field in a format-struct is not of type struct
-        When I pass to Marshal() a pointer to such a format-struct
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to such a format-struct
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             A format-struct should nest exported word-structs.
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             with an exported field '[NameOfStructField]' that is not a struct.
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given an exported field in a format-struct with no struct tag
-        When I pass to Marshal() a pointer to such a format-struct
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to such a format-struct
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             Exported fields in a format-struct should be tagged
             with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             with an exported field '[NameOfStructField]' that has no struct tag.
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given an exported field in a format-struct with a malformed struct tag
@@ -157,73 +220,98 @@ Feature: Marshal
             A struct tag is malformed when its key is not "word"
             or when its value cannot be parsed as an unsigned integer.
             """
-        When I pass to Marshal() a pointer to such a format-struct
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to such a format-struct
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             Exported fields in a format-struct should be tagged
             with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             with an exported field '[NameOfStructField]'
             that has a malformed struct tag: [message of wrapped error].
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given a word of length not a multiple of eight in the range [8, 64]
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             The length of a word should be a multiple of eight
             in the range [8, 64].
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[NameOfStructField]' of length [length]
             not in {8, 16, 24, ... 64}.
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given a word-struct containing no exported fields
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             A word-struct should nest exported fields representing bit fields.
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[FieldName]' of type '[WordStructType]',
             which has no exported fields.
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given a word-struct containing a field of unsupported type
             """
             Supported types are uint, uintN where N = {8, 16, 32, 64} and bool.
             """
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             The fields of a word-struct should be of type uintN or bool.
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[FieldName0]' of type '[WordStructType]',
             which has a field '[FieldName1]' of unsupported type '[FieldType]'.
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given a word-struct containing a field with no struct tag
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             Exported fields in a word-struct should be tagged
             with a key "bitfield" and a value
             indicating the length of the bit field in number of bits
             (e.g. `bitfield:"1"`).
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[FieldName0]' of type '[WordStructType]',
             which has a field '[FieldName1]' that has no struct tag.
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given a word-struct containing a field with a malformed struct tag
@@ -231,19 +319,24 @@ Feature: Marshal
             A struct tag is malformed when its key is not "bitfield"
             or when its value cannot be parsed as an unsigned integer.
             """
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             Exported fields in a word-struct should be tagged
             with a key "bitfield" and a value
             indicating the length of the bit field in number of bits
             (e.g. `bitfield:"1"`).
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[FieldName0]' of type '[WordStructType]',
             which has a field '[FieldName1]' that has a malformed struct tag:
             [message of wrapped error].
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
 
     Scenario:
         Given a word-struct with a bit field of length overflowing its type
@@ -252,27 +345,37 @@ Feature: Marshal
             when it is long enough to represent values
             outside the set of values of the type.
             """
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             The number of unique values a bit field can contain
             must not exceed the size of its type.
-            Argument to Marshal() points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a format-struct '[FormatStructType]'
             containing a word-struct '[FieldName0]' of type '[WordStructType]',
             which has a bit field '[FieldName1]' of length [length]
             exceeding the size of type [FieldType], [size].
             """
 
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
+
     Scenario:
         Given a word of length not equal to the sum of lengths of its bit fields
-        When I pass to Marshal() a pointer to a format-struct nesting such word
-        Then Marshal() should return a byte slice of zero length and an error
+        When I pass to <function> a pointer to a format-struct nesting such word
+        Then <function> should return a byte slice of zero length and an error
             """
-            Marshal error:
+            <function> error:
             The length of a word
             should be equal to the sum of lengths of its bit fields.
-            Argument to Marshal() points to a format-struct '[NameOfStructType]'
+            Argument to <function> points to a format-struct '[NameOfStructType]'
             containing a word-struct '[NameOfStructField]' of length [length]
             not equal to the sum of the lengths of its bit fields, [sum].
             """
+
+        Examples:
+            | function  |
+            | Marshal   |
+            | Unmarshal |
