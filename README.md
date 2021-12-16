@@ -14,6 +14,43 @@ so that developers can define custom binary formats using only struct tags and
 convert between structs and byte slices
 using `Marshal()` and `Unmarshal()` with their familiar signatures.
 
+## Binary Formats
+Message and file formats specify how bits are arranged to encode information.
+Control over individual bits or groups smaller than a byte is often required
+to put together and take apart these binary structures.
+
+### Message Formats
+* [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
+of RFC 791 Internet Protocol and
+* [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
+of RFC 793 Transmission Control Protocol
+describe the anatomy of TCP/IP headers
+at the beginning of every internet datagram ("packet").
+
+### File Formats
+Binary file formats are not significantly different from message formats
+from an application developer's perspective.
+[RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
+describes the GZIP File Format Specification.
+
+## Working with Binary Formats in Go
+The smallest data structures Go provides are
+the basic type `byte` (alias of `uint8`, an unsigned 8-bit integer), and `bool`,
+both eight bits long.
+To manipulate data at a scale smaller than eight bits
+would require the use of bitwise logical and shift [operators](https://go.dev/ref/spec#Arithmetic_operators) such as
+[AND](https://en.wikipedia.org/wiki/Bitwise_operation#AND) (`&`),
+[OR](https://en.wikipedia.org/wiki/Bitwise_operation#OR) (`|`),
+left [shift](https://en.wikipedia.org/wiki/Bitwise_operation#Bit_shifts) (`<<`),
+and right shift (`>>`).
+
+### Relevant Questions Posted on StackOverflow
+Suggestions on StackOverflow are limited to the use of bitwise operators.
+
+* [Golang: Parse bit values from a byte](https://stackoverflow.com/questions/54809254/golang-parse-bit-values-from-a-byte)
+* [Creating 8 bit binary data from 4,3, and 1 bit data in Golang](https://stackoverflow.com/questions/61885659/creating-8-bit-binary-data-from-4-3-and-1-bit-data-in-golang)
+* [How to pack the C bit field struct via encoding package in GO?](https://stackoverflow.com/questions/60180827/how-to-pack-the-c-bit-field-struct-via-encoding-package-in-go)
+
 ## Behaviour-Driven Specifications
 The following is an excerpt from the [specifications](docs/binary.feature)
 of this module.
@@ -158,166 +195,6 @@ Feature: Marshal and Unmarshal
 ```
 
 See the rest of the [specifications](docs/binary.feature) for error scenarios.
-
-## Binary Formats
-Message and file formats specify how bits are arranged to encode information.
-Control over individual bits or groups smaller than a byte is often required
-to put together and take apart these binary structures.
-
-### Message Formats
-The following specifications
-quoted from [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
-of RFC 791 Internet Protocol and
-[Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
-of RFC 793 Transmission Control Protocol
-describe the anatomy of TCP/IP headers
-at the beginning of every internet datagram ("packet").
-
-```
- A summary of the contents of the internet header follows:
-
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |Version|  IHL  |Type of Service|          Total Length         |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |         Identification        |Flags|      Fragment Offset    |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Time to Live |    Protocol   |         Header Checksum       |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                       Source Address                          |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Destination Address                        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Options                    |    Padding    |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-                    Example Internet Datagram Header
-
-                               Figure 4.
-
-  Note that each tick mark represents one bit position.
-```
-
-It is highly unlikely that a developer
-would ever need to implement these protocols,
-since in Go the standard library package [`net`](https://pkg.go.dev/net)
-supplies types and methods that abstract away low-level details,
-but they make appropriate illustrations of binary message formats.
-
-```
-  TCP Header Format
-
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |          Source Port          |       Destination Port        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                        Sequence Number                        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Acknowledgment Number                      |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Data |           |U|A|P|R|S|F|                               |
-   | Offset| Reserved  |R|C|S|S|Y|I|            Window             |
-   |       |           |G|K|H|T|N|N|                               |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |           Checksum            |         Urgent Pointer        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Options                    |    Padding    |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                             data                              |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-                            TCP Header Format
-
-          Note that one tick mark represents one bit position.
-
-                               Figure 3.
-```
-
-### File Formats
-Binary file formats are not significantly different from message formats
-from an application developer's perspective.
-[RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952)
-describes the GZIP File Format Specification.
-
-```
-   1.2. Intended audience
-
-      ...
-
-      The text of the specification assumes a basic background in
-      programming at the level of bits and other primitive data
-      representations.
-
-   2.1. Overall conventions
-
-      In the diagrams below, a box like this:
-
-         +---+
-         |   | <-- the vertical bars might be missing
-         +---+
-
-      represents one byte; ...
-
-   2.2. File format
-
-      A gzip file consists of a series of "members" (compressed data
-      sets).  The format of each member is specified in the following
-      section.  The members simply appear one after another in the file,
-      with no additional information before, between, or after them.
-
-   2.3. Member format
-
-      Each member has the following structure:
-
-         +---+---+---+---+---+---+---+---+---+---+
-         |ID1|ID2|CM |FLG|     MTIME     |XFL|OS | (more-->)
-         +---+---+---+---+---+---+---+---+---+---+
-
-      ...
-
-      2.3.1. Member header and trailer
-
-         ...
-
-         FLG (FLaGs)
-            This flag byte is divided into individual bits as follows:
-
-               bit 0   FTEXT
-               bit 1   FHCRC
-               bit 2   FEXTRA
-               bit 3   FNAME
-               bit 4   FCOMMENT
-               bit 5   reserved
-               bit 6   reserved
-               bit 7   reserved
-```
-
-Package [`compress/gzip`](https://pkg.go.dev/compress/gzip)
-in the Go standard library spares developers the need to (de)serialise
-or even to understand the GZIP file format,
-but the example is included here as a stand-in for other, custom formats.
-
-## Working with Binary Formats in Go
-The smallest data structures Go provides are
-the basic type `byte` (alias of `uint8`, an unsigned 8-bit integer), and `bool`,
-both eight bits long.
-To manipulate data at a scale smaller than eight bits
-would require the use of bitwise logical and shift [operators](https://go.dev/ref/spec#Arithmetic_operators) such as
-[AND](https://en.wikipedia.org/wiki/Bitwise_operation#AND) (`&`),
-[OR](https://en.wikipedia.org/wiki/Bitwise_operation#OR) (`|`),
-left [shift](https://en.wikipedia.org/wiki/Bitwise_operation#Bit_shifts) (`<<`),
-and right shift (`>>`).
-
-### Relevant Questions Posted on StackOverflow
-Suggestions on StackOverflow are limited to the use of bitwise operators.
-
-* [Golang: Parse bit values from a byte](https://stackoverflow.com/questions/54809254/golang-parse-bit-values-from-a-byte)
-* [Creating 8 bit binary data from 4,3, and 1 bit data in Golang](https://stackoverflow.com/questions/61885659/creating-8-bit-binary-data-from-4-3-and-1-bit-data-in-golang)
-* [How to pack the C bit field struct via encoding package in GO?](https://stackoverflow.com/questions/60180827/how-to-pack-the-c-bit-field-struct-via-encoding-package-in-go)
 
 ## Using This Module
 Encoding and decoding binary formats in Go should be a matter of
