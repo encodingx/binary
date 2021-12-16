@@ -8,6 +8,7 @@ Feature: Marshal and Unmarshal
     so that I can avoid the complexities of custom bit manipulation.
 
     Background:
+        # Ubiquitous language
         Given a message or file "format"
             """
             A format specifies how bits are arranged to encode information.
@@ -23,6 +24,7 @@ Feature: Marshal and Unmarshal
             by a given computer architecture and programming language.
             """
 
+        # Define format-structs
         And a format is represented by a type definition of a "format-struct"
         And the format-struct nests one or more exported "word-structs"
         And the words are tagged to indicate their lengths in number of bits
@@ -37,6 +39,7 @@ Feature: Marshal and Unmarshal
             """
         And the length of each word is a multiple of eight in the range [8, 64]
 
+        # Define word-structs
         And each word-struct has exported field(s) corresponding to bit field(s)
         And the fields are of unsigned integer or boolean types
         And the fields are tagged to indicate the lengths of those bit fields
