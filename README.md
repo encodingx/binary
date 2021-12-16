@@ -85,7 +85,8 @@ Feature: Marshal and Unmarshal
         And a format is represented by a type definition of a "format-struct"
         And the format-struct nests one or more exported "word-structs"
         And the words are tagged to indicate their lengths in number of bits
-            """
+```
+```go
             type RFC791InternetHeaderFormatWithoutOptions struct {
                 RFC791InternetHeaderFormatWord0 `word:"32"`
                 RFC791InternetHeaderFormatWord1 `word:"32"`
@@ -93,14 +94,16 @@ Feature: Marshal and Unmarshal
                 RFC791InternetHeaderFormatWord3 `word:"32"`
                 RFC791InternetHeaderFormatWord4 `word:"32"`
             }
-            """
+```
+```gherkin
         And the length of each word is a multiple of eight in the range [8, 64]
 
         # Define word-structs
         And each word-struct has exported field(s) corresponding to bit field(s)
         And the fields are of unsigned integer or boolean types
         And the fields are tagged to indicate the lengths of those bit fields
-            """
+```
+```go
             type RFC791InternetHeaderFormatWord0 struct {
                 Version     uint8  `bitfield:"4"`
                 IHL         uint8  `bitfield:"4"`
@@ -111,7 +114,8 @@ Feature: Marshal and Unmarshal
                 Reserved    uint8  `bitfield:"2"`
                 TotalLength uint16 `bitfield:"16"`
             }
-            """
+```
+```gherkin
         And the length of each bit field does not overflow the type of the field
             """
             A bit field overflows a type
@@ -122,7 +126,8 @@ Feature: Marshal and Unmarshal
 
     Scenario: Marshal a struct into a byte slice
         Given a format-struct variable representing a binary message or file
-            """
+```
+```go
             internetHeader = RFC791InternetHeaderFormatWithoutOptions{
                 RFC791InternetHeaderFormatWord0{
                     Version: 4,
@@ -131,7 +136,8 @@ Feature: Marshal and Unmarshal
                 },
                 // ...
             }
-            """
+```
+```gherkin
         And the struct field values do not overflow corresponding bit fields
             """
             A struct field value overflows its corresponding bit field
@@ -139,38 +145,46 @@ Feature: Marshal and Unmarshal
             that can be represented by that bit field given its length.
             """
         When I pass to function Marshal() a pointer to that struct variable
-            """
+```
+```go
             var (
                 bytes []byte
                 e     error
             )
 
             bytes, e = binary.Marshal(&internetHeader)
-            """
+```
+```gherkin
         Then Marshal() should return a slice of bytes and a nil error
         And I should see struct field values reflected as bits in those bytes
-            """
+```
+```go
             log.Printf("%08b", bytes)
             // [01000101 ...]
 
             log.Println(e == nil)
             // true
-            """
+```
+```gherkin
 
     Scenario: Unmarshal a byte slice into a struct
         Given a format-struct type representing a binary message or file format
-            """
+```
+```go
             var internetHeader RFC791InternetHeaderFormatWithoutOptions
-            """
+```
+```gherkin
         And a slice of bytes containing a binary message or file
-            """
+```
+```go
             var bytes []byte
 
             // ...
 
             log.Printf("%08b", bytes)
             // [01000101 ...]
-            """
+```
+```gherkin
         And the lengths of the slice and the format (measured in bits) are equal
             """
             The length of a format is the sum of lengths of the words in it.
@@ -178,12 +192,15 @@ Feature: Marshal and Unmarshal
             """
         When I pass to function Unmarshal() the slice of bytes as an argument
         And I pass to the function a pointer to the struct as a second argument
-            """
+```
+```go
             e = binary.Unmarshal(bytes, &internetHeader)
-            """
+```
+```gherkin
         Then Unmarshal() should return a nil error
         And I should see struct field values matching the bits in those bytes
-            """
+```
+```go
             log.Println(e == nil)
             // true
 
@@ -192,7 +209,6 @@ Feature: Marshal and Unmarshal
 
             log.Println(internetHeader.RFC791InternetHeaderFormatWord0.IHL)
             // 5
-            """
 ```
 
 See the rest of the [specifications](docs/binary.feature) for error scenarios.
