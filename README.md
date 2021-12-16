@@ -9,8 +9,7 @@ These functions are however missing from
 leaving developers without an accessible and intuitive way
 to work with binary formats.
 
-This module is a drop-in replacement for `encoding/binary`
-supplying the missing functions
+This module supplies the missing functions
 so that developers can define custom binary formats using only struct tags and
 convert between structs and byte slices
 using `Marshal()` and `Unmarshal()` with their familiar signatures.
