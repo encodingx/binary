@@ -28,12 +28,12 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 		return
 	}()
 
-	reflection, e = structVariableReflectionFromInterface(iface, functionName)
+	reflection, e = structReflectionFromInterface(iface, functionName)
 	if e != nil {
 		return
 	}
 
-	_, e = validateFormat(reflection, functionName)
+	_, e = validateFormatReflection(reflection, functionName)
 	if e != nil {
 		return
 	}
@@ -65,12 +65,12 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		return
 	}()
 
-	reflection, e = structVariableReflectionFromInterface(iface, functionName)
+	reflection, e = structReflectionFromInterface(iface, functionName)
 	if e != nil {
 		return
 	}
 
-	formatLength, e = validateFormat(reflection, functionName)
+	formatLength, e = validateFormatReflection(reflection, functionName)
 	if e != nil {
 		return
 	}
@@ -92,7 +92,7 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	return
 }
 
-func structVariableReflectionFromInterface(
+func structReflectionFromInterface(
 	iface interface{}, functionName string,
 ) (
 	reflection reflect.Type, e error,
@@ -116,7 +116,7 @@ func structVariableReflectionFromInterface(
 	return
 }
 
-func validateFormat(reflection reflect.Type, functionName string) (
+func validateFormatReflection(reflection reflect.Type, functionName string) (
 	formatLength uint, e error,
 ) {
 	var (
@@ -134,7 +134,7 @@ func validateFormat(reflection reflect.Type, functionName string) (
 	}
 
 	for i = 0; i < reflection.NumField(); i++ {
-		wordLength, e = validateWord(
+		wordLength, e = validateWordReflection(
 			reflection.Field(i),
 			functionName,
 			reflection.String(),
@@ -149,7 +149,7 @@ func validateFormat(reflection reflect.Type, functionName string) (
 	return
 }
 
-func validateWord(
+func validateWordReflection(
 	reflection reflect.StructField, functionName, formatName string,
 ) (
 	wordLength uint, e error,
@@ -232,7 +232,7 @@ func validateWord(
 	}
 
 	for i = 0; i < reflection.Type.NumField(); i++ {
-		bitFieldLength, e = validateBitField(
+		bitFieldLength, e = validateBitFieldReflection(
 			reflection.Type.Field(i),
 			functionName,
 			formatName,
@@ -260,7 +260,7 @@ func validateWord(
 	return
 }
 
-func validateBitField(
+func validateBitFieldReflection(
 	reflection reflect.StructField, functionName, formatName, wordName string,
 ) (
 	bitFieldLength uint, e error,
