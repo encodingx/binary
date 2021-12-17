@@ -129,7 +129,7 @@ func TestShouldReturnErrorGivenFormatWithNoWords(t *testing.T) {
 	const (
 		errorMessage = "%[1]s error: " +
 			"A format-struct should nest exported word-structs. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"that has no words."
 	)
 
@@ -149,7 +149,7 @@ func TestShouldReturnErrorGivenWordNotStruct(
 	const (
 		errorMessage = "%[1]s error: " +
 			"A format-struct should nest exported word-structs. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that is not a struct."
 	)
@@ -175,7 +175,7 @@ func TestShouldReturnErrorGivenWordWithNoStructTag(
 			"tagged with a key \"word\" and a value " +
 			"indicating the length of a word in number of bits " +
 			"(e.g. `word:\"32\"`). " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"with no struct tag."
 	)
@@ -205,7 +205,7 @@ func TestShouldReturnErrorGivenWordWithMalformedTag(
 			"tagged with a key \"word\" and a value " +
 			"indicating the length of a word in number of bits " +
 			"(e.g. `word:\"32\"`). " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"with a malformed struct tag."
 	)
@@ -231,7 +231,7 @@ func TestShouldReturnErrorGivenWordOfIncompatibleLength(t *testing.T) {
 		errorMessage = "%[1]s error: " +
 			"The length of a word should be a multiple of eight " +
 			"in the range [8, 64]. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"that has a word \"Word\" " +
 			"of length 36 not in {8, 16, 24, ... 64}."
 	)
@@ -257,7 +257,7 @@ func TestShouldReturnErrorGivenWordWithNoBitFields(t *testing.T) {
 		errorMessage = "%[1]s error: " +
 			"A word-struct should have exported fields " +
 			"representing bit fields. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that has no bit fields."
 	)
@@ -284,7 +284,7 @@ func TestShouldReturnErrorGivenBitFieldOfUnsupportedType(
 			"A bit field is represented " +
 			"by an exported field of a word-struct " +
 			"of type uintN or bool. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that has a bit field \"BitField\" " +
 			"of unsupported type \"int\"."
@@ -314,7 +314,7 @@ func TestShouldReturnErrorGivenBitFieldWithNoStructTag(t *testing.T) {
 			"tagged with a key \"bitfield\" and a value " +
 			"indicating the length of the bit field in number of bits " +
 			"(e.g. `bitfield:\"1\"`). " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that has a bit field \"BitField\" " +
 			"with no struct tag."
@@ -336,7 +336,7 @@ func TestShouldReturnErrorGivenBitFieldWithNoStructTag(t *testing.T) {
 	)
 }
 
-func TestShouldReturnErrorGivenBitFieldWithMalformedStructTag(t *testing.T) {
+func TestShouldReturnErrorGivenBitFieldWithMalformedTag(t *testing.T) {
 	const (
 		errorMessage = "%[1]s error: " +
 			"A bit field is represented " +
@@ -344,7 +344,7 @@ func TestShouldReturnErrorGivenBitFieldWithMalformedStructTag(t *testing.T) {
 			"tagged with a key \"bitfield\" and a value " +
 			"indicating the length of the bit field in number of bits " +
 			"(e.g. `bitfield:\"1\"`). " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that has a bit field \"BitField\" " +
 			"with a malformed struct tag."
@@ -352,7 +352,7 @@ func TestShouldReturnErrorGivenBitFieldWithMalformedStructTag(t *testing.T) {
 
 	type (
 		Word struct {
-			BitField uint `bitfield:"32b"`
+			BitField uint `bitfield:"-32"`
 		}
 
 		Format struct {
@@ -371,7 +371,7 @@ func TestShouldReturnErrorGivenBitFieldOfLengthOverflowingType(t *testing.T) {
 		errorMessage = "%[1]s error: " +
 			"The number of unique values a bit field can contain " +
 			"must not exceed the size of its type. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"nesting a word-struct \"Word\" " +
 			"that has a bit field \"BitField\" " +
 			"of length 32 exceeding the size of type \"uint8\"."
@@ -393,14 +393,14 @@ func TestShouldReturnErrorGivenBitFieldOfLengthOverflowingType(t *testing.T) {
 	)
 }
 
-func TestShouldReturnErrorGivenWordLengthNotEqualToSumOfLengthsOfBitFields(
+func TestShouldReturnErrorGivenWordOfLengthNotEqualToSumOfLengthsOfBitFields(
 	t *testing.T,
 ) {
 	const (
 		errorMessage = "%[1]s error: " +
 			"The length of a word " +
 			"should be equal to the sum of lengths of its bit fields. " +
-			"Argument to %[1]s points to a format-struct \"Format\" " +
+			"Argument to %[1]s points to a format-struct \"binary.Format\" " +
 			"that has a word \"Word\" " +
 			"of length 32 " +
 			"not equal to the sum of the lengths of its bit fields, 31."
@@ -408,7 +408,7 @@ func TestShouldReturnErrorGivenWordLengthNotEqualToSumOfLengthsOfBitFields(
 
 	type (
 		Word struct {
-			BitField uint8 `bitfield:"31"`
+			BitField uint `bitfield:"31"`
 		}
 
 		Format struct {
@@ -462,14 +462,15 @@ func TestShouldReturnErrorGivenLengthOfByteSliceNotEqualToFormatLength(
 			"A byte slice into which a format-struct would be unmarshalled " +
 			"should be of length equal to the sum of lengths of words " +
 			"in the format represented by the struct. " +
-			"Argument to Unmarshal points to a format-struct \"Format\" " +
+			"Argument to Unmarshal points to a format-struct " +
+			"\"binary.Format\" " +
 			"of length 32 bits " +
 			"not equal to the length of the byte slice, 8 bits."
 	)
 
 	type (
 		Word struct {
-			BitField uint8 `bitfield:"32"`
+			BitField uint `bitfield:"32"`
 		}
 
 		Format struct {

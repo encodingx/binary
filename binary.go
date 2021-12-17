@@ -1,81 +1,347 @@
 package binary
 
 import (
-	stdlib "encoding/binary"
-	"io"
+	"fmt"
+	"reflect"
 
-	"github.com/encodingx/binary/internal/codecs"
+	"github.com/encodingx/binary/internal/validation"
 )
 
-// Original features
+func Marshal(interf interface{}) (bytes []byte, e error) {
+	const (
+		functionName = "Marshal"
+	)
 
-var (
-	defaultCodec = codecs.NewV1Codec()
-)
+	var (
+		reflection reflect.Type
+	)
 
-func Marshal(pointer interface{}) ([]byte, error) {
-	return defaultCodec.Marshal(pointer)
+	defer func() {
+		const (
+			marshalError = "Marshal error: %w"
+		)
+
+		if e != nil {
+			e = fmt.Errorf(marshalError, e)
+		}
+
+		return
+	}()
+
+	reflection, e = structVariableReflectionFromInterface(interf, functionName)
+	if e != nil {
+		return
+	}
+
+	_, e = validateFormat(reflection, functionName)
+	if e != nil {
+		return
+	}
+
+	return
 }
 
-func Unmarshal(bytes []byte, pointer interface{}) error {
-	return defaultCodec.Unmarshal(bytes, pointer)
+func Unmarshal(bytes []byte, interf interface{}) (e error) {
+	const (
+		bitsPerByte  = 8
+		functionName = "Unmarshal"
+	)
+
+	var (
+		byteSliceLength uint
+		formatLength    uint
+		reflection      reflect.Type
+	)
+
+	defer func() {
+		const (
+			unmarshalError = "Unmarshal error: %w"
+		)
+
+		if e != nil {
+			e = fmt.Errorf(unmarshalError, e)
+		}
+
+		return
+	}()
+
+	reflection, e = structVariableReflectionFromInterface(interf, functionName)
+	if e != nil {
+		return
+	}
+
+	formatLength, e = validateFormat(reflection, functionName)
+	if e != nil {
+		return
+	}
+
+	byteSliceLength = uint(
+		len(bytes) * bitsPerByte,
+	)
+
+	if byteSliceLength != formatLength {
+		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
+			reflection.String(),
+			formatLength,
+			byteSliceLength,
+		)
+
+		return
+	}
+
+	return
 }
 
-// Standard library features
+func structVariableReflectionFromInterface(
+	interf interface{}, functionName string,
+) (
+	reflection reflect.Type, e error,
+) {
+	reflection = reflect.TypeOf(interf)
 
-const (
-	MaxVarintLen16 = stdlib.MaxVarintLen16
-	MaxVarintLen32 = stdlib.MaxVarintLen32
-	MaxVarintLen64 = stdlib.MaxVarintLen64
-)
+	if reflection.Kind() != reflect.Ptr {
+		e = validation.NewNonPointerError(functionName)
 
-var (
-	BigEndian    = stdlib.BigEndian
-	LittleEndian = stdlib.LittleEndian
-)
+		return
+	}
 
-type ByteOrder interface {
-	Uint16([]byte) uint16
-	Uint32([]byte) uint32
-	Uint64([]byte) uint64
-	PutUint16([]byte, uint16)
-	PutUint32([]byte, uint32)
-	PutUint64([]byte, uint64)
-	String() string
+	reflection = reflection.Elem()
+
+	if reflection.Kind() != reflect.Struct {
+		e = validation.NewPointerToNonStructVariableError(functionName)
+
+		return
+	}
+
+	return
 }
 
-func PutUvarint(buf []byte, x uint64) int {
-	return stdlib.PutUvarint(buf, x)
+func validateFormat(reflection reflect.Type, functionName string) (
+	formatLength uint, e error,
+) {
+	var (
+		i          int
+		wordLength uint
+	)
+
+	if reflection.NumField() == 0 {
+		e = validation.NewFormatWithNoWordsError(
+			functionName,
+			reflection.String(),
+		)
+
+		return
+	}
+
+	for i = 0; i < reflection.NumField(); i++ {
+		wordLength, e = validateWord(
+			reflection.Field(i),
+			functionName,
+			reflection.String(),
+		)
+		if e != nil {
+			return
+		}
+
+		formatLength += wordLength
+	}
+
+	return
 }
 
-func PutVarint(buf []byte, x int64) int {
-	return stdlib.PutVarint(buf, x)
+func validateWord(
+	reflection reflect.StructField, functionName, formatName string,
+) (
+	wordLength uint, e error,
+) {
+	const (
+		tagKey         = "word"
+		tagValueFormat = "%d"
+
+		wordLengthFactor     = 8
+		wordLengthLowerLimit = 8
+		wordLengthUpperLimit = 64
+	)
+
+	var (
+		bitFieldLength    uint
+		bitFieldLengthSum uint
+		wordLengthOK      bool
+
+		i int
+	)
+
+	if reflection.Type.Kind() != reflect.Struct {
+		e = validation.NewWordNotStructError(
+			functionName,
+			formatName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	if len(reflection.Tag) == 0 {
+		e = validation.NewWordWithNoStructTagError(
+			functionName,
+			formatName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	_, e = fmt.Sscanf(
+		reflection.Tag.Get(tagKey),
+		tagValueFormat,
+		&wordLength,
+	)
+	if e != nil {
+		e = validation.NewWordWithMalformedTagError(
+			functionName,
+			formatName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	wordLengthOK = wordLength%wordLengthFactor == 0
+	wordLengthOK = wordLengthOK && wordLength >= wordLengthLowerLimit
+	wordLengthOK = wordLengthOK && wordLength <= wordLengthUpperLimit
+
+	if !wordLengthOK {
+		e = validation.NewWordOfIncompatibleLengthError(
+			functionName,
+			formatName,
+			reflection.Name,
+			wordLength,
+		)
+
+		return
+	}
+
+	if reflection.Type.NumField() == 0 {
+		e = validation.NewWordWithNoBitFieldsError(
+			functionName,
+			formatName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	for i = 0; i < reflection.Type.NumField(); i++ {
+		bitFieldLength, e = validateBitField(
+			reflection.Type.Field(i),
+			functionName,
+			formatName,
+			reflection.Name,
+		)
+		if e != nil {
+			return
+		}
+
+		bitFieldLengthSum += bitFieldLength
+	}
+
+	if bitFieldLengthSum != wordLength {
+		e = validation.NewWordOfLengthNotEqualToSumOfLengthsOfBitFieldsError(
+			functionName,
+			formatName,
+			reflection.Name,
+			wordLength,
+			bitFieldLengthSum,
+		)
+
+		return
+	}
+
+	return
 }
 
-func Read(r io.Reader, order ByteOrder, data interface{}) error {
-	return stdlib.Read(r, order, data)
-}
+func validateBitField(
+	reflection reflect.StructField, functionName, formatName, wordName string,
+) (
+	bitFieldLength uint, e error,
+) {
+	const (
+		tagKey         = "bitfield"
+		tagValueFormat = "%d"
+	)
 
-func ReadUvarint(r io.ByteReader) (uint64, error) {
-	return stdlib.ReadUvarint(r)
-}
+	var (
+		bitFieldLengthCap uint
+	)
 
-func ReadVarint(r io.ByteReader) (int64, error) {
-	return stdlib.ReadVarint(r)
-}
+	switch reflection.Type.Kind() {
+	case reflect.Uint:
+		fallthrough
 
-func Size(v interface{}) int {
-	return stdlib.Size(v)
-}
+	case reflect.Uint64:
+		bitFieldLengthCap = 64
 
-func Uvarint(buf []byte) (uint64, int) {
-	return stdlib.Uvarint(buf)
-}
+	case reflect.Uint32:
+		bitFieldLengthCap = 32
 
-func Varint(buf []byte) (int64, int) {
-	return stdlib.Varint(buf)
-}
+	case reflect.Uint16:
+		bitFieldLengthCap = 16
 
-func Write(w io.Writer, order ByteOrder, data interface{}) error {
-	return stdlib.Write(w, order, data)
+	case reflect.Uint8:
+		bitFieldLengthCap = 8
+
+	case reflect.Bool:
+		bitFieldLengthCap = 1
+
+	default:
+		e = validation.NewBitFieldOfUnsupportedTypeError(
+			functionName,
+			formatName,
+			wordName,
+			reflection.Name,
+			reflection.Type.String(),
+		)
+
+		return
+	}
+
+	if len(reflection.Tag) == 0 {
+		e = validation.NewBitFieldWithNoStructTagError(
+			functionName,
+			formatName,
+			wordName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	_, e = fmt.Sscanf(
+		reflection.Tag.Get(tagKey),
+		tagValueFormat,
+		&bitFieldLength,
+	)
+	if e != nil {
+		e = validation.NewBitFieldWithMalformedTagError(
+			functionName,
+			formatName,
+			wordName,
+			reflection.Name,
+		)
+
+		return
+	}
+
+	if bitFieldLength > bitFieldLengthCap {
+		e = validation.NewBitFieldOfLengthOverflowingTypeError(
+			functionName,
+			formatName,
+			wordName,
+			reflection.Name,
+			bitFieldLength,
+			reflection.Type.String(),
+		)
+	}
+
+	return
 }
