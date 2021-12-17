@@ -175,8 +175,7 @@ Feature: Marshal and Unmarshal
             """
             <function> error:
             A format-struct should nest exported word-structs.
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            with no exported fields.
+            Argument to <function> points to a struct with no exported fields.
             """
 
         Examples:
@@ -191,7 +190,7 @@ Feature: Marshal and Unmarshal
             """
             <function> error:
             A format-struct should nest exported word-structs.
-            Argument to <function> points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a struct
             with an exported field '[NameOfStructField]' that is not a struct.
             """
 
@@ -206,11 +205,11 @@ Feature: Marshal and Unmarshal
         Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
-            Exported fields in a format-struct should be tagged
-            with a key "word" and a value
+            Word-structs should be exported fields of a format-struct
+            tagged with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to <function> points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a struct
             with an exported field '[NameOfStructField]' that has no struct tag.
             """
 
@@ -229,11 +228,11 @@ Feature: Marshal and Unmarshal
         Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
-            Exported fields in a format-struct should be tagged
-            with a key "word" and a value
+            Word-structs should be exported fields of a format-struct
+            tagged with a key "word" and a value
             indicating the length of the word in number of bits
             (e.g. `word:"32"`).
-            Argument to <function> points to a format-struct '[FormatStructType]'
+            Argument to <function> points to a struct
             with an exported field '[NameOfStructField]'
             that has a malformed struct tag: [message of wrapped error].
             """
@@ -251,8 +250,8 @@ Feature: Marshal and Unmarshal
             <function> error:
             The length of a word should be a multiple of eight
             in the range [8, 64].
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[NameOfStructField]' of length [length]
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfStructField]' of length [length]
             not in {8, 16, 24, ... 64}.
             """
 
@@ -267,10 +266,10 @@ Feature: Marshal and Unmarshal
         Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
-            A word-struct should nest exported fields representing bit fields.
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[FieldName]' of type '[WordStructType]',
-            which has no exported fields.
+            A word-struct should have exported fields representing bit fields.
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfStructField]'
+            that has no exported fields.
             """
 
         Examples:
@@ -287,10 +286,11 @@ Feature: Marshal and Unmarshal
         Then <function> should return <a byte slice of zero length and> an error
             """
             <function> error:
-            The fields of a word-struct should be of type uintN or bool.
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[FieldName0]' of type '[WordStructType]',
-            which has a field '[FieldName1]' of unsupported type '[FieldType]'.
+            Exported fields of a word-struct should be of type uintN or bool.
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfFormatStructField]'
+            that has an exported field '[NameOfWordStructField]'
+            of unsupported type '[FieldType]'.
             """
 
         Examples:
@@ -308,9 +308,10 @@ Feature: Marshal and Unmarshal
             with a key "bitfield" and a value
             indicating the length of the bit field in number of bits
             (e.g. `bitfield:"1"`).
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[FieldName0]' of type '[WordStructType]',
-            which has a field '[FieldName1]' that has no struct tag.
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfFormatStructField]'
+            that has an exported field '[NameOfWordStructField]'
+            that has no struct tag.
             """
 
         Examples:
@@ -332,10 +333,10 @@ Feature: Marshal and Unmarshal
             with a key "bitfield" and a value
             indicating the length of the bit field in number of bits
             (e.g. `bitfield:"1"`).
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[FieldName0]' of type '[WordStructType]',
-            which has a field '[FieldName1]' that has a malformed struct tag:
-            [message of wrapped error].
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfFormatStructField]'
+            that has an exported field '[NameOfWordStructField]'
+            that has a malformed struct tag: [message of wrapped error].
             """
 
         Examples:
@@ -378,9 +379,9 @@ Feature: Marshal and Unmarshal
             <function> error:
             The number of unique values a bit field can contain
             must not exceed the size of its type.
-            Argument to <function> points to a format-struct '[FormatStructType]'
-            containing a word-struct '[FieldName0]' of type '[WordStructType]',
-            which has a bit field '[FieldName1]' of length [length]
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfFormatStructField]'
+            that has a bit field '[NameOfWordStructField]' of length [length]
             exceeding the size of type [FieldType], [size].
             """
 
@@ -397,8 +398,8 @@ Feature: Marshal and Unmarshal
             <function> error:
             The length of a word
             should be equal to the sum of lengths of its bit fields.
-            Argument to <function> points to a format-struct '[NameOfStructType]'
-            containing a word-struct '[NameOfStructField]' of length [length]
+            Argument to <function> points to a struct
+            nesting a word-struct '[NameOfFormatStructField]' of length [length]
             not equal to the sum of the lengths of its bit fields, [sum].
             """
 
@@ -419,7 +420,7 @@ Feature: Marshal and Unmarshal
             A byte slice into which a format-struct would be unmarshalled
             should have the same length as the format represented by the struct.
             The length of a format is the sum of the lengths of the words in it.
-            Argument to Unmarshal() points to a format-struct '[NameOfStructType]'
-            of length [length0] not equal to length [length1] of the byte slice.
-            (Lengths are measured in number of bits.)
+            Argument to Unmarshal() points to a format of length [formatLength]
+            not equal to length [byteSliceLength] of the byte slice.
+            Lengths are measured in number of bits.
             """
