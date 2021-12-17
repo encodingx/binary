@@ -6,12 +6,37 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	formatName = "Format"
+)
+
+func TestFormatWithNoWordsError(t *testing.T) {
+	const (
+		errorMessage = "" +
+			"A format-struct should nest exported word-structs. " +
+			"Argument to Marshal points to a format-struct \"Format\" " +
+			"that has no words."
+	)
+
+	var (
+		e FormatError
+	)
+
+	e = NewFormatWithNoWordsError()
+
+	e.SetFunctionName(functionName)
+
+	e.SetFormatName(formatName)
+
+	assert.Equal(t,
+		errorMessage, e.Error(),
+	)
+}
+
 func TestLengthOfByteSliceNotEqualToFormatLengthError(t *testing.T) {
 	const (
 		byteSliceLength = 8
 		formatLength    = 32
-
-		formatName = "Format"
 
 		errorMessage = "" +
 			"A byte slice into which a format-struct would be unmarshalled " +
@@ -23,14 +48,15 @@ func TestLengthOfByteSliceNotEqualToFormatLengthError(t *testing.T) {
 	)
 
 	var (
-		e error
+		e FormatError
 	)
 
 	e = NewLengthOfByteSliceNotEqualToFormatLengthError(
-		formatName,
 		formatLength,
 		byteSliceLength,
 	)
+
+	e.SetFormatName(formatName)
 
 	assert.Equal(t,
 		errorMessage, e.Error(),
