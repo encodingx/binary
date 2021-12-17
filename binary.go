@@ -22,18 +22,20 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 		)
 
 		if e != nil {
+			e.(validation.FunctionError).SetFunctionName(functionName)
+
 			e = fmt.Errorf(marshalError, e)
 		}
 
 		return
 	}()
 
-	reflection, e = structReflectionFromInterface(iface, functionName)
+	reflection, e = structReflectionFromInterface(iface)
 	if e != nil {
 		return
 	}
 
-	_, e = validateFormatReflection(reflection, functionName)
+	_, e = validateFormatReflection(reflection)
 	if e != nil {
 		return
 	}
@@ -59,18 +61,20 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		)
 
 		if e != nil {
+			e.(validation.FunctionError).SetFunctionName(functionName)
+
 			e = fmt.Errorf(unmarshalError, e)
 		}
 
 		return
 	}()
 
-	reflection, e = structReflectionFromInterface(iface, functionName)
+	reflection, e = structReflectionFromInterface(iface)
 	if e != nil {
 		return
 	}
 
-	formatLength, e = validateFormatReflection(reflection, functionName)
+	formatLength, e = validateFormatReflection(reflection)
 	if e != nil {
 		return
 	}
@@ -81,10 +85,13 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 
 	if byteSliceLength != formatLength {
 		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
-			reflection.String(),
 			formatLength,
 			byteSliceLength,
 		)
+
+        e.(validation.FormatError).SetFormatName(
+            reflection.String(),
+        )
 
 		return
 	}
@@ -92,15 +99,13 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	return
 }
 
-func structReflectionFromInterface(
-	iface interface{}, functionName string,
-) (
+func structReflectionFromInterface(iface interface{}) (
 	reflection reflect.Type, e error,
 ) {
 	reflection = reflect.TypeOf(iface)
 
 	if reflection.Kind() != reflect.Ptr {
-		e = validation.NewNonPointerError(functionName)
+		e = validation.NewNonPointerError()
 
 		return
 	}
@@ -108,7 +113,7 @@ func structReflectionFromInterface(
 	reflection = reflection.Elem()
 
 	if reflection.Kind() != reflect.Struct {
-		e = validation.NewPointerToNonStructVariableError(functionName)
+		e = validation.NewPointerToNonStructVariableError()
 
 		return
 	}
@@ -116,7 +121,7 @@ func structReflectionFromInterface(
 	return
 }
 
-func validateFormatReflection(reflection reflect.Type, functionName string) (
+func validateFormatReflection(reflection reflect.Type) (
 	formatLength uint, e error,
 ) {
 	var (
@@ -124,11 +129,16 @@ func validateFormatReflection(reflection reflect.Type, functionName string) (
 		wordLength uint
 	)
 
+	defer func() {
+		if e != nil {
+			e.(validation.FormatError).SetFormatName(
+				reflection.String(),
+			)
+		}
+	}()
+
 	if reflection.NumField() == 0 {
-		e = validation.NewFormatWithNoWordsError(
-			functionName,
-			reflection.String(),
-		)
+		e = validation.NewFormatWithNoWordsError()
 
 		return
 	}
@@ -136,8 +146,6 @@ func validateFormatReflection(reflection reflect.Type, functionName string) (
 	for i = 0; i < reflection.NumField(); i++ {
 		wordLength, e = validateWordReflection(
 			reflection.Field(i),
-			functionName,
-			reflection.String(),
 		)
 		if e != nil {
 			return
@@ -149,9 +157,7 @@ func validateFormatReflection(reflection reflect.Type, functionName string) (
 	return
 }
 
-func validateWordReflection(
-	reflection reflect.StructField, functionName, formatName string,
-) (
+func validateWordReflection(reflection reflect.StructField) (
 	wordLength uint, e error,
 ) {
 	const (
@@ -171,22 +177,20 @@ func validateWordReflection(
 		i int
 	)
 
+	defer func() {
+		if e != nil {
+			e.(validation.WordError).SetWordName(reflection.Name)
+		}
+	}()
+
 	if reflection.Type.Kind() != reflect.Struct {
-		e = validation.NewWordNotStructError(
-			functionName,
-			formatName,
-			reflection.Name,
-		)
+		e = validation.NewWordNotStructError()
 
 		return
 	}
 
 	if len(reflection.Tag) == 0 {
-		e = validation.NewWordWithNoStructTagError(
-			functionName,
-			formatName,
-			reflection.Name,
-		)
+		e = validation.NewWordWithNoStructTagError()
 
 		return
 	}
@@ -197,11 +201,7 @@ func validateWordReflection(
 		&wordLength,
 	)
 	if e != nil {
-		e = validation.NewWordWithMalformedTagError(
-			functionName,
-			formatName,
-			reflection.Name,
-		)
+		e = validation.NewWordWithMalformedTagError()
 
 		return
 	}
@@ -211,22 +211,13 @@ func validateWordReflection(
 	wordLengthOK = wordLengthOK && wordLength <= wordLengthUpperLimit
 
 	if !wordLengthOK {
-		e = validation.NewWordOfIncompatibleLengthError(
-			functionName,
-			formatName,
-			reflection.Name,
-			wordLength,
-		)
+		e = validation.NewWordOfIncompatibleLengthError(wordLength)
 
 		return
 	}
 
 	if reflection.Type.NumField() == 0 {
-		e = validation.NewWordWithNoBitFieldsError(
-			functionName,
-			formatName,
-			reflection.Name,
-		)
+		e = validation.NewWordWithNoBitFieldsError()
 
 		return
 	}
@@ -234,9 +225,6 @@ func validateWordReflection(
 	for i = 0; i < reflection.Type.NumField(); i++ {
 		bitFieldLength, e = validateBitFieldReflection(
 			reflection.Type.Field(i),
-			functionName,
-			formatName,
-			reflection.Name,
 		)
 		if e != nil {
 			return
@@ -247,9 +235,6 @@ func validateWordReflection(
 
 	if bitFieldLengthSum != wordLength {
 		e = validation.NewWordOfLengthNotEqualToSumOfLengthsOfBitFieldsError(
-			functionName,
-			formatName,
-			reflection.Name,
 			wordLength,
 			bitFieldLengthSum,
 		)
@@ -260,9 +245,7 @@ func validateWordReflection(
 	return
 }
 
-func validateBitFieldReflection(
-	reflection reflect.StructField, functionName, formatName, wordName string,
-) (
+func validateBitFieldReflection(reflection reflect.StructField) (
 	bitFieldLength uint, e error,
 ) {
 	const (
@@ -273,6 +256,12 @@ func validateBitFieldReflection(
 	var (
 		bitFieldLengthCap uint
 	)
+
+	defer func() {
+		if e != nil {
+			e.(validation.BitFieldError).SetBitFieldName(reflection.Name)
+		}
+	}()
 
 	switch reflection.Type.Kind() {
 	case reflect.Uint:
@@ -295,10 +284,6 @@ func validateBitFieldReflection(
 
 	default:
 		e = validation.NewBitFieldOfUnsupportedTypeError(
-			functionName,
-			formatName,
-			wordName,
-			reflection.Name,
 			reflection.Type.String(),
 		)
 
@@ -306,12 +291,7 @@ func validateBitFieldReflection(
 	}
 
 	if len(reflection.Tag) == 0 {
-		e = validation.NewBitFieldWithNoStructTagError(
-			functionName,
-			formatName,
-			wordName,
-			reflection.Name,
-		)
+		e = validation.NewBitFieldWithNoStructTagError()
 
 		return
 	}
@@ -322,22 +302,13 @@ func validateBitFieldReflection(
 		&bitFieldLength,
 	)
 	if e != nil {
-		e = validation.NewBitFieldWithMalformedTagError(
-			functionName,
-			formatName,
-			wordName,
-			reflection.Name,
-		)
+		e = validation.NewBitFieldWithMalformedTagError()
 
 		return
 	}
 
 	if bitFieldLength > bitFieldLengthCap {
 		e = validation.NewBitFieldOfLengthOverflowingTypeError(
-			functionName,
-			formatName,
-			wordName,
-			reflection.Name,
 			bitFieldLength,
 			reflection.Type.String(),
 		)
