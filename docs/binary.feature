@@ -235,7 +235,7 @@ Feature: Marshal and Unmarshal
             (e.g. `word:"32"`).
             Argument to <function> points to a struct "[StructType]"
             with an exported field "[NameOfStructField]"
-            that has a malformed struct tag: [message of wrapped error].
+            that has a malformed struct tag.
             """
 
         Examples:
@@ -337,7 +337,7 @@ Feature: Marshal and Unmarshal
             Argument to <function> points to a struct "[StructType]"
             nesting a word-struct "[NameOfFormatStructField]"
             that has an exported field "[NameOfWordStructField]"
-            that has a malformed struct tag: [message of wrapped error].
+            that has a malformed struct tag.
             """
 
         Examples:
