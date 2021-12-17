@@ -41,33 +41,39 @@ func (e *formatWithNoWordsError) Error() string {
 
 type lengthOfByteSliceNotEqualToFormatLengthError struct {
 	DefaultFormatError
-	formatLength    uint
-	byteSliceLength uint
+	formatLengthInBytes uint
+	byteSliceLength     uint
 }
 
 func NewLengthOfByteSliceNotEqualToFormatLengthError(
-	formatLength, byteSliceLength uint,
+	formatLengthInBytes, byteSliceLength uint,
 ) (
 	e *lengthOfByteSliceNotEqualToFormatLengthError,
 ) {
 	e = &lengthOfByteSliceNotEqualToFormatLengthError{
-		formatLength:    formatLength,
-		byteSliceLength: byteSliceLength,
+		formatLengthInBytes: formatLengthInBytes,
+		byteSliceLength:     byteSliceLength,
 	}
 
 	return
 }
 
-func (e *lengthOfByteSliceNotEqualToFormatLengthError) Error() string {
+func (e *lengthOfByteSliceNotEqualToFormatLengthError) Error() (s string) {
 	const (
 		format = "" +
 			"A byte slice into which a format-struct would be unmarshalled " +
 			"should be of length equal to the sum of lengths of words " +
 			"in the format represented by the struct. " +
 			"Argument to Unmarshal points to a format-struct \"%s\" " +
-			"of length %d bits " +
-			"not equal to the length of the byte slice, %d bits."
+			"of length %d byte(s) " +
+			"not equal to the length of the byte slice, %d byte(s)."
 	)
 
-	return fmt.Sprintf(format, e.formatName, e.formatLength, e.byteSliceLength)
+	s = fmt.Sprintf(format,
+		e.formatName,
+		e.formatLengthInBytes,
+		e.byteSliceLength,
+	)
+
+	return
 }

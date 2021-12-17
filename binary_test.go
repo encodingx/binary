@@ -464,8 +464,8 @@ func TestShouldReturnErrorGivenLengthOfByteSliceNotEqualToFormatLength(
 			"in the format represented by the struct. " +
 			"Argument to Unmarshal points to a format-struct " +
 			"\"binary.Format\" " +
-			"of length 32 bits " +
-			"not equal to the length of the byte slice, 8 bits."
+			"of length 4 byte(s) " +
+			"not equal to the length of the byte slice, 1 byte(s)."
 	)
 
 	type (

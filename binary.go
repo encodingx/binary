@@ -1,6 +1,7 @@
 package binary
 
 import (
+	"encoding/binary"
 	"fmt"
 	"reflect"
 
@@ -13,7 +14,9 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 	)
 
 	var (
-		reflection reflect.Type
+		format          *formatMetadata
+		typeReflection  reflect.Type
+		valueReflection reflect.Value
 	)
 
 	defer func() {
@@ -30,29 +33,29 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 		return
 	}()
 
-	reflection, e = structReflectionFromInterface(iface)
+	typeReflection, valueReflection, e = structReflectionFromInterface(iface)
 	if e != nil {
 		return
 	}
 
-	_, e = validateFormatReflection(reflection)
+	format, e = newFormatMetadataFromTypeReflection(typeReflection)
 	if e != nil {
 		return
 	}
+
+	bytes = format.marshal(valueReflection)
 
 	return
 }
 
 func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	const (
-		bitsPerByte  = 8
 		functionName = "Unmarshal"
 	)
 
 	var (
-		byteSliceLength uint
-		formatLength    uint
-		reflection      reflect.Type
+		format     *formatMetadata
+		reflection reflect.Type
 	)
 
 	defer func() {
@@ -69,29 +72,25 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		return
 	}()
 
-	reflection, e = structReflectionFromInterface(iface)
+	reflection, _, e = structReflectionFromInterface(iface)
 	if e != nil {
 		return
 	}
 
-	formatLength, e = validateFormatReflection(reflection)
+	format, e = newFormatMetadataFromTypeReflection(reflection)
 	if e != nil {
 		return
 	}
 
-	byteSliceLength = uint(
-		len(bytes) * bitsPerByte,
-	)
-
-	if byteSliceLength != formatLength {
+	if len(bytes) != format.lengthInBytes {
 		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
-			formatLength,
-			byteSliceLength,
+			uint(format.lengthInBytes),
+			uint(len(bytes)),
 		)
 
-        e.(validation.FormatError).SetFormatName(
-            reflection.String(),
-        )
+		e.(validation.FormatError).SetFormatName(
+			reflection.String(),
+		)
 
 		return
 	}
@@ -100,33 +99,39 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 }
 
 func structReflectionFromInterface(iface interface{}) (
-	reflection reflect.Type, e error,
+	typeReflection reflect.Type, valueReflection reflect.Value, e error,
 ) {
-	reflection = reflect.TypeOf(iface)
+	typeReflection = reflect.TypeOf(iface)
 
-	if reflection.Kind() != reflect.Ptr {
+	if typeReflection.Kind() != reflect.Ptr {
 		e = validation.NewNonPointerError()
 
 		return
 	}
 
-	reflection = reflection.Elem()
+	typeReflection = typeReflection.Elem()
 
-	if reflection.Kind() != reflect.Struct {
+	if typeReflection.Kind() != reflect.Struct {
 		e = validation.NewPointerToNonStructVariableError()
 
 		return
 	}
 
+	valueReflection = reflect.ValueOf(iface).Elem()
+
 	return
 }
 
-func validateFormatReflection(reflection reflect.Type) (
-	formatLength uint, e error,
+type formatMetadata struct {
+	words         []*wordMetadata
+	lengthInBytes int
+}
+
+func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
+	format *formatMetadata, e error,
 ) {
 	var (
-		i          int
-		wordLength uint
+		i int
 	)
 
 	defer func() {
@@ -143,22 +148,57 @@ func validateFormatReflection(reflection reflect.Type) (
 		return
 	}
 
+	format = &formatMetadata{
+		words: make([]*wordMetadata,
+			reflection.NumField(),
+		),
+	}
+
 	for i = 0; i < reflection.NumField(); i++ {
-		wordLength, e = validateWordReflection(
+		format.words[i], e = newWordMetadataFromStructFieldReflection(
 			reflection.Field(i),
 		)
 		if e != nil {
 			return
 		}
 
-		formatLength += wordLength
+		format.lengthInBytes += format.words[i].lengthInBytes
 	}
 
 	return
 }
 
-func validateWordReflection(reflection reflect.StructField) (
-	wordLength uint, e error,
+func (m *formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+	var (
+		copyIndex int
+		i         int
+		word      *wordMetadata
+		wordBytes []byte
+	)
+
+	bytes = make([]byte, m.lengthInBytes)
+
+	for i, word = range m.words {
+		wordBytes = word.marshal(
+			reflection.Field(i),
+		)
+
+		copy(bytes[copyIndex:], wordBytes)
+
+		copyIndex += word.lengthInBytes
+	}
+
+	return
+}
+
+type wordMetadata struct {
+	bitfields     []*bitFieldMetadata
+	lengthInBits  uint
+	lengthInBytes int
+}
+
+func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
+	word *wordMetadata, e error,
 ) {
 	const (
 		tagKey         = "word"
@@ -170,9 +210,9 @@ func validateWordReflection(reflection reflect.StructField) (
 	)
 
 	var (
-		bitFieldLength    uint
-		bitFieldLengthSum uint
-		wordLengthOK      bool
+		sumBitFieldLengths uint
+		wordLength         uint
+		wordLengthOK       bool
 
 		i int
 	)
@@ -222,21 +262,29 @@ func validateWordReflection(reflection reflect.StructField) (
 		return
 	}
 
+	word = &wordMetadata{
+		bitfields: make([]*bitFieldMetadata,
+			reflection.Type.NumField(),
+		),
+		lengthInBits:  wordLength,
+		lengthInBytes: int(wordLength / wordLengthFactor),
+	}
+
 	for i = 0; i < reflection.Type.NumField(); i++ {
-		bitFieldLength, e = validateBitFieldReflection(
+		word.bitfields[i], e = newBitFieldMetadataFromStructFieldReflection(
 			reflection.Type.Field(i),
 		)
 		if e != nil {
 			return
 		}
 
-		bitFieldLengthSum += bitFieldLength
+		sumBitFieldLengths += word.bitfields[i].length
 	}
 
-	if bitFieldLengthSum != wordLength {
+	if sumBitFieldLengths != wordLength {
 		e = validation.NewWordOfLengthNotEqualToSumOfLengthsOfBitFieldsError(
 			wordLength,
-			bitFieldLengthSum,
+			sumBitFieldLengths,
 		)
 
 		return
@@ -245,8 +293,50 @@ func validateWordReflection(reflection reflect.StructField) (
 	return
 }
 
-func validateBitFieldReflection(reflection reflect.StructField) (
-	bitFieldLength uint, e error,
+func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+	const (
+		wordLengthUpperLimitBytes = 8
+	)
+
+	var (
+		bitField       *bitFieldMetadata
+		bitFieldUint64 uint64
+		i              int
+		offset         uint
+		wordUint64     uint64
+	)
+
+	offset = m.lengthInBits
+
+	for i, bitField = range m.bitfields {
+		offset -= bitField.length
+
+		bitFieldUint64 = bitField.marshal(
+			reflection.Field(i),
+			uint64(offset),
+		)
+
+		wordUint64 = wordUint64 | bitFieldUint64
+	}
+
+	bytes = make([]byte, wordLengthUpperLimitBytes)
+
+	binary.BigEndian.PutUint64(bytes, wordUint64)
+
+	bytes = bytes[wordLengthUpperLimitBytes-m.lengthInBytes:]
+
+	return
+}
+
+type bitFieldMetadata struct {
+	length uint
+	kind   reflect.Kind
+}
+
+func newBitFieldMetadataFromStructFieldReflection(
+	reflection reflect.StructField,
+) (
+	bitField *bitFieldMetadata, e error,
 ) {
 	const (
 		tagKey         = "bitfield"
@@ -290,6 +380,10 @@ func validateBitFieldReflection(reflection reflect.StructField) (
 		return
 	}
 
+	bitField = &bitFieldMetadata{
+		kind: reflection.Type.Kind(),
+	}
+
 	if len(reflection.Tag) == 0 {
 		e = validation.NewBitFieldWithNoStructTagError()
 
@@ -299,7 +393,7 @@ func validateBitFieldReflection(reflection reflect.StructField) (
 	_, e = fmt.Sscanf(
 		reflection.Tag.Get(tagKey),
 		tagValueFormat,
-		&bitFieldLength,
+		&bitField.length,
 	)
 	if e != nil {
 		e = validation.NewBitFieldWithMalformedTagError()
@@ -307,12 +401,37 @@ func validateBitFieldReflection(reflection reflect.StructField) (
 		return
 	}
 
-	if bitFieldLength > bitFieldLengthCap {
+	if bitField.length > bitFieldLengthCap {
 		e = validation.NewBitFieldOfLengthOverflowingTypeError(
-			bitFieldLength,
+			bitField.length,
 			reflection.Type.String(),
 		)
 	}
+
+	return
+}
+
+func (m *bitFieldMetadata) marshal(
+	reflection reflect.Value, offset uint64,
+) (
+	value uint64,
+) {
+	switch m.kind {
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		fallthrough
+
+	case reflect.Uint:
+		value = reflection.Uint()
+
+	case reflect.Bool:
+		if reflection.Bool() {
+			value = 1
+		}
+	}
+
+	value = value & (1<<m.length - 1) // XXX: mask if overflowing
+
+	value = value << offset
 
 	return
 }

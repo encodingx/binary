@@ -35,16 +35,16 @@ func TestFormatWithNoWordsError(t *testing.T) {
 
 func TestLengthOfByteSliceNotEqualToFormatLengthError(t *testing.T) {
 	const (
-		byteSliceLength = 8
-		formatLength    = 32
+		byteSliceLength     = 1
+		formatLengthInBytes = 4
 
 		errorMessage = "" +
 			"A byte slice into which a format-struct would be unmarshalled " +
 			"should be of length equal to the sum of lengths of words " +
 			"in the format represented by the struct. " +
 			"Argument to Unmarshal points to a format-struct \"Format\" " +
-			"of length 32 bits " +
-			"not equal to the length of the byte slice, 8 bits."
+			"of length 4 byte(s) " +
+			"not equal to the length of the byte slice, 1 byte(s)."
 	)
 
 	var (
@@ -52,7 +52,7 @@ func TestLengthOfByteSliceNotEqualToFormatLengthError(t *testing.T) {
 	)
 
 	e = NewLengthOfByteSliceNotEqualToFormatLengthError(
-		formatLength,
+		formatLengthInBytes,
 		byteSliceLength,
 	)
 
