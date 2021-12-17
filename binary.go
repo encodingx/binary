@@ -7,7 +7,7 @@ import (
 	"github.com/encodingx/binary/internal/validation"
 )
 
-func Marshal(interf interface{}) (bytes []byte, e error) {
+func Marshal(iface interface{}) (bytes []byte, e error) {
 	const (
 		functionName = "Marshal"
 	)
@@ -28,7 +28,7 @@ func Marshal(interf interface{}) (bytes []byte, e error) {
 		return
 	}()
 
-	reflection, e = structVariableReflectionFromInterface(interf, functionName)
+	reflection, e = structVariableReflectionFromInterface(iface, functionName)
 	if e != nil {
 		return
 	}
@@ -41,7 +41,7 @@ func Marshal(interf interface{}) (bytes []byte, e error) {
 	return
 }
 
-func Unmarshal(bytes []byte, interf interface{}) (e error) {
+func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	const (
 		bitsPerByte  = 8
 		functionName = "Unmarshal"
@@ -65,7 +65,7 @@ func Unmarshal(bytes []byte, interf interface{}) (e error) {
 		return
 	}()
 
-	reflection, e = structVariableReflectionFromInterface(interf, functionName)
+	reflection, e = structVariableReflectionFromInterface(iface, functionName)
 	if e != nil {
 		return
 	}
@@ -93,11 +93,11 @@ func Unmarshal(bytes []byte, interf interface{}) (e error) {
 }
 
 func structVariableReflectionFromInterface(
-	interf interface{}, functionName string,
+	iface interface{}, functionName string,
 ) (
 	reflection reflect.Type, e error,
 ) {
-	reflection = reflect.TypeOf(interf)
+	reflection = reflect.TypeOf(iface)
 
 	if reflection.Kind() != reflect.Ptr {
 		e = validation.NewNonPointerError(functionName)
