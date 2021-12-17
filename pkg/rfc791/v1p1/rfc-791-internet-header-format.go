@@ -1,4 +1,4 @@
-package rfc791
+package v1p1
 
 type RFC791InternetHeaderFormatWithoutOptions struct {
 	// Reference: Section 3.1 "Internet Header Format" of
@@ -38,24 +38,24 @@ type RFC791InternetHeaderFormatWithoutOptions struct {
 }
 
 type RFC791InternetHeaderFormatWord0 struct {
-	Version uint8 `bitfield:"4"`
+	Version uint8 `bitfield:"4,28"`
 	// > Version:  4 bits
 	// >
 	// >   The Version field indicates the format of the internet header.  This
 	// >   document describes version 4.
 
-	IHL uint8 `bitfield:"4"`
+	IHL uint8 `bitfield:"4,24"`
 	// > IHL:  4 bits
 	// >
 	// >   Internet Header Length is the length of the internet header in 32
 	// >   bit words, and thus points to the beginning of the data.  Note that
 	// >   the minimum value for a correct header is 5.
 
-	Precedence  uint8 `bitfield:"3"`
-	Delay       bool  `bitfield:"1"`
-	Throughput  bool  `bitfield:"1"`
-	Reliability bool  `bitfield:"1"`
-	Reserved    uint8 `bitfield:"2"`
+	Precedence  uint8 `bitfield:"3,21"`
+	Delay       bool  `bitfield:"1,20"`
+	Throughput  bool  `bitfield:"1,19"`
+	Reliability bool  `bitfield:"1,18"`
+	Reserved    uint8 `bitfield:"2,16"`
 	// > Type of Service:  8 bits
 	// >
 	// >   The Type of Service provides an indication of the abstract
@@ -94,7 +94,7 @@ type RFC791InternetHeaderFormatWord0 struct {
 	// >
 	// >   ...
 
-	TotalLength uint16 `bitfield:"16"`
+	TotalLength uint16 `bitfield:"16,0"`
 	// > Total Length:  16 bits
 	// >
 	// >   Total Length is the length of the datagram, measured in octets,
@@ -137,15 +137,15 @@ const (
 )
 
 type RFC791InternetHeaderFormatWord1 struct {
-	Identification uint16 `bitfield:"16"`
+	Identification uint16 `bitfield:"16,16"`
 	// > Identification:  16 bits
 	// >
 	// >   An identifying value assigned by the sender to aid in assembling the
 	// >   fragments of a datagram.
 
-	FlagsBit0Reserved bool `bitfield:"1"`
-	FlagsBit1         bool `bitfield:"1"`
-	FlagsBit2         bool `bitfield:"1"`
+	FlagsBit0Reserved bool `bitfield:"1,15"`
+	FlagsBit1         bool `bitfield:"1,14"`
+	FlagsBit2         bool `bitfield:"1,13"`
 	// > Flags:  3 bits
 	// >
 	// >   Various Control Flags.
@@ -160,7 +160,7 @@ type RFC791InternetHeaderFormatWord1 struct {
 	// >       | 0 | F | F |
 	// >       +---+---+---+
 
-	FragmentOffset uint16 `bitfield:"13"`
+	FragmentOffset uint16 `bitfield:"13,0"`
 	// > Fragment Offset:  13 bits
 	// >
 	// >   This field indicates where in the datagram this fragment belongs.
@@ -179,7 +179,7 @@ const (
 )
 
 type RFC791InternetHeaderFormatWord2 struct {
-	TimeToLive uint8 `bitfield:"8"`
+	TimeToLive uint8 `bitfield:"8,24"`
 	// > Time to Live:  8 bits
 	// >
 	// >   This field indicates the maximum time the datagram is allowed to
@@ -193,7 +193,7 @@ type RFC791InternetHeaderFormatWord2 struct {
 	// >   undeliverable datagrams to be discarded, and to bound the maximum
 	// >   datagram lifetime.
 
-	Protocol uint8 `bitfield:"8"`
+	Protocol uint8 `bitfield:"8,16"`
 	// > Protocol:  8 bits
 	// >
 	// >   This field indicates the next level protocol used in the data
@@ -246,7 +246,7 @@ type RFC791InternetHeaderFormatWord2 struct {
 	// >    80-254 120-376         Unassigned                            [JBP]
 	// >       255     377         Reserved                              [JBP]
 
-	HeaderChecksum uint16 `bitfield:"16"`
+	HeaderChecksum uint16 `bitfield:"16,0"`
 	// > Header Checksum:  16 bits
 	// >
 	// >   A checksum on the header only.  Since some header fields change
@@ -289,17 +289,17 @@ const (
 )
 
 type RFC791InternetHeaderFormatWord3 struct {
-	SourceAddressOctet0 uint8 `bitfield:"8"`
-	SourceAddressOctet1 uint8 `bitfield:"8"`
-	SourceAddressOctet2 uint8 `bitfield:"8"`
-	SourceAddressOctet3 uint8 `bitfield:"8"`
+	SourceAddressOctet0 uint8 `bitfield:"8,24"`
+	SourceAddressOctet1 uint8 `bitfield:"8,16"`
+	SourceAddressOctet2 uint8 `bitfield:"8,8"`
+	SourceAddressOctet3 uint8 `bitfield:"8,0"`
 	// > Source Address:  32 bits
 }
 
 type RFC791InternetHeaderFormatWord4 struct {
-	DestinationAddressOctet0 uint8 `bitfield:"8"`
-	DestinationAddressOctet1 uint8 `bitfield:"8"`
-	DestinationAddressOctet2 uint8 `bitfield:"8"`
-	DestinationAddressOctet3 uint8 `bitfield:"8"`
+	DestinationAddressOctet0 uint8 `bitfield:"8,24"`
+	DestinationAddressOctet1 uint8 `bitfield:"8,16"`
+	DestinationAddressOctet2 uint8 `bitfield:"8,8"`
+	DestinationAddressOctet3 uint8 `bitfield:"8,0"`
 	// > Destination Address:  32 bits
 }
