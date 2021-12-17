@@ -210,9 +210,9 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 	)
 
 	var (
-		sumBitFieldLengths uint
-		wordLength         uint
-		wordLengthOK       bool
+		offset       uint
+		wordLength   uint
+		wordLengthOK bool
 
 		i int
 	)
@@ -270,6 +270,8 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 		lengthInBytes: int(wordLength / wordLengthFactor),
 	}
 
+	offset = wordLength
+
 	for i = 0; i < reflection.Type.NumField(); i++ {
 		word.bitfields[i], e = newBitFieldMetadataFromStructFieldReflection(
 			reflection.Type.Field(i),
@@ -278,13 +280,15 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 			return
 		}
 
-		sumBitFieldLengths += word.bitfields[i].length
+		offset -= word.bitfields[i].length
+
+		word.bitfields[i].offset = uint64(offset)
 	}
 
-	if sumBitFieldLengths != wordLength {
+	if offset != 0 {
 		e = validation.NewWordOfLengthNotEqualToSumOfLengthsOfBitFieldsError(
 			wordLength,
-			sumBitFieldLengths,
+			wordLength-offset,
 		)
 
 		return
@@ -302,18 +306,12 @@ func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 		bitField       *bitFieldMetadata
 		bitFieldUint64 uint64
 		i              int
-		offset         uint
 		wordUint64     uint64
 	)
 
-	offset = m.lengthInBits
-
 	for i, bitField = range m.bitfields {
-		offset -= bitField.length
-
 		bitFieldUint64 = bitField.marshal(
 			reflection.Field(i),
-			uint64(offset),
 		)
 
 		wordUint64 = wordUint64 | bitFieldUint64
@@ -330,6 +328,7 @@ func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 
 type bitFieldMetadata struct {
 	length uint
+	offset uint64
 	kind   reflect.Kind
 }
 
@@ -411,9 +410,7 @@ func newBitFieldMetadataFromStructFieldReflection(
 	return
 }
 
-func (m *bitFieldMetadata) marshal(
-	reflection reflect.Value, offset uint64,
-) (
+func (m *bitFieldMetadata) marshal(reflection reflect.Value) (
 	value uint64,
 ) {
 	switch m.kind {
@@ -431,7 +428,7 @@ func (m *bitFieldMetadata) marshal(
 
 	value = value & (1<<m.length - 1) // XXX: mask if overflowing
 
-	value = value << offset
+	value = value << m.offset
 
 	return
 }
