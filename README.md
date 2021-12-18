@@ -26,7 +26,7 @@ are
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc791#section-3.1)
 of RFC 791 Internet Protocol, and
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
-of RFC 793 Transmission Control Protocol
+of RFC 793 Transmission Control Protocol.
 
 ### File Format Examples
 Binary file formats are not significantly different from message formats
