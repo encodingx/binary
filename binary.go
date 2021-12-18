@@ -153,8 +153,6 @@ func (c *codec) newOperation(iface interface{}) (
 		return
 	}
 
-	operation.formatName = reflection.String()
-
 	operation.valueReflection = reflect.ValueOf(iface).Elem()
 
 	return
@@ -162,7 +160,6 @@ func (c *codec) newOperation(iface interface{}) (
 
 type codecOperation struct {
 	format          *formatMetadata
-	formatName      string
 	valueReflection reflect.Value
 }
 
@@ -179,7 +176,9 @@ func (c *codecOperation) unmarshal(bytes []byte) (e error) {
 			uint(len(bytes)),
 		)
 
-		e.(validation.FormatError).SetFormatName(c.formatName)
+		e.(validation.FormatError).SetFormatName(
+			c.valueReflection.Type().String(),
+		)
 
 		return
 	}
