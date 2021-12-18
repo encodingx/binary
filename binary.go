@@ -8,6 +8,10 @@ import (
 	"github.com/encodingx/binary/internal/validation"
 )
 
+const (
+	wordLengthUpperLimitBytes = 8
+)
+
 func Marshal(iface interface{}) (bytes []byte, e error) {
 	const (
 		functionName = "Marshal"
@@ -54,8 +58,9 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	)
 
 	var (
-		format     *formatMetadata
-		reflection reflect.Type
+		format          *formatMetadata
+		typeReflection  reflect.Type
+		valueReflection reflect.Value
 	)
 
 	defer func() {
@@ -72,12 +77,12 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		return
 	}()
 
-	reflection, _, e = structReflectionFromInterface(iface)
+	typeReflection, valueReflection, e = structReflectionFromInterface(iface)
 	if e != nil {
 		return
 	}
 
-	format, e = newFormatMetadataFromTypeReflection(reflection)
+	format, e = newFormatMetadataFromTypeReflection(typeReflection)
 	if e != nil {
 		return
 	}
@@ -89,11 +94,13 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		)
 
 		e.(validation.FormatError).SetFormatName(
-			reflection.String(),
+			typeReflection.String(),
 		)
 
 		return
 	}
+
+	format.unmarshal(bytes, valueReflection)
 
 	return
 }
@@ -191,8 +198,36 @@ func (m *formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	return
 }
 
+func (m *formatMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+	var (
+		i    int
+		j    int
+		k    int
+		word *wordMetadata
+	)
+
+	for i, word = range m.words {
+		k = j + word.lengthInBytes
+
+		if k < wordLengthUpperLimitBytes {
+			j = 0
+
+		} else {
+			j = k - wordLengthUpperLimitBytes
+		}
+
+		word.unmarshal(bytes[j:k],
+			reflection.Field(i),
+		)
+
+		j = k
+	}
+
+	return
+}
+
 type wordMetadata struct {
-	bitfields     []*bitFieldMetadata
+	bitFields     []*bitFieldMetadata
 	lengthInBits  uint
 	lengthInBytes int
 }
@@ -263,7 +298,7 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 	}
 
 	word = &wordMetadata{
-		bitfields: make([]*bitFieldMetadata,
+		bitFields: make([]*bitFieldMetadata,
 			reflection.Type.NumField(),
 		),
 		lengthInBits:  wordLength,
@@ -273,16 +308,16 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 	offset = wordLength
 
 	for i = 0; i < reflection.Type.NumField(); i++ {
-		word.bitfields[i], e = newBitFieldMetadataFromStructFieldReflection(
+		word.bitFields[i], e = newBitFieldMetadataFromStructFieldReflection(
 			reflection.Type.Field(i),
 		)
 		if e != nil {
 			return
 		}
 
-		offset -= word.bitfields[i].length
+		offset -= word.bitFields[i].length
 
-		word.bitfields[i].offset = uint64(offset)
+		word.bitFields[i].offset = uint64(offset)
 	}
 
 	if offset != 0 {
@@ -298,10 +333,6 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 }
 
 func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
-	const (
-		wordLengthUpperLimitBytes = 8
-	)
-
 	var (
 		bitField       *bitFieldMetadata
 		bitFieldUint64 uint64
@@ -309,7 +340,7 @@ func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 		wordUint64     uint64
 	)
 
-	for i, bitField = range m.bitfields {
+	for i, bitField = range m.bitFields {
 		bitFieldUint64 = bitField.marshal(
 			reflection.Field(i),
 		)
@@ -322,6 +353,32 @@ func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	binary.BigEndian.PutUint64(bytes, wordUint64)
 
 	bytes = bytes[wordLengthUpperLimitBytes-m.lengthInBytes:]
+
+	return
+}
+
+func (m *wordMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+	var (
+		bitFieldBytes []byte
+		i             int
+	)
+
+	for i = 0; i < len(m.bitFields); i++ {
+		if len(bytes) < wordLengthUpperLimitBytes {
+			bitFieldBytes = make([]byte, wordLengthUpperLimitBytes)
+
+			copy(bitFieldBytes[wordLengthUpperLimitBytes-len(bytes):],
+				bytes,
+			)
+
+		} else {
+			bitFieldBytes = bytes
+		}
+
+		m.bitFields[i].unmarshal(bitFieldBytes,
+			reflection.Field(i),
+		)
+	}
 
 	return
 }
@@ -410,9 +467,7 @@ func newBitFieldMetadataFromStructFieldReflection(
 	return
 }
 
-func (m *bitFieldMetadata) marshal(reflection reflect.Value) (
-	value uint64,
-) {
+func (m *bitFieldMetadata) marshal(reflection reflect.Value) (value uint64) {
 	switch m.kind {
 	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		fallthrough
@@ -426,9 +481,33 @@ func (m *bitFieldMetadata) marshal(reflection reflect.Value) (
 		}
 	}
 
-	value = value & (1<<m.length - 1) // XXX: mask if overflowing
+	value = value & (1<<m.length - 1) << m.offset // XXX: mask if overflowing
 
-	value = value << m.offset
+	return
+}
+
+func (m *bitFieldMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+	var (
+		value uint64
+	)
+
+	value = binary.BigEndian.Uint64(bytes) >> m.offset & (1<<m.length - 1)
+
+	switch m.kind {
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		fallthrough
+
+	case reflect.Uint:
+		reflection.SetUint(value)
+
+	case reflect.Bool:
+		switch value {
+		case 1:
+			reflection.SetBool(true)
+		default:
+			reflection.SetBool(false)
+		}
+	}
 
 	return
 }
