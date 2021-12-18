@@ -9,9 +9,10 @@ These functions are however missing from
 leaving developers without an accessible and intuitive way
 to work with binary formats.
 
-This module supplies the missing functions
+This module supplies the ubiquitous `Marshal()` and `Unmarshal()`
+function signatures
 so that developers can define custom binary formats using only struct tags and
-work with the familiar `Marshal()` and `Unmarshal()` function signatures.
+avoid custom bit manipulation.
 
 ### User Story
 ```
