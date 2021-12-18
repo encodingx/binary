@@ -19,7 +19,7 @@ Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
 to put together and take apart these binary structures.
 
-### Message Formats
+### Message Format Examples
 Describing the anatomy of TCP/IP headers
 at the beginning of every internet datagram ("packet")
 are
@@ -28,7 +28,7 @@ of RFC 791 Internet Protocol, and
 * [Section 3.1](https://datatracker.ietf.org/doc/html/rfc793#section-3.1)
 of RFC 793 Transmission Control Protocol
 
-### File Formats
+### File Format Examples
 Binary file formats are not significantly different from message formats
 from an application developer's perspective.
 [RFC 1952](https://datatracker.ietf.org/doc/html/rfc1952#section-2)
