@@ -1,6 +1,6 @@
 # Marshal and Unmarshal Binary Formats in Go
 The Go standard library features packages for marshalling structs
-into text-based message and file formats, and vice versa.
+into various message and file formats, and vice versa.
 Packages `encoding/json` and `encoding/xml` are well known
 for providing convenient functions `Marshal()` and `Unmarshal()`
 that leverage the declarative nature of struct tags.
