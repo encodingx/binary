@@ -53,6 +53,9 @@ func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
 }
 
 func (m formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+	// Merge byte slices marshalled from words,
+	// in the order they appear in the format.
+
 	var (
 		copyIndex int
 		i         int
