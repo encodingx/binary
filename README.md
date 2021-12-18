@@ -14,6 +14,17 @@ so that developers can define custom binary formats using only struct tags and
 convert between structs and byte slices
 using `Marshal()` and `Unmarshal()` with their familiar signatures.
 
+### User Story
+```
+As a Go developer implementing a binary message or file format,
+I want a pair of functions "Marshal/Unmarshal" like those in "encoding/json"
+that convert a struct into a series of bits in a byte slice and vice versa,
+so that I can avoid the complexities of custom bit manipulation.
+```
+
+See the rest of the behaviour-driven specifications of this module
+[below](#behaviour-driven-specifications).
+
 ## Binary Formats
 Message and file formats specify how bits are arranged to encode information.
 Control over individual bits or groups smaller than a byte is often required
