@@ -12,15 +12,17 @@ const (
 	wordLengthUpperLimitBytes = 8
 )
 
+var (
+	defaultCodec = newCodec()
+)
+
 func Marshal(iface interface{}) (bytes []byte, e error) {
 	const (
 		functionName = "Marshal"
 	)
 
 	var (
-		format          *formatMetadata
-		typeReflection  reflect.Type
-		valueReflection reflect.Value
+		operation *codecOperation
 	)
 
 	defer func() {
@@ -37,17 +39,15 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 		return
 	}()
 
-	typeReflection, valueReflection, e = structReflectionFromInterface(iface)
+	operation, e = defaultCodec.newOperation(iface)
 	if e != nil {
 		return
 	}
 
-	format, e = newFormatMetadataFromTypeReflection(typeReflection)
+	bytes, e = operation.marshal()
 	if e != nil {
 		return
 	}
-
-	bytes = format.marshal(valueReflection)
 
 	return
 }
@@ -58,9 +58,7 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	)
 
 	var (
-		format          *formatMetadata
-		typeReflection  reflect.Type
-		valueReflection reflect.Value
+		operation *codecOperation
 	)
 
 	defer func() {
@@ -77,54 +75,116 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		return
 	}()
 
-	typeReflection, valueReflection, e = structReflectionFromInterface(iface)
+	operation, e = defaultCodec.newOperation(iface)
 	if e != nil {
 		return
 	}
 
-	format, e = newFormatMetadataFromTypeReflection(typeReflection)
+	e = operation.unmarshal(bytes)
 	if e != nil {
 		return
 	}
-
-	if len(bytes) != format.lengthInBytes {
-		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
-			uint(format.lengthInBytes),
-			uint(len(bytes)),
-		)
-
-		e.(validation.FormatError).SetFormatName(
-			typeReflection.String(),
-		)
-
-		return
-	}
-
-	format.unmarshal(bytes, valueReflection)
 
 	return
 }
 
-func structReflectionFromInterface(iface interface{}) (
-	typeReflection reflect.Type, valueReflection reflect.Value, e error,
-) {
-	typeReflection = reflect.TypeOf(iface)
+type codec struct {
+	formatMetadataCache map[reflect.Type]*formatMetadata
+}
 
-	if typeReflection.Kind() != reflect.Ptr {
+func newCodec() (c *codec) {
+	c = &codec{
+		formatMetadataCache: make(map[reflect.Type]*formatMetadata),
+	}
+
+	return
+}
+
+func (c *codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
+	format *formatMetadata, e error,
+) {
+	var (
+		inCache bool
+	)
+
+	format, inCache = c.formatMetadataCache[reflection]
+
+	if inCache {
+		return
+	}
+
+	format, e = newFormatMetadataFromTypeReflection(reflection)
+	if e != nil {
+		return
+	}
+
+	c.formatMetadataCache[reflection] = format
+
+	return
+}
+
+func (c *codec) newOperation(iface interface{}) (
+	operation *codecOperation, e error,
+) {
+	var (
+		reflection reflect.Type
+	)
+
+	reflection = reflect.TypeOf(iface)
+
+	if reflection.Kind() != reflect.Ptr {
 		e = validation.NewNonPointerError()
 
 		return
 	}
 
-	typeReflection = typeReflection.Elem()
+	reflection = reflection.Elem()
 
-	if typeReflection.Kind() != reflect.Struct {
+	if reflection.Kind() != reflect.Struct {
 		e = validation.NewPointerToNonStructVariableError()
 
 		return
 	}
 
-	valueReflection = reflect.ValueOf(iface).Elem()
+	operation = new(codecOperation)
+
+	operation.format, e = c.formatMetadataFromTypeReflection(reflection)
+	if e != nil {
+		return
+	}
+
+	operation.formatName = reflection.String()
+
+	operation.valueReflection = reflect.ValueOf(iface).Elem()
+
+	return
+}
+
+type codecOperation struct {
+	format          *formatMetadata
+	formatName      string
+	valueReflection reflect.Value
+}
+
+func (c *codecOperation) marshal() (bytes []byte, e error) {
+	bytes = c.format.marshal(c.valueReflection)
+
+	return
+}
+
+func (c *codecOperation) unmarshal(bytes []byte) (e error) {
+	if len(bytes) != c.format.lengthInBytes {
+		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
+			uint(c.format.lengthInBytes),
+			uint(len(bytes)),
+		)
+
+		e.(validation.FormatError).SetFormatName(c.formatName)
+
+		return
+	}
+
+	c.format.unmarshal(bytes, c.valueReflection)
 
 	return
 }
