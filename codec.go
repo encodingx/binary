@@ -7,19 +7,19 @@ import (
 )
 
 type codec struct {
-	formatMetadataCache map[reflect.Type]*formatMetadata
+	formatMetadataCache map[reflect.Type]formatMetadata
 }
 
-func newCodec() (c *codec) {
-	c = &codec{
-		formatMetadataCache: make(map[reflect.Type]*formatMetadata),
+func newCodec() (c codec) {
+	c = codec{
+		formatMetadataCache: make(map[reflect.Type]formatMetadata),
 	}
 
 	return
 }
 
-func (c *codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
-	format *formatMetadata, e error,
+func (c codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
+	format formatMetadata, e error,
 ) {
 	var (
 		inCache bool
@@ -55,7 +55,7 @@ func (c *codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
 	return
 }
 
-func (c *codec) newOperation(iface interface{}) (
+func (c codec) newOperation(iface interface{}) (
 	operation codecOperation, e error,
 ) {
 	operation.format, e = c.formatMetadataFromTypeReflection(
@@ -71,7 +71,7 @@ func (c *codec) newOperation(iface interface{}) (
 }
 
 type codecOperation struct {
-	format          *formatMetadata
+	format          formatMetadata
 	valueReflection reflect.Value
 }
 

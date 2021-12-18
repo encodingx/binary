@@ -9,13 +9,13 @@ import (
 )
 
 type wordMetadata struct {
-	bitFields     []*bitFieldMetadata
+	bitFields     []bitFieldMetadata
 	lengthInBits  uint
 	lengthInBytes int
 }
 
 func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
-	word *wordMetadata, e error,
+	word wordMetadata, e error,
 ) {
 	const (
 		tagKey         = "word"
@@ -79,8 +79,8 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 		return
 	}
 
-	word = &wordMetadata{
-		bitFields: make([]*bitFieldMetadata,
+	word = wordMetadata{
+		bitFields: make([]bitFieldMetadata,
 			reflection.Type.NumField(),
 		),
 		lengthInBits:  wordLength,
@@ -114,9 +114,9 @@ func newWordMetadataFromStructFieldReflection(reflection reflect.StructField) (
 	return
 }
 
-func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+func (m wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	var (
-		bitField       *bitFieldMetadata
+		bitField       bitFieldMetadata
 		bitFieldUint64 uint64
 		i              int
 		wordUint64     uint64
@@ -139,7 +139,7 @@ func (m *wordMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	return
 }
 
-func (m *wordMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+func (m wordMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
 	var (
 		bitFieldBytes []byte
 		i             int

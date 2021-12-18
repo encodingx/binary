@@ -17,7 +17,7 @@ type bitFieldMetadata struct {
 func newBitFieldMetadataFromStructFieldReflection(
 	reflection reflect.StructField,
 ) (
-	bitField *bitFieldMetadata, e error,
+	bitField bitFieldMetadata, e error,
 ) {
 	const (
 		tagKey         = "bitfield"
@@ -61,7 +61,7 @@ func newBitFieldMetadataFromStructFieldReflection(
 		return
 	}
 
-	bitField = &bitFieldMetadata{
+	bitField = bitFieldMetadata{
 		kind: reflection.Type.Kind(),
 	}
 
@@ -92,7 +92,7 @@ func newBitFieldMetadataFromStructFieldReflection(
 	return
 }
 
-func (m *bitFieldMetadata) marshal(reflection reflect.Value) (value uint64) {
+func (m bitFieldMetadata) marshal(reflection reflect.Value) (value uint64) {
 	switch m.kind {
 	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		fallthrough
@@ -111,7 +111,7 @@ func (m *bitFieldMetadata) marshal(reflection reflect.Value) (value uint64) {
 	return
 }
 
-func (m *bitFieldMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+func (m bitFieldMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
 	var (
 		value uint64
 	)

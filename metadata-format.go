@@ -7,12 +7,12 @@ import (
 )
 
 type formatMetadata struct {
-	words         []*wordMetadata
+	words         []wordMetadata
 	lengthInBytes int
 }
 
 func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
-	format *formatMetadata, e error,
+	format formatMetadata, e error,
 ) {
 	var (
 		i int
@@ -32,8 +32,8 @@ func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
 		return
 	}
 
-	format = &formatMetadata{
-		words: make([]*wordMetadata,
+	format = formatMetadata{
+		words: make([]wordMetadata,
 			reflection.NumField(),
 		),
 	}
@@ -52,11 +52,11 @@ func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
 	return
 }
 
-func (m *formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+func (m formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	var (
 		copyIndex int
 		i         int
-		word      *wordMetadata
+		word      wordMetadata
 		wordBytes []byte
 	)
 
@@ -75,12 +75,12 @@ func (m *formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	return
 }
 
-func (m *formatMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+func (m formatMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
 	var (
 		i    int
 		j    int
 		k    int
-		word *wordMetadata
+		word wordMetadata
 	)
 
 	for i, word = range m.words {
