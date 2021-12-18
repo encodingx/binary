@@ -2,7 +2,7 @@
 The Go standard library features packages for marshalling structs
 into text-based message and file formats, and vice versa.
 Packages `encoding/json` and `encoding/xml` are well known
-for the convenient functions `Marshal()` and `Unmarshal()` they provide
+for providing convenient functions `Marshal()` and `Unmarshal()`
 that leverage the declarative nature of struct tags.
 These functions are however missing from
 [`encoding/binary`](https://pkg.go.dev/encoding/binary),
