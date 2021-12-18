@@ -492,13 +492,19 @@ func TestShouldReturnErrorGivenLengthOfByteSliceNotEqualToFormatLength(
 }
 
 const (
-	destinationAddressOctet = 8
-	fragmentOffset          = 8191
-	headerChecksum          = 0
-	identification          = 0
-	sourceAddressOctet      = 1
-	timeToLive              = 1
-	totalLength             = 65535
+	destinationAddressOctet0 = 85
+	destinationAddressOctet1 = 51
+	destinationAddressOctet2 = 15
+	destinationAddressOctet3 = 0
+	fragmentOffset           = 8191
+	headerChecksum           = 0
+	identification           = 0
+	sourceAddressOctet0      = 170
+	sourceAddressOctet1      = 204
+	sourceAddressOctet2      = 240
+	sourceAddressOctet3      = 255
+	timeToLive               = 1
+	totalLength              = 65535
 )
 
 var (
@@ -524,16 +530,16 @@ var (
 			HeaderChecksum: headerChecksum,
 		},
 		rfc791.RFC791InternetHeaderFormatWord3{
-			SourceAddressOctet0: sourceAddressOctet,
-			SourceAddressOctet1: sourceAddressOctet,
-			SourceAddressOctet2: sourceAddressOctet,
-			SourceAddressOctet3: sourceAddressOctet,
+			SourceAddressOctet0: sourceAddressOctet0,
+			SourceAddressOctet1: sourceAddressOctet1,
+			SourceAddressOctet2: sourceAddressOctet2,
+			SourceAddressOctet3: sourceAddressOctet3,
 		},
 		rfc791.RFC791InternetHeaderFormatWord4{
-			DestinationAddressOctet0: destinationAddressOctet,
-			DestinationAddressOctet1: destinationAddressOctet,
-			DestinationAddressOctet2: destinationAddressOctet,
-			DestinationAddressOctet3: destinationAddressOctet,
+			DestinationAddressOctet0: destinationAddressOctet0,
+			DestinationAddressOctet1: destinationAddressOctet1,
+			DestinationAddressOctet2: destinationAddressOctet2,
+			DestinationAddressOctet3: destinationAddressOctet3,
 		},
 	}
 
@@ -561,16 +567,16 @@ var (
 			HeaderChecksum: headerChecksum,
 		},
 		v1p1.RFC791InternetHeaderFormatWord3{
-			SourceAddressOctet0: sourceAddressOctet,
-			SourceAddressOctet1: sourceAddressOctet,
-			SourceAddressOctet2: sourceAddressOctet,
-			SourceAddressOctet3: sourceAddressOctet,
+			SourceAddressOctet0: sourceAddressOctet0,
+			SourceAddressOctet1: sourceAddressOctet1,
+			SourceAddressOctet2: sourceAddressOctet2,
+			SourceAddressOctet3: sourceAddressOctet3,
 		},
 		v1p1.RFC791InternetHeaderFormatWord4{
-			DestinationAddressOctet0: destinationAddressOctet,
-			DestinationAddressOctet1: destinationAddressOctet,
-			DestinationAddressOctet2: destinationAddressOctet,
-			DestinationAddressOctet3: destinationAddressOctet,
+			DestinationAddressOctet0: destinationAddressOctet0,
+			DestinationAddressOctet1: destinationAddressOctet1,
+			DestinationAddressOctet2: destinationAddressOctet2,
+			DestinationAddressOctet3: destinationAddressOctet3,
 		},
 	}
 
@@ -580,7 +586,7 @@ var (
 		0b01000101, 0b11101000, 0b11111111, 0b11111111,
 		0b00000000, 0b00000000, 0b01011111, 0b11111111,
 		0b00000001, 0b00000110, 0b00000000, 0b00000000,
-		0b00000001, 0b00000001, 0b00000001, 0b00000001,
-		0b00001000, 0b00001000, 0b00001000, 0b00001000,
+		0b10101010, 0b11001100, 0b11110000, 0b11111111,
+		0b01010101, 0b00110011, 0b00001111, 0b00000000,
 	}
 )
