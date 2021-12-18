@@ -11,8 +11,7 @@ to work with binary formats.
 
 This module supplies the missing functions
 so that developers can define custom binary formats using only struct tags and
-convert between structs and byte slices
-using `Marshal()` and `Unmarshal()` with their familiar signatures.
+work with the familiar `Marshal()` and `Unmarshal()` function signatures.
 
 ### User Story
 ```
