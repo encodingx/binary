@@ -56,10 +56,8 @@ func (c *codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
 }
 
 func (c *codec) newOperation(iface interface{}) (
-	operation *codecOperation, e error,
+	operation codecOperation, e error,
 ) {
-	operation = new(codecOperation)
-
 	operation.format, e = c.formatMetadataFromTypeReflection(
 		reflect.TypeOf(iface),
 	)
@@ -77,13 +75,13 @@ type codecOperation struct {
 	valueReflection reflect.Value
 }
 
-func (c *codecOperation) marshal() (bytes []byte, e error) {
+func (c codecOperation) marshal() (bytes []byte, e error) {
 	bytes = c.format.marshal(c.valueReflection)
 
 	return
 }
 
-func (c *codecOperation) unmarshal(bytes []byte) (e error) {
+func (c codecOperation) unmarshal(bytes []byte) (e error) {
 	if len(bytes) != c.format.lengthInBytes {
 		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
 			uint(c.format.lengthInBytes),

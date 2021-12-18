@@ -20,7 +20,7 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 	)
 
 	var (
-		operation *codecOperation
+		operation codecOperation
 	)
 
 	defer func() {
@@ -56,7 +56,7 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	)
 
 	var (
-		operation *codecOperation
+		operation codecOperation
 	)
 
 	defer func() {
