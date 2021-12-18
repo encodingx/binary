@@ -227,8 +227,7 @@ Feature: Marshal and Unmarshal
 ```
 
 ## Performance and Optimisation
-This module has been optimised for performance.
-Suggestions to improve are welcome.
+This module is optimised for performance.
 
 ```bash
 $ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
@@ -238,8 +237,8 @@ goos: linux
 goarch: amd64
 pkg: github.com/encodingx/binary
 cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
-BenchmarkMarshal   	 1206807	       851.9 ns/op	      64 B/op	       6 allocs/op
-BenchmarkUnmarshal 	 1376592	       876.0 ns/op	      64 B/op	       8 allocs/op
+BenchmarkMarshal   	 2145660	       552.5 ns/op	      64 B/op	       6 allocs/op
+BenchmarkUnmarshal 	 1878840	       655.3 ns/op	      64 B/op	       8 allocs/op
 PASS
-ok  	github.com/encodingx/binary	4.015s
+ok  	github.com/encodingx/binary	3.873s
 ```
