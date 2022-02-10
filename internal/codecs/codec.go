@@ -1,25 +1,26 @@
-package binary
+package codecs
 
 import (
 	"reflect"
 
+	"github.com/encodingx/binary/internal/codecs/metadata"
 	"github.com/encodingx/binary/internal/validation"
 )
 
-type codec struct {
-	formatMetadataCache map[reflect.Type]formatMetadata
+type Codec struct {
+	formatMetadataCache map[reflect.Type]metadata.FormatMetadata
 }
 
-func newCodec() (c codec) {
-	c = codec{
-		formatMetadataCache: make(map[reflect.Type]formatMetadata),
+func NewCodec() (c Codec) {
+	c = Codec{
+		formatMetadataCache: make(map[reflect.Type]metadata.FormatMetadata),
 	}
 
 	return
 }
 
-func (c codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
-	format formatMetadata, e error,
+func (c Codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
+	format metadata.FormatMetadata, e error,
 ) {
 	var (
 		inCache bool
@@ -43,7 +44,7 @@ func (c codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
 		return
 	}
 
-	format, e = newFormatMetadataFromTypeReflection(
+	format, e = metadata.NewFormatMetadataFromTypeReflection(
 		reflection.Elem(),
 	)
 	if e != nil {
@@ -55,8 +56,8 @@ func (c codec) formatMetadataFromTypeReflection(reflection reflect.Type) (
 	return
 }
 
-func (c codec) newOperation(iface interface{}) (
-	operation codecOperation, e error,
+func (c Codec) NewOperation(iface interface{}) (
+	operation CodecOperation, e error,
 ) {
 	operation.format, e = c.formatMetadataFromTypeReflection(
 		reflect.TypeOf(iface),
@@ -70,21 +71,21 @@ func (c codec) newOperation(iface interface{}) (
 	return
 }
 
-type codecOperation struct {
-	format          formatMetadata
+type CodecOperation struct {
+	format          metadata.FormatMetadata
 	valueReflection reflect.Value
 }
 
-func (c codecOperation) marshal() (bytes []byte, e error) {
-	bytes = c.format.marshal(c.valueReflection)
+func (c CodecOperation) Marshal() (bytes []byte, e error) {
+	bytes = c.format.Marshal(c.valueReflection)
 
 	return
 }
 
-func (c codecOperation) unmarshal(bytes []byte) (e error) {
-	if len(bytes) != c.format.lengthInBytes {
+func (c CodecOperation) Unmarshal(bytes []byte) (e error) {
+	if len(bytes) != c.format.LengthInBytes() {
 		e = validation.NewLengthOfByteSliceNotEqualToFormatLengthError(
-			uint(c.format.lengthInBytes),
+			uint(c.format.LengthInBytes()),
 			uint(len(bytes)),
 		)
 
@@ -95,7 +96,7 @@ func (c codecOperation) unmarshal(bytes []byte) (e error) {
 		return
 	}
 
-	c.format.unmarshal(bytes, c.valueReflection)
+	c.format.Unmarshal(bytes, c.valueReflection)
 
 	return
 }

@@ -234,11 +234,10 @@ $ go test -cpuprofile cpu.prof -memprofile mem.prof -bench . -benchmem
 ```
 ```
 goos: linux
-goarch: amd64
+goarch: arm64
 pkg: github.com/encodingx/binary
-cpu: Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
-BenchmarkMarshal   	 2145660	       552.5 ns/op	      64 B/op	       6 allocs/op
-BenchmarkUnmarshal 	 1878840	       655.3 ns/op	      64 B/op	       8 allocs/op
+BenchmarkMarshal-2     	 3435181	       349.9 ns/op	      64 B/op	       6 allocs/op
+BenchmarkUnmarshal-2   	 3004425	       396.4 ns/op	      64 B/op	       8 allocs/op
 PASS
-ok  	github.com/encodingx/binary	3.873s
+ok  	github.com/encodingx/binary	3.288s
 ```

@@ -1,4 +1,4 @@
-package binary
+package metadata
 
 import (
 	"reflect"
@@ -6,13 +6,13 @@ import (
 	"github.com/encodingx/binary/internal/validation"
 )
 
-type formatMetadata struct {
+type FormatMetadata struct {
 	words         []wordMetadata
 	lengthInBytes int
 }
 
-func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
-	format formatMetadata, e error,
+func NewFormatMetadataFromTypeReflection(reflection reflect.Type) (
+	format FormatMetadata, e error,
 ) {
 	var (
 		i int
@@ -32,7 +32,7 @@ func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
 		return
 	}
 
-	format = formatMetadata{
+	format = FormatMetadata{
 		words: make([]wordMetadata,
 			reflection.NumField(),
 		),
@@ -52,7 +52,7 @@ func newFormatMetadataFromTypeReflection(reflection reflect.Type) (
 	return
 }
 
-func (m formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
+func (m FormatMetadata) Marshal(reflection reflect.Value) (bytes []byte) {
 	// Merge byte slices marshalled from words,
 	// in the order they appear in the format.
 
@@ -78,7 +78,7 @@ func (m formatMetadata) marshal(reflection reflect.Value) (bytes []byte) {
 	return
 }
 
-func (m formatMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
+func (m FormatMetadata) Unmarshal(bytes []byte, reflection reflect.Value) {
 	var (
 		i    int
 		j    int
@@ -104,4 +104,8 @@ func (m formatMetadata) unmarshal(bytes []byte, reflection reflect.Value) {
 	}
 
 	return
+}
+
+func (m FormatMetadata) LengthInBytes() int {
+	return m.lengthInBytes
 }

@@ -5,15 +5,12 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/encodingx/binary/internal/codecs"
 	"github.com/encodingx/binary/internal/validation"
 )
 
-const (
-	wordLengthUpperLimitBytes = 8
-)
-
 var (
-	defaultCodec = newCodec()
+	defaultCodec codecs.Codec = codecs.NewCodec()
 )
 
 func Marshal(iface interface{}) (bytes []byte, e error) {
@@ -22,7 +19,7 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 	)
 
 	var (
-		operation codecOperation
+		operation codecs.CodecOperation
 	)
 
 	defer func() {
@@ -39,12 +36,12 @@ func Marshal(iface interface{}) (bytes []byte, e error) {
 		return
 	}()
 
-	operation, e = defaultCodec.newOperation(iface)
+	operation, e = defaultCodec.NewOperation(iface)
 	if e != nil {
 		return
 	}
 
-	bytes, e = operation.marshal()
+	bytes, e = operation.Marshal()
 	if e != nil {
 		return
 	}
@@ -58,7 +55,7 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 	)
 
 	var (
-		operation codecOperation
+		operation codecs.CodecOperation
 	)
 
 	defer func() {
@@ -75,12 +72,12 @@ func Unmarshal(bytes []byte, iface interface{}) (e error) {
 		return
 	}()
 
-	operation, e = defaultCodec.newOperation(iface)
+	operation, e = defaultCodec.NewOperation(iface)
 	if e != nil {
 		return
 	}
 
-	e = operation.unmarshal(bytes)
+	e = operation.Unmarshal(bytes)
 	if e != nil {
 		return
 	}
